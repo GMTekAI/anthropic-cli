@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.7.0 (2026-05-05)
+
+Full Changelog: [v1.6.0...v1.7.0](https://github.com/anthropics/anthropic-cli/compare/v1.6.0...v1.7.0)
+
+### Features
+
+* **api:** add support for Managed Agents multiagents and outcomes, webhooks, vault validation ([6f6a472](https://github.com/anthropics/anthropic-cli/commit/6f6a472f51c025b3445591c428146156f884df50))
+
 ## 1.6.0 (2026-05-05)
 
 Full Changelog: [v1.5.0...v1.6.0](https://github.com/anthropics/anthropic-cli/compare/v1.5.0...v1.6.0)
