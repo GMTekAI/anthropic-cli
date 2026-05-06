@@ -3,7 +3,7 @@ module github.com/anthropics/anthropic-cli
 go 1.25
 
 require (
-	github.com/anthropics/anthropic-sdk-go v1.40.1-0.20260505191752-e7aa026b0358
+	github.com/anthropics/anthropic-sdk-go v1.40.1-0.20260506005728-39972c82a38a
 	github.com/charmbracelet/bubbles v0.21.0
 	github.com/charmbracelet/bubbletea v1.3.6
 	github.com/charmbracelet/lipgloss v1.1.0
