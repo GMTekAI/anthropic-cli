@@ -269,9 +269,12 @@ func identifyOrigin(ctx context.Context, cmd *cli.Command, sdk anthropic.Client,
 }
 
 // currentBaseURL resolves the API host by the client's own precedence: the
-// Google Cloud tier's own host when that tier is in use, else flag, then
-// environment, then the profile in use, then the SDK default.
+// AWS or Google Cloud tier's own host when that tier is in use, else flag,
+// then environment, then the profile in use, then the SDK default.
 func currentBaseURL(cmd *cli.Command) string {
+	if cmd.Root().Bool("aws") {
+		return awsHost(cmd.Root())
+	}
 	if googleCloudInUse(cmd) {
 		return googleCloudFromRoot(cmd.Root()).host()
 	}
@@ -290,10 +293,14 @@ func currentBaseURL(cmd *cli.Command) string {
 // profileInUse returns the active profile's config only when that profile is
 // what requests will authenticate with — by the client's own precedence, an
 // API key, auth token, complete federation config or Google Cloud settings
-// from flags or the environment win over an implicit profile.
+// from flags or the environment win over an implicit profile, and --aws wins
+// over every profile.
 func profileInUse(cmd *cli.Command) *config.Config {
-	cfg, explicit := loadProfileIfUsable(cmd)
 	root := cmd.Root()
+	if root.Bool("aws") {
+		return nil
+	}
+	cfg, explicit := loadProfileIfUsable(cmd)
 	fed := federationFromRoot(root)
 	_, apiKeySet := directCredential(root, "api-key")
 	_, authTokenSet := directCredential(root, "auth-token")
@@ -356,6 +363,10 @@ func describeOrigin(cmd *cli.Command, o core.Origin) render.OriginSummary {
 				c.Workspace = nameAndID(creds.WorkspaceName, o.WorkspaceID)
 			}
 		}
+	case root.Bool("aws") && buildAWSConfig(root).APIKey != "":
+		c.Credentials = "Claude Platform on AWS (API key)"
+	case root.Bool("aws"):
+		c.Credentials = "Claude Platform on AWS (SigV4 via AWS credential chain)"
 	case apiKeySet:
 		c.Credentials = "API key (--api-key / ANTHROPIC_API_KEY)"
 	case authTokenSet:

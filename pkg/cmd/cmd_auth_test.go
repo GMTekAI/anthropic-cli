@@ -394,10 +394,12 @@ func resetWarnOnce(t *testing.T) {
 	multiAuthWarnOnce = sync.Once{}
 	clientIDDefaultedOnce = sync.Once{}
 	googleCloudBaseURLNoticeOnce = sync.Once{}
+	awsBaseURLNoticeOnce = sync.Once{}
 	t.Cleanup(func() {
 		multiAuthWarnOnce = sync.Once{}
 		clientIDDefaultedOnce = sync.Once{}
 		googleCloudBaseURLNoticeOnce = sync.Once{}
+		awsBaseURLNoticeOnce = sync.Once{}
 	})
 }
 

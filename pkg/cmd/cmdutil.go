@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bytes"
+	"cmp"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -19,6 +20,7 @@ import (
 	"syscall"
 
 	"github.com/anthropics/anthropic-cli/internal/jsonview"
+	"github.com/anthropics/anthropic-sdk-go/aws"
 	"github.com/anthropics/anthropic-sdk-go/config"
 	"github.com/anthropics/anthropic-sdk-go/option"
 	"github.com/charmbracelet/x/term"
@@ -45,6 +47,7 @@ func ValidateBaseURL(value, source string) error {
 var (
 	multiAuthWarnOnce     sync.Once
 	clientIDDefaultedOnce sync.Once
+	awsBaseURLNoticeOnce  sync.Once
 )
 
 func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
@@ -74,7 +77,58 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-	// Credential precedence mirrors the WIF User Guide's "Credential resolution" section:
+
+	// Tier 0 — Claude Platform on AWS. Opt-in only (--aws / ANTHROPIC_USE_AWS,
+	// both surfaced through root.Bool("aws")); short-circuits BEFORE the
+	// first-party credential switch below. Placed after the stdin credential
+	// is applied (so warnIfAWSConflict sees it) but before the credential
+	// resolution, so an AWS call never runs loadProfileIfUsable (disk I/O +
+	// possible client_id shadow-warning), builds the federation struct, or
+	// calls warnIfMultipleAuthSources, all of which would be wasted/misleading
+	// work for a request that bypasses the first-party paths entirely.
+	if root.Bool("aws") {
+		cfg := buildAWSConfig(root)
+		if err := ValidateBaseURL(cfg.BaseURL, "--aws-base-url / ANTHROPIC_AWS_BASE_URL"); err != nil {
+			// TODO: same os.Exit wart as the aws.NewClient failure below.
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		// context.Background(): getDefaultRequestOptions takes only *cli.Command
+		// (urfave/cli v3 exposes no Context on the Command; ctx flows separately
+		// to actions and is not threaded into this helper at its ~30 generated
+		// call sites). aws.NewClient uses ctx only for eager AWS credential
+		// resolution in SigV4 mode — there is no long-lived request I/O here.
+		// In SigV4 mode that resolution can walk the AWS credential chain
+		// (env → shared config → SSO → IMDS); on a misconfigured host it may
+		// block up to the AWS SDK's own internal per-provider timeouts before
+		// erroring. We deliberately do NOT impose a CLI-side deadline: a short
+		// one would break legitimately-slow chains (SSO, role assumption, IMDS
+		// on a busy host). The SDK's bounded timeouts are the backstop.
+		awsClient, err := aws.NewClient(context.Background(), cfg)
+		if err != nil {
+			// Surface the SDK's "no region" / "no workspace ID" / "no base URL"
+			// error, plus the CLI flags that fix it, rather than letting it fall
+			// through to a downstream 401.
+			// Fatals via os.Exit to match the federation path below (which carries
+			// its own TODO about bypassing urfave's error pipeline) rather than
+			// re-threading an error return through ~30 codegen handlers.
+			fmt.Fprintln(os.Stderr, awsClientError(err))
+			os.Exit(1)
+		}
+		// Conflict notice: warn only when a FIRST-PARTY credential is also set
+		// (--aws wins, since it short-circuits here). ANTHROPIC_AWS_API_KEY
+		// (--aws-api-key) is NOT a conflict — it merely selects API-key mode —
+		// so it is deliberately excluded, else every API-key-mode CI run would
+		// spuriously warn.
+		warnIfAWSConflict(root)
+		// --base-url / ANTHROPIC_BASE_URL is deliberately not applied: it names
+		// a host trusted with Anthropic credentials, not AWS ones.
+		noteIgnoredAWSBaseURL(os.Stderr, root, extraClientFlagsFromCmd(cmd).BaseURL)
+		return append(opts, awsClient.Options...)
+	}
+
+	// Credential precedence mirrors the WIF User Guide's "Credential resolution" section,
+	// with the AWS tier-0 short-circuit above sitting ahead of all of them:
 	//   1. --api-key-stdin / ANTHROPIC_API_KEY (or deprecated --api-key)          (doc tiers 1+2)
 	//   2. --auth-token-stdin / ANTHROPIC_AUTH_TOKEN (or deprecated --auth-token) (doc tiers 1+2)
 	//   3. profile named by --profile / ANTHROPIC_PROFILE (explicit)
@@ -163,6 +217,106 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 	opts = append(opts, extra.requestOptions()...)
 
 	return opts
+}
+
+// buildAWSConfig maps the CLI's AWS flags onto the SDK's aws.ClientConfig.
+// Pure and unit-tested directly (no network, no aws.NewClient). Empty values
+// are intentional: awsauth.ResolveConfig treats an empty string in every field
+// as "unset, fall back" — to the env vars (AWS_REGION, ANTHROPIC_AWS_API_KEY,
+// ANTHROPIC_AWS_WORKSPACE_ID, ANTHROPIC_AWS_BASE_URL) and regional base-URL
+// derivation — and emits its own clean "no region/workspace/base URL" errors.
+// The base URL comes only from --aws-base-url / ANTHROPIC_AWS_BASE_URL, never
+// --base-url, so a stray ANTHROPIC_BASE_URL can't receive AWS credentials.
+// So no IsSet guards are needed; passing "" never clobbers anything. The
+// --aws-api-key flag, when set, selects API-key mode; when empty the SDK reads
+// ANTHROPIC_AWS_API_KEY then falls back to SigV4 via the AWS credential chain.
+//
+// The workspace falls back to the global --workspace-id / ANTHROPIC_WORKSPACE_ID,
+// since the AWS short-circuit returns before extraClientFlags would send it.
+func buildAWSConfig(root *cli.Command) aws.ClientConfig {
+	return aws.ClientConfig{
+		WorkspaceID: cmp.Or(root.String("aws-workspace-id"), root.String("workspace-id")),
+		AWSRegion:   root.String("aws-region"),
+		APIKey:      root.String("aws-api-key"),
+		BaseURL:     root.String("aws-base-url"),
+	}
+}
+
+// awsClientError adds the CLI's names for the AWS settings to an aws.NewClient
+// error, whose own message names SDK fields (ClientConfig.AWSRegion) the user
+// can't set directly.
+func awsClientError(err error) error {
+	return fmt.Errorf("%w\n"+
+		"  Region:      --aws-region / AWS_REGION / AWS_DEFAULT_REGION\n"+
+		"  Workspace:   --aws-workspace-id / ANTHROPIC_AWS_WORKSPACE_ID (or --workspace-id)\n"+
+		"  Credentials: --aws-api-key / ANTHROPIC_AWS_API_KEY, else SigV4 via the AWS credential chain (AWS_PROFILE, env keys, IAM role)", err)
+}
+
+// awsHost is where the AWS tier sends requests, mirroring the SDK's
+// resolution: --aws-base-url / ANTHROPIC_AWS_BASE_URL, then the regional
+// gateway. Empty when no region is known yet.
+func awsHost(root *cli.Command) string {
+	cfg := buildAWSConfig(root)
+	if cfg.BaseURL != "" {
+		return cfg.BaseURL
+	}
+	if cfg.AWSRegion == "" {
+		return ""
+	}
+	return fmt.Sprintf("https://aws-external-anthropic.%s.api.aws", cfg.AWSRegion)
+}
+
+// noteIgnoredAWSBaseURL tells the user, once, that the generic base URL is not
+// applied under --aws. Sending SigV4-signed requests or the AWS API key there
+// without saying so would hand an AWS credential to a host set up for
+// Anthropic traffic.
+func noteIgnoredAWSBaseURL(w io.Writer, root *cli.Command, baseURL string) {
+	if baseURL == "" {
+		return
+	}
+	host := cmp.Or(awsHost(root), "the regional AWS gateway")
+	awsBaseURLNoticeOnce.Do(func() {
+		fmt.Fprintf(w,
+			"Note: --base-url / ANTHROPIC_BASE_URL is not used with --aws; requests go to %s. To send them elsewhere: --aws-base-url / ANTHROPIC_AWS_BASE_URL.\n",
+			host)
+	})
+}
+
+// warnIfAWSConflict emits a one-shot stderr notice when --aws is active AND a
+// first-party credential is also configured. --aws wins (it short-circuits
+// before the first-party switch), so the notice names the ignored source.
+// Deliberately ignores --aws-api-key: its presence only selects API-key mode
+// within the AWS tier, so it is not a cross-tier conflict.
+func warnIfAWSConflict(root *cli.Command) {
+	var ignored []string
+	if _, ok := directCredential(root, "api-key"); ok {
+		ignored = append(ignored, credentialSourceLabel(root, "api-key"))
+	}
+	if _, ok := directCredential(root, "auth-token"); ok {
+		ignored = append(ignored, credentialSourceLabel(root, "auth-token"))
+	}
+	if profileIsExplicit(root) {
+		ignored = append(ignored, "profile from --profile / ANTHROPIC_PROFILE")
+	}
+	if federationFromRoot(root).AnySet() {
+		ignored = append(ignored, "federation env")
+	}
+	if googleCloudFromRoot(root).AnySet() {
+		ignored = append(ignored, "Google Cloud (--google-cloud-* / ANTHROPIC_GOOGLE_CLOUD_*)")
+	}
+	if len(ignored) == 0 {
+		return
+	}
+	// Intentionally shares multiAuthWarnOnce with warnIfMultipleAuthSources:
+	// both emit a single "Note:" auth diagnostic, and the AWS short-circuit
+	// returns before warnIfMultipleAuthSources is ever reached, so within one
+	// process exactly one of the two paths runs — the shared Once can't let one
+	// silence the other.
+	multiAuthWarnOnce.Do(func() {
+		fmt.Fprintf(os.Stderr,
+			"Note: --aws is active and overrides the first-party credential(s) also configured (%s). Run `ant --aws auth status` for details.\n",
+			strings.Join(ignored, ", "))
+	})
 }
 
 // warnIfMultipleAuthSources emits a one-shot stderr notice when more than one
