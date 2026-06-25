@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.12.3 (2026-06-25)
+
+Full Changelog: [v1.12.2...v1.12.3](https://github.com/anthropics/anthropic-cli/compare/v1.12.2...v1.12.3)
+
+### Chores
+
+* **api:** accept user profile ID's when counting tokens ([ac6bf4b](https://github.com/anthropics/anthropic-cli/commit/ac6bf4b7c0b702d1886394a9bc4c61ab441c7354))
+* **docs:** updates to descriptions and example values ([7708932](https://github.com/anthropics/anthropic-cli/commit/77089320c047ef10a0b5a81d00d4bbfd546bcc7a))
+
 ## 1.12.2 (2026-06-24)
 
 Full Changelog: [v1.12.1...v1.12.2](https://github.com/anthropics/anthropic-cli/compare/v1.12.1...v1.12.2)
