@@ -1,0 +1,25 @@
+schema: 1
+name: deleting a field from the file clears it on the server
+resources:
+  test:
+    kind: environment
+    body:
+      name: cf-{run}-clearable
+      description: temporary
+steps:
+  - expect:
+      plan:
+        test: create
+      remote:
+        test:
+          description: temporary
+  - change:
+      test:
+        body:
+          description: null
+    expect:
+      plan:
+        test: {update: [description]}
+      remote:
+        test:
+          description: {$unset: true}

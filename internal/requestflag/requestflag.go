@@ -984,18 +984,24 @@ func (c *cliValue[T]) SetInnerField(field string, val any) {
 	flagValReflect := reflect.ValueOf(flagVal)
 	switch flagValReflect.Kind() {
 	case reflect.Slice:
-		if flagValReflect.Type().Elem().Kind() != reflect.Map {
+		// []map[string]any: --message '{"role":"user"}' --message.content hi => [{"role":"user","content":"hi"}]
+		// []any (union array): --tool '{"type":"custom"}' --tool.name f => [{"type":"custom","name":"f"}]
+		// Other slice types have no map element to write the field into.
+		elemKind := flagValReflect.Type().Elem().Kind()
+		if elemKind != reflect.Map && elemKind != reflect.Interface {
 			return
 		}
 
 		sliceLen := flagValReflect.Len()
 		if sliceLen > 0 {
-			// Check if the last element already has the InnerField
-			lastElement := flagValReflect.Index(sliceLen - 1).Interface().(map[string]any)
-			if _, hasInnerField := lastElement[field]; !hasInnerField {
-				// Last element doesn't have the field, set it
-				lastElement[field] = val
-				return
+			// --message '{"role":"user"}' --message.content hi => [{"role":"user","content":"hi"}] (write into the trailing map)
+			// --message null --message.type user => [null, {"type":"user"}] (nil trailing map: append below instead)
+			if lastElement, ok := flagValReflect.Index(sliceLen - 1).Interface().(map[string]any); ok && lastElement != nil {
+				if _, hasInnerField := lastElement[field]; !hasInnerField {
+					// Last element doesn't have the field, set it
+					lastElement[field] = val
+					return
+				}
 			}
 		}
 

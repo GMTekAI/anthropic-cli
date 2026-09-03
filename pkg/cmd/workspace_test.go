@@ -18,28 +18,36 @@ import (
 func TestWorkspaceIDHeader(t *testing.T) {
 	for _, tc := range []struct {
 		name, env, want string
-		args            []string
+		global, leaf    []string
 	}{
-		{name: "flag", args: []string{"--workspace-id", "wrkspc_flag"}, want: "wrkspc_flag"},
+		{name: "global flag", global: []string{"--workspace-id", "wrkspc_flag"}, want: "wrkspc_flag"},
 		{name: "env", env: "ANTHROPIC_WORKSPACE_ID=wrkspc_env", want: "wrkspc_env"},
+		{name: "per-command flag", leaf: []string{"--workspace-id", "wrkspc_leaf"}, want: "wrkspc_leaf"},
+		{name: "per-command flag overrides env", env: "ANTHROPIC_WORKSPACE_ID=wrkspc_env", leaf: []string{"--workspace-id", "wrkspc_leaf"}, want: "wrkspc_leaf"},
+		{name: "per-command flag overrides global flag", global: []string{"--workspace-id", "wrkspc_flag"}, leaf: []string{"--workspace-id", "wrkspc_leaf"}, want: "wrkspc_leaf"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			var got string
+			var got []string
 			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				got = r.Header.Get("anthropic-workspace-id")
+				got = r.Header.Values("anthropic-workspace-id")
 				w.Header().Set("Content-Type", "application/json")
 				fmt.Fprint(w, `{"data":[],"has_more":false,"first_id":null,"last_id":null}`)
 			}))
 
-			args := append([]string{"run", "./cmd/ant", "--api-key", "k", "--base-url", srv.URL}, tc.args...)
-			cmd := exec.Command("go", append(args, "models", "list")...)
+			args := append([]string{"run", "./cmd/ant", "--api-key", "k", "--base-url", srv.URL}, tc.global...)
+			args = append(args, "models", "list")
+			cmd := exec.Command("go", append(args, tc.leaf...)...)
 			cmd.Dir = "../.."
 			cmd.Env = append(cmd.Environ(), "ANTHROPIC_CONFIG_DIR="+t.TempDir(), tc.env)
 			out, err := cmd.CombinedOutput()
 			srv.Close()
 
 			require.NoError(t, err, "%s", out)
-			assert.Equal(t, tc.want, got)
+			if tc.want == "" {
+				assert.Empty(t, got)
+			} else {
+				assert.Equal(t, []string{tc.want}, got, "exactly one anthropic-workspace-id value must reach the wire")
+			}
 		})
 	}
 }

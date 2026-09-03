@@ -1,0 +1,54 @@
+schema: 1
+name: editing a sub-agent re-pins its coordinator
+# A coordinator pins the worker at a version. Changing the worker mints a new
+# one, so the coordinator must update too — one edit, two changes — and an
+# archived worker, once forced, is recreated and the coordinator follows.
+resources:
+  helper:
+    kind: agent
+    body:
+      name: cf-{run}-helper
+      model: claude-sonnet-4-5
+      system: You help. Read the request carefully and answer briefly.
+  lead:
+    kind: agent
+    body:
+      name: cf-{run}-lead
+      model: claude-sonnet-4-5
+      multiagent:
+        type: coordinator
+        agents:
+          - $ref: helper
+steps:
+  - expect:
+      plan:
+        helper: create
+        lead: create
+      remote:
+        lead:
+          multiagent.agents[0].version: {$version: helper}
+  - change:
+      helper:
+        body:
+          system: You help. Read the request thoroughly and answer briefly.
+    expect:
+      plan:
+        helper: {update: [system]}
+        lead: {update: [multiagent]}
+      remote:
+        helper:
+          version: 2
+        lead:
+          multiagent.agents[0].version: {$version: helper}
+  - remote:
+      helper: archive
+    expect:
+      error: "archived|no longer"
+  - flags: [force]
+    expect:
+      plan:
+        helper: replace
+        lead: {update: [multiagent]}
+      remote:
+        lead:
+          multiagent.agents[0].id: {$id: helper}

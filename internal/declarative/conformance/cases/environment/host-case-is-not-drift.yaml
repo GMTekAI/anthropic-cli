@@ -1,0 +1,30 @@
+schema: 1
+name: a mixed-case allowed host is not drift, and recasing it is not a change
+# The server lower-cases allowed_hosts. The file's spelling must not read back
+# as a difference, and rewriting it in the server's spelling must plan empty.
+resources:
+  test:
+    kind: environment
+    body:
+      name: cf-{run}-hosts
+      config:
+        type: cloud
+        networking:
+          type: limited
+          allowed_hosts: [API.Example.com]
+steps:
+  - expect:
+      plan:
+        test: create
+      remote:
+        test:
+          config.networking.allowed_hosts[0]: api.example.com
+  - change:
+      test:
+        body:
+          config:
+            networking:
+              allowed_hosts: [api.example.com]
+    expect:
+      plan:
+        test: noop

@@ -1,0 +1,45 @@
+schema: 1
+name: editing a skill re-pins the agent that uses it, in the same run
+# The edit mints a skill version, and the agent must be sent that version —
+# not the "(known after apply)" placeholder — within the one apply.
+resources:
+  notes:
+    kind: skill
+    files:
+      SKILL.md: |
+        ---
+        name: cf-{run}-notes
+        description: Conformance test skill.
+        ---
+
+        Greet politely.
+      notes.md: |
+        First version of the notes.
+  writer:
+    kind: agent
+    body:
+      name: cf-{run}-writer
+      model: claude-sonnet-4-5
+      skills:
+        - $ref: notes
+steps:
+  - expect:
+      plan:
+        notes: create
+        writer: create
+      remote:
+        writer:
+          skills[0].skill_id: {$id: notes}
+          skills[0].version: {$version: notes}
+  - change:
+      notes:
+        files:
+          notes.md: |
+            Second version, edited.
+    expect:
+      plan:
+        notes: update
+        writer: {update: [skills]}
+      remote:
+        writer:
+          skills[0].version: {$version: notes}

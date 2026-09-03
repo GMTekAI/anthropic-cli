@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.30.0 (2026-09-03)
+
+Full Changelog: [v1.29.0...v1.30.0](https://github.com/anthropics/anthropic-cli/compare/v1.29.0...v1.30.0)
+
+### Features
+
+* add `ant apply` for managing agents, skills, environments, memory stores and deployments as code ([#97](https://github.com/anthropics/anthropic-cli/issues/97)) ([d69ffe9](https://github.com/anthropics/anthropic-cli/commit/d69ffe9911738c1ed6fb6a9d5bed104a9c687e9a))
+* **api:** add Claude Tag category and user breakdowns to usage reports ([9ec28f9](https://github.com/anthropics/anthropic-cli/commit/9ec28f93d41ccdde28e2a19fc97032385d31c2e0))
+* **api:** add support for sending a workspace ID on more endpoints ([f0cab61](https://github.com/anthropics/anthropic-cli/commit/f0cab612ce1a74c8a015d31db704b34cb56d8842))
+
+
+### Bug Fixes
+
+* apply dotted sub-flags to union array flags ([c9ad752](https://github.com/anthropics/anthropic-cli/commit/c9ad7520b125468acc8eeb05199524de832cc61b))
+
+
+### Chores
+
+* bump go sdk to v1.70.1 ([5fc9be6](https://github.com/anthropics/anthropic-cli/commit/5fc9be6c88703f2b7edc97c93b1c239f46a78373))
+* **internal:** narrower codeowners scope ([c32c35e](https://github.com/anthropics/anthropic-cli/commit/c32c35e4474e961e1e56ca6ef6728d8dcedeac4a))
+* **internal:** revert codeowners change ([58e6f5e](https://github.com/anthropics/anthropic-cli/commit/58e6f5e9ac231275852b2ea617f9045e03db9282))
+
+
+### Documentation
+
+* **api:** update a few doc strings ([465f12e](https://github.com/anthropics/anthropic-cli/commit/465f12e578147fc4ebacf0f8ee5b47e312460f59))
+
 ## 1.29.0 (2026-09-01)
 
 Full Changelog: [v1.28.0...v1.29.0](https://github.com/anthropics/anthropic-cli/compare/v1.28.0...v1.29.0)

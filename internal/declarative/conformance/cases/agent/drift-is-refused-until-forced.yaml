@@ -1,0 +1,27 @@
+schema: 1
+name: a console edit is refused, then overwritten when forced
+# Someone changes the description in the Console. The next plan must notice,
+# refuse to silently clobber it, and — told to — put the file's value back.
+resources:
+  test:
+    kind: agent
+    body:
+      name: cf-{run}-drift
+      model: claude-sonnet-4-5
+      description: as the file says
+steps:
+  - expect:
+      plan:
+        test: create
+  - remote:
+      test:
+        patch: {description: edited in the console}
+    expect:
+      error: "outside|drift|changed"
+  - flags: [force]
+    expect:
+      plan:
+        test: {update: [description]}
+      remote:
+        test:
+          description: as the file says

@@ -1,0 +1,34 @@
+schema: 1
+name: a version published elsewhere is noticed and the declared files win
+# Someone publishes a version with different contents. The tool must not read
+# that as converged; forced, it re-publishes the declared files and the plan
+# is empty again.
+resources:
+  test:
+    kind: skill
+    files:
+      SKILL.md: |
+        ---
+        name: cf-{run}-oob
+        description: Conformance test skill.
+        ---
+
+        Declared notes.
+steps:
+  - expect:
+      plan:
+        test: create
+  - remote:
+      test:
+        files:
+          SKILL.md: |
+            ---
+            name: cf-{run}-oob
+            description: Conformance test skill.
+            ---
+
+            TAMPERED.
+    flags: [force]
+    expect:
+      plan:
+        test: update

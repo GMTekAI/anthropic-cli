@@ -48,7 +48,12 @@ func (o extraClientFlags) requestOptions() []option.RequestOption {
 	return opts
 }
 
+// init runs after cmd.go's, which builds Command — package-level init
+// functions run in filename order, and "extras.go" sorts after "cmd.go".
+// Hand-written commands are registered here for that reason.
 func init() {
+	Command.Commands = append(Command.Commands, &applyCommand)
+
 	// cmd.go declares --base-url without an env source and the SDK's own
 	// env handling is disabled (WithoutEnvironmentDefaults), so attach
 	// ANTHROPIC_BASE_URL here. TestBaseURLEnvRealTree fails if a regen

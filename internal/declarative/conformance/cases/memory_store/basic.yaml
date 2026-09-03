@@ -1,0 +1,22 @@
+schema: 1
+name: a memory store converges and its description can change
+resources:
+  test:
+    kind: memory_store
+    body:
+      name: cf-{run}-store
+      description: Where the agent keeps notes.
+steps:
+  - expect:
+      plan:
+        test: create
+      remote:
+        test:
+          name: cf-{run}-store
+  - change:
+      test:
+        body:
+          description: Where the agent keeps its notes, revised.
+    expect:
+      plan:
+        test: {update: [description]}

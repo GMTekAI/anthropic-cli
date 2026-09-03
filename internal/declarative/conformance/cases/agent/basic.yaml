@@ -1,0 +1,19 @@
+schema: 1
+name: a minimal agent converges and re-plans empty
+# Server-populated defaults — model.speed, the version token, empty tool and
+# skill lists — must not read back as drift.
+resources:
+  test:
+    kind: agent
+    body:
+      name: cf-{run}-basic
+      model: claude-sonnet-4-5
+steps:
+  - expect:
+      plan:
+        test: create
+      remote:
+        test:
+          name: cf-{run}-basic
+          model.id: claude-sonnet-4-5
+          version: 1

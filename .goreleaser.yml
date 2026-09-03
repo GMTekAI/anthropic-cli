@@ -90,7 +90,7 @@ homebrew_casks:
     homepage: anthropic.com
     description: CLI for the Claude Platform
     license: MIT
-    binary: "ant"
+    binaries: ["ant"]
     completions:
       bash: "completions/ant.bash"
       zsh: "completions/ant.zsh"
