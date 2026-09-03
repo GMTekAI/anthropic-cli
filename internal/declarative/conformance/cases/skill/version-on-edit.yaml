@@ -1,0 +1,29 @@
+schema: 1
+name: editing a skill's files publishes a new version in place
+# Contents are immutable per version, so an edit is an update that mints a
+# version — never a replacement.
+resources:
+  test:
+    kind: skill
+    files:
+      SKILL.md: |
+        ---
+        name: cf-{run}-notes
+        description: Conformance test skill.
+        ---
+
+        Greet politely.
+      notes.md: |
+        First version of the notes.
+steps:
+  - expect:
+      plan:
+        test: create
+  - change:
+      test:
+        files:
+          notes.md: |
+            Second version, edited.
+    expect:
+      plan:
+        test: update

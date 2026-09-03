@@ -1,0 +1,43 @@
+schema: 1
+name: a cloud environment with nested config round-trips
+# The config union (cloud) with a nested choice (networking) and a packages
+# block where only pip is set must create cleanly and read back with no
+# drift; a nested flag change is an in-place update.
+resources:
+  test:
+    kind: environment
+    body:
+      name: cf-{run}-cloud
+      description: Networked sandbox.
+      config:
+        type: cloud
+        networking:
+          type: limited
+          allow_mcp_servers: true
+          allow_package_managers: true
+          allowed_hosts: [api.example.com]
+        packages:
+          pip: [pandas, numpy]
+steps:
+  - expect:
+      plan:
+        test: create
+      remote:
+        test:
+          config.type: cloud
+          config.packages.pip: [pandas, numpy]
+          config.networking.allow_mcp_servers: true
+  - change:
+      test:
+        body:
+          description: Updated.
+          config:
+            networking:
+              allow_mcp_servers: false
+    expect:
+      plan:
+        test: {update: [config, description]}
+      remote:
+        test:
+          description: Updated.
+          config.networking.allow_mcp_servers: false

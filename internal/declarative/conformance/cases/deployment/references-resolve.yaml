@@ -1,0 +1,56 @@
+schema: 1
+name: a deployment pins its agent and follows it on change
+# A deployment references an agent (pinned at a version), an environment (by
+# id) and a memory store (inside a mixed resources list). Editing the agent
+# must re-pin the deployment.
+resources:
+  box:
+    kind: environment
+    body:
+      name: cf-{run}-box
+  notes:
+    kind: memory_store
+    body:
+      name: cf-{run}-notes
+      description: Scratch space.
+  lead:
+    kind: agent
+    body:
+      name: cf-{run}-lead
+      model: claude-sonnet-4-5
+      system: Say hello.
+  nightly:
+    kind: deployment
+    body:
+      name: cf-{run}-nightly
+      agent: {$ref: lead}
+      environment_id: {$ref: box}
+      resources:
+        - $ref: notes
+      initial_events:
+        - type: user.message
+          content: [{type: text, text: "Say hello."}]
+steps:
+  - expect:
+      plan:
+        box: create
+        notes: create
+        lead: create
+        nightly: create
+      remote:
+        nightly:
+          agent.id: {$id: lead}
+          agent.version: {$version: lead}
+          environment_id: {$id: box}
+          resources[0].memory_store_id: {$id: notes}
+  - change:
+      lead:
+        body:
+          system: Say hello, warmly.
+    expect:
+      plan:
+        lead: {update: [system]}
+        nightly: {update: [agent]}
+      remote:
+        nightly:
+          agent.version: {$version: lead}

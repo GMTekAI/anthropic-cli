@@ -1,0 +1,27 @@
+schema: 1
+name: a skill deleted out of band does not wedge teardown
+# All versions and then the skill are deleted behind the tool's back. Removing
+# it from the files afterwards must succeed — the 404 counts as done.
+resources:
+  test:
+    kind: skill
+    files:
+      SKILL.md: |
+        ---
+        name: cf-{run}-doomed
+        description: Conformance test skill.
+        ---
+
+        Doomed.
+steps:
+  - expect:
+      plan:
+        test: create
+  - remote:
+      test: delete
+    change:
+      test: null
+    flags: [prune, force]
+    expect:
+      plan:
+        test: destroy

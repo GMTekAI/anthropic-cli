@@ -1,0 +1,49 @@
+schema: 1
+name: renaming a skill in SKILL.md is refused before anything uploads
+# A skill keeps the `name` of its first version; the API rejects an upload that
+# changes it. The plan must say so up front rather than fail midway, and
+# putting the name back must leave the skill converged. The display name is
+# pinned so that only `name` moves.
+resources:
+  test:
+    kind: skill
+    files:
+      SKILL.md: |
+        ---
+        name: cf-{run}-rename
+        display_name: Conformance skill cf-{run}-rename
+        description: Conformance test skill.
+        ---
+
+        Greet politely.
+steps:
+  - expect:
+      plan:
+        test: create
+  - change:
+      test:
+        files:
+          SKILL.md: |
+            ---
+            name: cf-{run}-renamed
+            display_name: Conformance skill cf-{run}-rename
+            description: Conformance test skill.
+            ---
+
+            Greet politely.
+    expect:
+      error: ": name cannot be changed"
+  - change:
+      test:
+        files:
+          SKILL.md: |
+            ---
+            name: cf-{run}-rename
+            display_name: Conformance skill cf-{run}-rename
+            description: Conformance test skill.
+            ---
+
+            Greet politely.
+    expect:
+      plan:
+        test: noop

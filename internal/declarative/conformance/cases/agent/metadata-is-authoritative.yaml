@@ -1,0 +1,31 @@
+schema: 1
+name: the file is the whole truth about metadata
+# A key someone adds in the Console is removed by the next apply, and a key
+# dropped from the file is removed too: the bag is declared, not merged.
+resources:
+  test:
+    kind: agent
+    body:
+      name: cf-{run}-meta
+      model: claude-sonnet-4-5
+      metadata: {team: alpha, owner: file}
+steps:
+  - expect:
+      plan:
+        test: create
+  - remote:
+      test:
+        patch: {metadata: {ticket: OPS-1}}
+    change:
+      test:
+        body:
+          metadata: {owner: null}
+    flags: [force]
+    expect:
+      plan:
+        test: {update: [metadata]}
+      remote:
+        test:
+          metadata.team: alpha
+          metadata.ticket: {$unset: true}
+          metadata.owner: {$unset: true}

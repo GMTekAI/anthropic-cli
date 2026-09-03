@@ -1,0 +1,41 @@
+schema: 1
+name: switching a tool from one variant to another is an in-place update
+# There is no same-variant prior state to diff against, so the tool must send
+# the new variant's full body, not an empty one. It must apply cleanly and
+# converge.
+resources:
+  test:
+    kind: agent
+    body:
+      name: cf-{run}-toolarm
+      model: claude-sonnet-4-5
+      tools:
+        - type: agent_toolset_20260401
+          default_config: {enabled: true, permission_policy: {type: always_allow}}
+          configs:
+            - {name: bash, permission_policy: {type: always_ask}}
+steps:
+  - expect:
+      plan:
+        test: create
+      remote:
+        test:
+          tools[0].type: agent_toolset_20260401
+          tools[0].configs[0].name: bash
+          tools[0].configs[0].permission_policy.type: always_ask
+  - change:
+      test:
+        body:
+          tools:
+            - type: custom
+              name: get_weather
+              description: Look up the weather for a city.
+              input_schema: {type: object, properties: {city: {type: string}}}
+    expect:
+      plan:
+        test: {update: [tools]}
+      remote:
+        test:
+          tools[0].type: custom
+          tools[0].name: get_weather
+          tools[1]: {$unset: true}

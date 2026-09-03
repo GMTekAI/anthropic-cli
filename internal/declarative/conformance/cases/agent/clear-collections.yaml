@@ -1,0 +1,38 @@
+schema: 1
+name: removing mcp_servers and the toolset that used them clears both
+# The update endpoint is merge-style — omission does not clear — so the tool
+# has to send the clear itself, and drop the mcp_toolset in the same request
+# or the API rejects it.
+resources:
+  test:
+    kind: agent
+    body:
+      name: cf-{run}-clear
+      model: claude-sonnet-4-5
+      mcp_servers:
+        - {name: docs, type: url, url: "https://example-server.modelcontextprotocol.io/sse"}
+      tools:
+        - {type: mcp_toolset, mcp_server_name: docs}
+steps:
+  - expect:
+      plan:
+        test: create
+      remote:
+        test:
+          mcp_servers[0].name: docs
+  - change:
+      test:
+        body:
+          mcp_servers: null
+          tools:
+            - type: custom
+              name: get_weather
+              description: Look up the weather for a city.
+              input_schema: {type: object, properties: {city: {type: string}}}
+    expect:
+      plan:
+        test: {update: [mcp_servers, tools]}
+      remote:
+        test:
+          tools[0].name: get_weather
+          mcp_servers[0]: {$unset: true}

@@ -1,0 +1,41 @@
+schema: 1
+name: a coordinator's roster converges and can be cleared
+# The server rewrites the roster — a path or bare id resolves to a concrete
+# {type: agent, id, version} — and the plan must still be empty afterwards.
+# Dropping `multiagent` clears it in place.
+resources:
+  worker:
+    kind: agent
+    body:
+      name: cf-{run}-worker
+      model: claude-sonnet-4-5
+  coordinator:
+    kind: agent
+    body:
+      name: cf-{run}-coordinator
+      model: claude-sonnet-4-5
+      multiagent:
+        type: coordinator
+        agents:
+          - $ref: worker
+steps:
+  - expect:
+      plan:
+        worker: create
+        coordinator: create
+      remote:
+        coordinator:
+          multiagent.type: coordinator
+          multiagent.agents[0].type: agent
+          multiagent.agents[0].id: {$id: worker}
+          multiagent.agents[0].version: {$version: worker}
+  - change:
+      coordinator:
+        body:
+          multiagent: null
+    expect:
+      plan:
+        coordinator: {update: [multiagent]}
+      remote:
+        coordinator:
+          multiagent: {$unset: true}
