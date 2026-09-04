@@ -30,7 +30,6 @@ var betaOrganizationComplianceSettingsUpdate = requestflag.WithInnerFlags(cli.Co
 	Flags: []cli.Flag{
 		&requestflag.Flag[map[string]any]{
 			Name:     "state",
-			Usage:    `Desired state. Accepts the string shorthand "enabled" or "disabled" in place of the object form; the response always returns the canonical object form.`,
 			Required: true,
 			BodyPath: "state",
 		},
