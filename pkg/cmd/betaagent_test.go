@@ -106,7 +106,7 @@ func TestBetaAgentsCreate(t *testing.T) {
 }
 
 func TestBetaAgentsRetrieve(t *testing.T) {
-	t.Skip("buildURL drops path-level query params (SDK-4349)")
+	t.Skip("buildURL drops path-level query params")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
@@ -223,7 +223,7 @@ func TestBetaAgentsUpdate(t *testing.T) {
 }
 
 func TestBetaAgentsList(t *testing.T) {
-	t.Skip("buildURL drops path-level query params (SDK-4349)")
+	t.Skip("buildURL drops path-level query params")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
