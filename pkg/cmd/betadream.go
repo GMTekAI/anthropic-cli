@@ -24,7 +24,6 @@ var betaDreamsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[any]{
 			Name:     "model",
-			Usage:    "Model identifier and configuration applied to every pipeline stage.",
 			Required: true,
 			BodyPath: "model",
 		},
@@ -34,7 +33,6 @@ var betaDreamsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "output-behavior",
-			Usage:    "The default destination: the job creates a new output memory store as a clone of the memory_store input and writes the consolidated memories into it. The input store is never mutated.",
 			BodyPath: "output_behavior",
 		},
 		&requestflag.Flag[[]string]{
