@@ -456,6 +456,11 @@ var betaMessagesCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      `Allowed values: "custom", "bash_20241022", "bash_20250124", "code_execution_20250522", "code_execution_20250825", "code_execution_20260120", "code_execution_20260521", "browser_toolset_20260801", "computer_20241022", "memory_20250818", "computer_20250124", "text_editor_20241022", "computer_20251124", "computer_toolset_20260801", "text_editor_20250124", "text_editor_20250429", "text_editor_20250728", "web_search_20250305", "web_fetch_20250910", "web_search_20260209", "web_fetch_20260209", "web_fetch_20260309", "web_search_20260318", "web_fetch_20260318", "advisor_20260301", "tool_search_tool_bm25_20251119", "tool_search_tool_bm25", "tool_search_tool_regex_20251119", "tool_search_tool_regex", "mcp_toolset".`,
 			InnerField: "type",
 		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "tool.url-sources",
+			Usage:      "Which sources contribute to the set of URLs web fetch may fetch.\n\nEach key is a tagged variant: ``user_input`` is ``all`` or ``none``; the\ntwo tool filters are ``all``, ``none``, ``only`` (only the named tools'\nresults) or ``except`` (every result but the named tools'). A named tool\nmust be declared in this request's ``tools[]``.",
+			InnerField: "url_sources",
+		},
 		&requestflag.InnerFlag[bool]{
 			Name:       "tool.use-cache",
 			Usage:      "Whether to use cached content. Set to false to bypass the cache and fetch fresh content. Only set to false when the user explicitly requests fresh content or when fetching rapidly-changing sources.",
@@ -805,6 +810,11 @@ var betaMessagesCountTokens = requestflag.WithInnerFlags(cli.Command{
 			Name:       "tool.type",
 			Usage:      `Allowed values: "custom", "bash_20241022", "bash_20250124", "code_execution_20250522", "code_execution_20250825", "code_execution_20260120", "code_execution_20260521", "browser_toolset_20260801", "computer_20241022", "memory_20250818", "computer_20250124", "text_editor_20241022", "computer_20251124", "computer_toolset_20260801", "text_editor_20250124", "text_editor_20250429", "text_editor_20250728", "web_search_20250305", "web_fetch_20250910", "web_search_20260209", "web_fetch_20260209", "web_fetch_20260309", "web_search_20260318", "web_fetch_20260318", "advisor_20260301", "tool_search_tool_bm25_20251119", "tool_search_tool_bm25", "tool_search_tool_regex_20251119", "tool_search_tool_regex", "mcp_toolset".`,
 			InnerField: "type",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "tool.url-sources",
+			Usage:      "Which sources contribute to the set of URLs web fetch may fetch.\n\nEach key is a tagged variant: ``user_input`` is ``all`` or ``none``; the\ntwo tool filters are ``all``, ``none``, ``only`` (only the named tools'\nresults) or ``except`` (every result but the named tools'). A named tool\nmust be declared in this request's ``tools[]``.",
+			InnerField: "url_sources",
 		},
 		&requestflag.InnerFlag[bool]{
 			Name:       "tool.use-cache",
