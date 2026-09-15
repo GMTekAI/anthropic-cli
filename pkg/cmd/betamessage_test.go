@@ -18,6 +18,7 @@ func TestBetaMessagesCreate(t *testing.T) {
 			"--message", "{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user, clear_at: next_user_message, output_config: {effort: low}}",
 			"--model", "claude-opus-5",
 			"--cache-control", "{type: ephemeral, ttl: 5m}",
+			"--compaction", "{type: summarize, instructions: instructions}",
 			"--container", "{id: id, skills: [{skill_id: pdf, type: anthropic, version: latest}]}",
 			"--context-management", "{edits: [{type: clear_tool_uses_20250919, clear_at_least: {type: input_tokens, value: 0}, clear_tool_inputs: true, exclude_tools: [string], keep: {type: tool_uses, value: 0}, trigger: {type: input_tokens, value: 1}}]}",
 			"--diagnostics", "{previous_message_id: previous_message_id}",
@@ -63,6 +64,8 @@ func TestBetaMessagesCreate(t *testing.T) {
 			"--model", "claude-opus-5",
 			"--cache-control.type", "ephemeral",
 			"--cache-control.ttl", "5m",
+			"--compaction.type", "summarize",
+			"--compaction.instructions", "instructions",
 			"--container", "{id: id, skills: [{skill_id: pdf, type: anthropic, version: latest}]}",
 			"--context-management.edits", "[{type: clear_tool_uses_20250919, clear_at_least: {type: input_tokens, value: 0}, clear_tool_inputs: true, exclude_tools: [string], keep: {type: tool_uses, value: 0}, trigger: {type: input_tokens, value: 1}}]",
 			"--diagnostics.previous-message-id", "previous_message_id",
@@ -123,6 +126,9 @@ func TestBetaMessagesCreate(t *testing.T) {
 			"cache_control:\n" +
 			"  type: ephemeral\n" +
 			"  ttl: 5m\n" +
+			"compaction:\n" +
+			"  type: summarize\n" +
+			"  instructions: instructions\n" +
 			"container:\n" +
 			"  id: id\n" +
 			"  skills:\n" +
@@ -245,6 +251,7 @@ func TestBetaMessagesCountTokens(t *testing.T) {
 			"--message", "{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user, clear_at: next_user_message, output_config: {effort: low}}",
 			"--model", "claude-opus-5",
 			"--cache-control", "{type: ephemeral, ttl: 5m}",
+			"--compaction", "{type: summarize, instructions: instructions}",
 			"--context-management", "{edits: [{type: clear_tool_uses_20250919, clear_at_least: {type: input_tokens, value: 0}, clear_tool_inputs: true, exclude_tools: [string], keep: {type: tool_uses, value: 0}, trigger: {type: input_tokens, value: 1}}]}",
 			"--mcp-server", "{name: name, type: url, url: url, authorization_token: authorization_token, tool_configuration: {allowed_tools: [string], enabled: true}}",
 			"--output-config", "{effort: low, format: {schema: {foo: bar}, type: json_schema}, task_budget: {total: 1024, type: tokens, remaining: 0}}",
@@ -276,6 +283,8 @@ func TestBetaMessagesCountTokens(t *testing.T) {
 			"--model", "claude-opus-5",
 			"--cache-control.type", "ephemeral",
 			"--cache-control.ttl", "5m",
+			"--compaction.type", "summarize",
+			"--compaction.instructions", "instructions",
 			"--context-management.edits", "[{type: clear_tool_uses_20250919, clear_at_least: {type: input_tokens, value: 0}, clear_tool_inputs: true, exclude_tools: [string], keep: {type: tool_uses, value: 0}, trigger: {type: input_tokens, value: 1}}]",
 			"--mcp-server.name", "name",
 			"--mcp-server.type", "url",
@@ -323,6 +332,9 @@ func TestBetaMessagesCountTokens(t *testing.T) {
 			"cache_control:\n" +
 			"  type: ephemeral\n" +
 			"  ttl: 5m\n" +
+			"compaction:\n" +
+			"  type: summarize\n" +
+			"  instructions: instructions\n" +
 			"context_management:\n" +
 			"  edits:\n" +
 			"    - type: clear_tool_uses_20250919\n" +

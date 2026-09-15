@@ -39,6 +39,11 @@ var betaMessagesCreate = requestflag.WithInnerFlags(cli.Command{
 			Name:     "cache-control",
 			BodyPath: "cache_control",
 		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "compaction",
+			Usage:    "Compact the whole conversation and return a signed `compaction` block,\nalone, that a later request sends back first in `messages`, in place of\nthe messages it summarizes. There is no trigger and no pause flag: sending\nthe parameter compacts, and nothing is sampled after the block.\n\nThe summarization prompt is the server's own unless `instructions` are\ngiven, which then replace it for this request; a value that is empty or\nonly whitespace counts as absent.",
+			BodyPath: "compaction",
+		},
 		&requestflag.Flag[any]{
 			Name:     "container",
 			Usage:    "Container identifier for reuse across requests.",
@@ -193,6 +198,18 @@ var betaMessagesCreate = requestflag.WithInnerFlags(cli.Command{
 			Name:       "cache-control.ttl",
 			Usage:      "The time-to-live for the cache control breakpoint.\n\nThis may be one the following values:\n- `5m`: 5 minutes\n- `1h`: 1 hour\n\nDefaults to `5m`. See [prompt caching pricing](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) for details.",
 			InnerField: "ttl",
+		},
+	},
+	"compaction": {
+		&requestflag.InnerFlag[string]{
+			Name:       "compaction.type",
+			Usage:      `Allowed values: "summarize".`,
+			InnerField: "type",
+		},
+		&requestflag.InnerFlag[*string]{
+			Name:       "compaction.instructions",
+			Usage:      "Replaces the server's summarization prompt for this request. When set, earlier thinking blocks are left out of the content being summarized on models that require it.",
+			InnerField: "instructions",
 		},
 	},
 	"container": {
@@ -495,6 +512,11 @@ var betaMessagesCountTokens = requestflag.WithInnerFlags(cli.Command{
 			BodyPath: "cache_control",
 		},
 		&requestflag.Flag[map[string]any]{
+			Name:     "compaction",
+			Usage:    "Compact the whole conversation and return a signed `compaction` block,\nalone, that a later request sends back first in `messages`, in place of\nthe messages it summarizes. There is no trigger and no pause flag: sending\nthe parameter compacts, and nothing is sampled after the block.\n\nThe summarization prompt is the server's own unless `instructions` are\ngiven, which then replace it for this request; a value that is empty or\nonly whitespace counts as absent.",
+			BodyPath: "compaction",
+		},
+		&requestflag.Flag[map[string]any]{
 			Name:     "context-management",
 			BodyPath: "context_management",
 		},
@@ -585,6 +607,18 @@ var betaMessagesCountTokens = requestflag.WithInnerFlags(cli.Command{
 			Name:       "cache-control.ttl",
 			Usage:      "The time-to-live for the cache control breakpoint.\n\nThis may be one the following values:\n- `5m`: 5 minutes\n- `1h`: 1 hour\n\nDefaults to `5m`. See [prompt caching pricing](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) for details.",
 			InnerField: "ttl",
+		},
+	},
+	"compaction": {
+		&requestflag.InnerFlag[string]{
+			Name:       "compaction.type",
+			Usage:      `Allowed values: "summarize".`,
+			InnerField: "type",
+		},
+		&requestflag.InnerFlag[*string]{
+			Name:       "compaction.instructions",
+			Usage:      "Replaces the server's summarization prompt for this request. When set, earlier thinking blocks are left out of the content being summarized on models that require it.",
+			InnerField: "instructions",
 		},
 	},
 	"context-management": {
