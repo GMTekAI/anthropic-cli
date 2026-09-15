@@ -20,6 +20,7 @@ func TestBetaUserProfilesCreate(t *testing.T) {
 			"--metadata", "{}",
 			"--name", "x",
 			"--beta", "message-batches-2024-09-24",
+			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
 	})
 
@@ -45,6 +46,7 @@ func TestBetaUserProfilesCreate(t *testing.T) {
 			"--metadata", "{}",
 			"--name", "x",
 			"--beta", "message-batches-2024-09-24",
+			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
 	})
 
@@ -69,6 +71,7 @@ func TestBetaUserProfilesCreate(t *testing.T) {
 			"--api-key", "string",
 			"beta:user-profiles", "create",
 			"--beta", "message-batches-2024-09-24",
+			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
 	})
 }
@@ -81,6 +84,7 @@ func TestBetaUserProfilesRetrieve(t *testing.T) {
 			"beta:user-profiles", "retrieve",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--beta", "message-batches-2024-09-24",
+			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
 	})
 }
@@ -99,6 +103,7 @@ func TestBetaUserProfilesUpdate(t *testing.T) {
 			"--metadata", "{foo: string}",
 			"--name", "x",
 			"--beta", "message-batches-2024-09-24",
+			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
 	})
 
@@ -125,6 +130,7 @@ func TestBetaUserProfilesUpdate(t *testing.T) {
 			"--metadata", "{foo: string}",
 			"--name", "x",
 			"--beta", "message-batches-2024-09-24",
+			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
 	})
 
@@ -151,6 +157,7 @@ func TestBetaUserProfilesUpdate(t *testing.T) {
 			"beta:user-profiles", "update",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--beta", "message-batches-2024-09-24",
+			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
 	})
 }
@@ -167,6 +174,7 @@ func TestBetaUserProfilesList(t *testing.T) {
 			"--order-by", "created_at",
 			"--page", "page",
 			"--beta", "message-batches-2024-09-24",
+			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
 	})
 }
@@ -179,6 +187,7 @@ func TestBetaUserProfilesCreateEnrollmentURL(t *testing.T) {
 			"beta:user-profiles", "create-enrollment-url",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--beta", "message-batches-2024-09-24",
+			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
 	})
 }

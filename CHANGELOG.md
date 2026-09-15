@@ -1,5 +1,38 @@
 # Changelog
 
+## 1.33.0 (2026-09-15)
+
+Full Changelog: [v1.32.0...v1.33.0](https://github.com/anthropics/anthropic-cli/compare/v1.32.0...v1.33.0)
+
+### Features
+
+* **api:** add auto mode tool permissions for Managed Agents ([8952120](https://github.com/anthropics/anthropic-cli/commit/895212025b4e28022efd3b20fb72b4cc72489e8c))
+* **api:** add compaction parameter and signed compaction blocks (beta) ([2b5931e](https://github.com/anthropics/anthropic-cli/commit/2b5931e7ee641beee8211fd61519b69246122ece))
+* **api:** add url_sources to the web fetch tool ([81f6bb5](https://github.com/anthropics/anthropic-cli/commit/81f6bb5eb2f0bd213fa26a21a43f284cd01894a9))
+* **api:** add workspace_id parameter to user profiles methods ([6c4c959](https://github.com/anthropics/anthropic-cli/commit/6c4c9593553ad8c0ebaca94567d534b2c79f88aa))
+
+
+### Bug Fixes
+
+* **client:** ignore invalid Retry-After values and validate maxRetries ([8952120](https://github.com/anthropics/anthropic-cli/commit/895212025b4e28022efd3b20fb72b4cc72489e8c))
+* **client:** retry connection errors in the async client and stop blocking in the coroutine retry loop ([8952120](https://github.com/anthropics/anthropic-cli/commit/895212025b4e28022efd3b20fb72b4cc72489e8c))
+* **client:** use the default backoff when Retry-After is out of range ([b9162c8](https://github.com/anthropics/anthropic-cli/commit/b9162c8275efc99d2bd409500fe84873a684d4a0))
+* **worker:** use Go SDK's toolset to enable memory stores ([5199245](https://github.com/anthropics/anthropic-cli/commit/51992458e909515cca20f4866b44681f78040b41))
+
+
+### Chores
+
+* bump go sdk to v1.73.0 ([#104](https://github.com/anthropics/anthropic-cli/issues/104)) ([526ad85](https://github.com/anthropics/anthropic-cli/commit/526ad85d277b87d7324978e4cbab2e4314f00f75))
+* **ci:** pass branch name to link step via env var ([8952120](https://github.com/anthropics/anthropic-cli/commit/895212025b4e28022efd3b20fb72b4cc72489e8c))
+* **deps:** pin a test-only indirect dependency for reproducible go.sum ([564ada5](https://github.com/anthropics/anthropic-cli/commit/564ada5fb991cfd3c0772838fadbd9b1c5910e30))
+* **docs:** correct the compaction beta's parameter descriptions ([d02eeb2](https://github.com/anthropics/anthropic-cli/commit/d02eeb282c001fd7de5714aad5f3baf726cc600d))
+* **tests:** stop the mock server without failing a passing test run ([bec0d1a](https://github.com/anthropics/anthropic-cli/commit/bec0d1a57a3f9ec27bfcd031b273240759ac5b31))
+
+
+### Documentation
+
+* stop documenting unions with their first variant's description ([9db5cd4](https://github.com/anthropics/anthropic-cli/commit/9db5cd4db9facdef54790099e44fb404a9884d0b))
+
 ## 1.32.0 (2026-09-10)
 
 Full Changelog: [v1.31.0...v1.32.0](https://github.com/anthropics/anthropic-cli/compare/v1.31.0...v1.32.0)

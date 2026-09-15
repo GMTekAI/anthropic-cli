@@ -39,6 +39,11 @@ var betaMessagesCreate = requestflag.WithInnerFlags(cli.Command{
 			Name:     "cache-control",
 			BodyPath: "cache_control",
 		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "compaction",
+			Usage:    "Compact the whole conversation and return a signed `compaction` block,\nalone, that a later request sends back first in `messages`, in place of\nthe messages it summarizes. There is no trigger and no pause flag: sending\nthe parameter compacts, and nothing is sampled after the block.\n\nThe summarization prompt is the server's own unless `instructions` are\ngiven, which then replace it for this request; a value that is empty or\nonly whitespace counts as absent.",
+			BodyPath: "compaction",
+		},
 		&requestflag.Flag[any]{
 			Name:     "container",
 			Usage:    "Container identifier for reuse across requests.",
@@ -193,6 +198,18 @@ var betaMessagesCreate = requestflag.WithInnerFlags(cli.Command{
 			Name:       "cache-control.ttl",
 			Usage:      "The time-to-live for the cache control breakpoint.\n\nThis may be one the following values:\n- `5m`: 5 minutes\n- `1h`: 1 hour\n\nDefaults to `5m`. See [prompt caching pricing](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) for details.",
 			InnerField: "ttl",
+		},
+	},
+	"compaction": {
+		&requestflag.InnerFlag[string]{
+			Name:       "compaction.type",
+			Usage:      `Allowed values: "summarize".`,
+			InnerField: "type",
+		},
+		&requestflag.InnerFlag[*string]{
+			Name:       "compaction.instructions",
+			Usage:      "Replaces the server's default summarization prompt for this request. An empty or whitespace-only value counts as absent.",
+			InnerField: "instructions",
 		},
 	},
 	"container": {
@@ -456,6 +473,11 @@ var betaMessagesCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      `Allowed values: "custom", "bash_20241022", "bash_20250124", "code_execution_20250522", "code_execution_20250825", "code_execution_20260120", "code_execution_20260521", "browser_toolset_20260801", "computer_20241022", "memory_20250818", "computer_20250124", "text_editor_20241022", "computer_20251124", "computer_toolset_20260801", "text_editor_20250124", "text_editor_20250429", "text_editor_20250728", "web_search_20250305", "web_fetch_20250910", "web_search_20260209", "web_fetch_20260209", "web_fetch_20260309", "web_search_20260318", "web_fetch_20260318", "advisor_20260301", "tool_search_tool_bm25_20251119", "tool_search_tool_bm25", "tool_search_tool_regex_20251119", "tool_search_tool_regex", "mcp_toolset".`,
 			InnerField: "type",
 		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "tool.url-sources",
+			Usage:      "Which sources contribute to the set of URLs web fetch may fetch.\n\nEach key is a tagged variant: ``user_input`` is ``all`` or ``none``; the\ntwo tool filters are ``all``, ``none``, ``only`` (only the named tools'\nresults) or ``except`` (every result but the named tools'). A named tool\nmust be declared in this request's ``tools[]``.",
+			InnerField: "url_sources",
+		},
 		&requestflag.InnerFlag[bool]{
 			Name:       "tool.use-cache",
 			Usage:      "Whether to use cached content. Set to false to bypass the cache and fetch fresh content. Only set to false when the user explicitly requests fresh content or when fetching rapidly-changing sources.",
@@ -488,6 +510,11 @@ var betaMessagesCountTokens = requestflag.WithInnerFlags(cli.Command{
 		&requestflag.Flag[map[string]any]{
 			Name:     "cache-control",
 			BodyPath: "cache_control",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "compaction",
+			Usage:    "Compact the whole conversation and return a signed `compaction` block,\nalone, that a later request sends back first in `messages`, in place of\nthe messages it summarizes. There is no trigger and no pause flag: sending\nthe parameter compacts, and nothing is sampled after the block.\n\nThe summarization prompt is the server's own unless `instructions` are\ngiven, which then replace it for this request; a value that is empty or\nonly whitespace counts as absent.",
+			BodyPath: "compaction",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "context-management",
@@ -580,6 +607,18 @@ var betaMessagesCountTokens = requestflag.WithInnerFlags(cli.Command{
 			Name:       "cache-control.ttl",
 			Usage:      "The time-to-live for the cache control breakpoint.\n\nThis may be one the following values:\n- `5m`: 5 minutes\n- `1h`: 1 hour\n\nDefaults to `5m`. See [prompt caching pricing](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) for details.",
 			InnerField: "ttl",
+		},
+	},
+	"compaction": {
+		&requestflag.InnerFlag[string]{
+			Name:       "compaction.type",
+			Usage:      `Allowed values: "summarize".`,
+			InnerField: "type",
+		},
+		&requestflag.InnerFlag[*string]{
+			Name:       "compaction.instructions",
+			Usage:      "Replaces the server's default summarization prompt for this request. An empty or whitespace-only value counts as absent.",
+			InnerField: "instructions",
 		},
 	},
 	"context-management": {
@@ -805,6 +844,11 @@ var betaMessagesCountTokens = requestflag.WithInnerFlags(cli.Command{
 			Name:       "tool.type",
 			Usage:      `Allowed values: "custom", "bash_20241022", "bash_20250124", "code_execution_20250522", "code_execution_20250825", "code_execution_20260120", "code_execution_20260521", "browser_toolset_20260801", "computer_20241022", "memory_20250818", "computer_20250124", "text_editor_20241022", "computer_20251124", "computer_toolset_20260801", "text_editor_20250124", "text_editor_20250429", "text_editor_20250728", "web_search_20250305", "web_fetch_20250910", "web_search_20260209", "web_fetch_20260209", "web_fetch_20260309", "web_search_20260318", "web_fetch_20260318", "advisor_20260301", "tool_search_tool_bm25_20251119", "tool_search_tool_bm25", "tool_search_tool_regex_20251119", "tool_search_tool_regex", "mcp_toolset".`,
 			InnerField: "type",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "tool.url-sources",
+			Usage:      "Which sources contribute to the set of URLs web fetch may fetch.\n\nEach key is a tagged variant: ``user_input`` is ``all`` or ``none``; the\ntwo tool filters are ``all``, ``none``, ``only`` (only the named tools'\nresults) or ``except`` (every result but the named tools'). A named tool\nmust be declared in this request's ``tools[]``.",
+			InnerField: "url_sources",
 		},
 		&requestflag.InnerFlag[bool]{
 			Name:       "tool.use-cache",

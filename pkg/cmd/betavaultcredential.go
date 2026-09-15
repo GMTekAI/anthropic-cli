@@ -84,7 +84,6 @@ var betaVaultsCredentialsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[map[string]any]{
 			Name:       "auth.networking",
-			Usage:      "Substitute the secret on any host the session's Environment network policy permits egress to. The Environment's network policy is the only boundary on where the secret can reach.",
 			InnerField: "networking",
 		},
 		&requestflag.InnerFlag[map[string]any]{
@@ -206,7 +205,6 @@ var betaVaultsCredentialsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[map[string]any]{
 			Name:       "auth.networking",
-			Usage:      "Substitute the secret on any host the session's Environment network policy permits egress to. The Environment's network policy is the only boundary on where the secret can reach.",
 			InnerField: "networking",
 		},
 		&requestflag.InnerFlag[map[string]any]{
