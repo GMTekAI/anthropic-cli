@@ -208,7 +208,7 @@ var betaMessagesCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[*string]{
 			Name:       "compaction.instructions",
-			Usage:      "Replaces the server's summarization prompt for this request. When set, earlier thinking blocks are left out of the content being summarized on models that require it.",
+			Usage:      "Replaces the server's default summarization prompt for this request. An empty or whitespace-only value counts as absent.",
 			InnerField: "instructions",
 		},
 	},
@@ -617,7 +617,7 @@ var betaMessagesCountTokens = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[*string]{
 			Name:       "compaction.instructions",
-			Usage:      "Replaces the server's summarization prompt for this request. When set, earlier thinking blocks are left out of the content being summarized on models that require it.",
+			Usage:      "Replaces the server's default summarization prompt for this request. An empty or whitespace-only value counts as absent.",
 			InnerField: "instructions",
 		},
 	},
