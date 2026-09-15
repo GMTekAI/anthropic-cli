@@ -17,7 +17,6 @@ import (
 
 	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/anthropics/anthropic-sdk-go/lib/environments"
-	"github.com/anthropics/anthropic-sdk-go/tools/agenttoolset"
 	"github.com/urfave/cli/v3"
 )
 
@@ -27,28 +26,32 @@ var workerCommand = cli.Command{
 	Usage:    "Run a self-hosted environment worker (poll for work and/or run tools).",
 	Suggest:  true,
 	Commands: []*cli.Command{
-		&workerPollCommand,
+		workerPollCommandDef(),
 		workerRunCommandDef(),
 	},
 }
 
-var workerPollCommand = cli.Command{
-	Name:    "poll",
-	Usage:   "Long-poll an environment for work and run an in-process session tool runner for each session.",
-	Suggest: true,
-	Flags: []cli.Flag{
-		&cli.StringFlag{Name: "environment-id", Required: true, Sources: cli.EnvVars("ANTHROPIC_ENVIRONMENT_ID")},
-		&cli.StringFlag{Name: "environment-key", Required: true, Sources: cli.EnvVars("ANTHROPIC_ENVIRONMENT_KEY")},
-		&cli.StringFlag{Name: "worker-id", Sources: cli.EnvVars("ANTHROPIC_WORKER_ID")},
-		&cli.StringFlag{Name: "base-url", Sources: cli.EnvVars("ANTHROPIC_BASE_URL")},
-		&cli.StringFlag{Name: "on-work", Usage: "Script to exec for each work item instead of the in-process runner. Receives ANTHROPIC_{WORK_ID,ENVIRONMENT_ID,SESSION_ID,ENVIRONMENT_KEY} in env and the work JSON on stdin. Empty or 'in-process' = built-in runner."},
-		&cli.StringFlag{Name: "workdir", Value: "."},
-		&cli.BoolFlag{Name: "unrestricted-paths", Usage: "let the file tools read/write outside the workdir (the workdir check is a guardrail for the file tools only, not a sandbox, and is not respected by bash)"},
-		&cli.DurationFlag{Name: "max-idle", Value: anthropic.DefaultMaxIdle, Usage: "stop this long after the session goes idle with stop_reason end_turn; 0 = no timeout"},
-		&cli.StringFlag{Name: "log-format", Value: "text"},
-	},
-	Action:          handleWorkerPoll,
-	HideHelpCommand: true,
+// workerPollCommandDef returns a fresh `poll` subcommand definition, for the
+// same reason as workerRunCommandDef.
+func workerPollCommandDef() *cli.Command {
+	return &cli.Command{
+		Name:    "poll",
+		Usage:   "Long-poll an environment for work and run an in-process session tool runner for each session.",
+		Suggest: true,
+		Flags: []cli.Flag{
+			&cli.StringFlag{Name: "environment-id", Required: true, Sources: cli.EnvVars("ANTHROPIC_ENVIRONMENT_ID")},
+			&cli.StringFlag{Name: "environment-key", Required: true, Sources: cli.EnvVars("ANTHROPIC_ENVIRONMENT_KEY")},
+			&cli.StringFlag{Name: "worker-id", Sources: cli.EnvVars("ANTHROPIC_WORKER_ID")},
+			&cli.StringFlag{Name: "base-url", Sources: cli.EnvVars("ANTHROPIC_BASE_URL")},
+			&cli.StringFlag{Name: "on-work", Usage: "Script to exec for each work item instead of the in-process runner. Receives ANTHROPIC_{WORK_ID,ENVIRONMENT_ID,SESSION_ID,ENVIRONMENT_KEY} in env and the work JSON on stdin. Empty or 'in-process' = built-in runner."},
+			&cli.StringFlag{Name: "workdir", Value: "."},
+			unrestrictedPathsFlag(),
+			&cli.DurationFlag{Name: "max-idle", Value: anthropic.DefaultMaxIdle, Usage: "stop this long after the session goes idle with stop_reason end_turn; 0 = no timeout"},
+			&cli.StringFlag{Name: "log-format", Value: "text"},
+		},
+		Action:          handleWorkerPoll,
+		HideHelpCommand: true,
+	}
 }
 
 // workerRunCommandDef returns a fresh `run` subcommand definition — urfave/cli
@@ -66,7 +69,7 @@ func workerRunCommandDef() *cli.Command {
 			&cli.StringFlag{Name: "environment-id", Required: true, Sources: cli.EnvVars("ANTHROPIC_ENVIRONMENT_ID")},
 			&cli.StringFlag{Name: "base-url", Sources: cli.EnvVars("ANTHROPIC_BASE_URL")},
 			&cli.StringFlag{Name: "workdir", Value: "."},
-			&cli.BoolFlag{Name: "unrestricted-paths", Usage: "let the file tools read/write outside the workdir (the workdir check is a guardrail for the file tools only, not a sandbox, and is not respected by bash)"},
+			unrestrictedPathsFlag(),
 			&cli.DurationFlag{Name: "max-idle", Value: anthropic.DefaultMaxIdle, Usage: "stop this long after the session goes idle with stop_reason end_turn; 0 = no timeout"},
 			&cli.StringFlag{Name: "log-format", Value: "text"},
 		},
@@ -75,7 +78,19 @@ func workerRunCommandDef() *cli.Command {
 	}
 }
 
+// unrestrictedPathsFlag stays parseable, hidden from help, so an invocation
+// that still passes it gets errUnrestrictedPaths instead of an unknown-flag
+// usage error.
+func unrestrictedPathsFlag() cli.Flag {
+	return &cli.BoolFlag{Name: "unrestricted-paths", Hidden: true, Usage: "no longer supported"}
+}
+
+var errUnrestrictedPaths = errors.New("--unrestricted-paths is no longer supported: the file tools always stay inside --workdir and the session's attached memory stores; remove the flag")
+
 func handleWorkerPoll(ctx context.Context, cmd *cli.Command) error {
+	if cmd.Bool("unrestricted-paths") {
+		return errUnrestrictedPaths
+	}
 	logger := newWorkerLogger(cmd.String("log-format"))
 	client := newWorkerClient(extraClientFlagsFromCmd(cmd))
 
@@ -92,13 +107,12 @@ func handleWorkerPoll(ctx context.Context, cmd *cli.Command) error {
 	// calls and the session-level calls.
 	if script := cmd.String("on-work"); script == "" || script == "in-process" {
 		worker := environments.NewEnvironmentWorker(client, environments.EnvironmentWorkerOptions{
-			EnvironmentID:     cmd.String("environment-id"),
-			EnvironmentKey:    cmd.String("environment-key"),
-			WorkerID:          cmd.String("worker-id"),
-			Workdir:           cmd.String("workdir"),
-			UnrestrictedPaths: cmd.Bool("unrestricted-paths"),
-			MaxIdle:           &maxIdle,
-			Logger:            logger,
+			EnvironmentID:  cmd.String("environment-id"),
+			EnvironmentKey: cmd.String("environment-key"),
+			WorkerID:       cmd.String("worker-id"),
+			Workdir:        cmd.String("workdir"),
+			MaxIdle:        &maxIdle,
+			Logger:         logger,
 		})
 		return worker.Run(ctx)
 	}
@@ -134,6 +148,9 @@ func handleWorkerPoll(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleWorkerRun(ctx context.Context, cmd *cli.Command) error {
+	if cmd.Bool("unrestricted-paths") {
+		return errUnrestrictedPaths
+	}
 	environmentKey, workSecret, err := workerRunCredentials(cmd)
 	if err != nil {
 		return err
@@ -151,21 +168,13 @@ func handleWorkerRun(ctx context.Context, cmd *cli.Command) error {
 	// skills, run a SessionToolRunner while heartbeating the work-item lease,
 	// force-stop the work on exit — to the SDK's EnvironmentWorker. That's the
 	// same composition `beta:worker poll`'s in-process path runs, just for a single
-	// item instead of a poll loop.
-	env := &agenttoolset.AgentToolContext{
-		Workdir:           cmd.String("workdir"),
-		UnrestrictedPaths: cmd.Bool("unrestricted-paths"),
-	}
-	toolset := agenttoolset.BetaAgentToolset20260401(env)
-	defer agenttoolset.CloseAll(toolset)
-
+	// item instead of a poll loop. The worker must build the toolset: only it
+	// learns the session's memory-store mount paths the file tools may reach.
 	maxIdle := cmd.Duration("max-idle")
 	worker := environments.NewEnvironmentWorker(client, environments.EnvironmentWorkerOptions{
-		Tools:             toolset,
-		Workdir:           cmd.String("workdir"),
-		UnrestrictedPaths: cmd.Bool("unrestricted-paths"),
-		MaxIdle:           &maxIdle,
-		Logger:            logger,
+		Workdir: cmd.String("workdir"),
+		MaxIdle: &maxIdle,
+		Logger:  logger,
 	})
 	return worker.HandleItem(ctx, environments.HandleItemOptions{
 		WorkID:         cmd.String("work-id"),

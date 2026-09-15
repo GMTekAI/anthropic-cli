@@ -155,3 +155,22 @@ func TestWorkerRunOnPremEntrypoint(t *testing.T) {
 	assert.Empty(t, envKey)
 	assert.Equal(t, "wksec_TOKEN", workSecret)
 }
+
+// --unrestricted-paths must fail before any request is sent, and must not be
+// advertised: the file tools cannot be unconfined any more.
+func TestWorkerUnrestrictedPathsRejectedUpFront(t *testing.T) {
+	clearWorkerEnv(t)
+	t.Setenv("ANTHROPIC_BASE_URL", "http://127.0.0.1:1")
+
+	err := run(t, workerRunCommandDef(), append([]string{"run", "--environment-key", "envkey_1", "--unrestricted-paths"}, workerRunRequiredArgs...)...)
+	require.ErrorIs(t, err, errUnrestrictedPaths)
+
+	err = run(t, workerPollCommandDef(), "poll", "--environment-id", "env_1", "--environment-key", "envkey_1", "--unrestricted-paths")
+	require.ErrorIs(t, err, errUnrestrictedPaths)
+
+	for _, def := range []*cli.Command{workerRunCommandDef(), workerPollCommandDef()} {
+		for _, flag := range def.VisibleFlags() {
+			assert.NotContains(t, flag.Names(), "unrestricted-paths", def.Name)
+		}
+	}
+}
