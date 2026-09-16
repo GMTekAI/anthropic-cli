@@ -11,6 +11,7 @@ func TestConsoleLinks(t *testing.T) {
 	assert.Equal(t, "https://platform.claude.com/workspaces/wrkspc_01abc/agents/agent_01x", link(KindAgent, "agent_01x"))
 	assert.Equal(t, "https://platform.claude.com/workspaces/wrkspc_01abc/deployments/depl_01x", link(KindDeployment, "depl_01x"))
 	assert.Equal(t, "https://platform.claude.com/workspaces/wrkspc_01abc/memory-stores/memstore_01x", link(KindMemoryStore, "memstore_01x"))
+	assert.Equal(t, "https://platform.claude.com/workspaces/wrkspc_01abc/vaults/vlt_01x", link(KindVault, "vlt_01x"))
 	assert.Equal(t, "https://platform.claude.com/workspaces/wrkspc_01abc/skills", link(KindSkill, "skill_01x"),
 		"skills have no detail page, so the link lands on the list")
 

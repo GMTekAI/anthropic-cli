@@ -85,6 +85,7 @@ var dirs = map[string]string{
 	"skill":        "skills",
 	"environment":  "environments",
 	"memory_store": "memory_stores",
+	"vault":        "vaults",
 	"agent":        "agents",
 	"deployment":   "deployments",
 }

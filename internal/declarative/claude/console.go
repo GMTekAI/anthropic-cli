@@ -17,6 +17,7 @@ var consolePages = map[core.Kind]struct {
 	KindEnvironment: {"environments", true},
 	KindDeployment:  {"deployments", true},
 	KindMemoryStore: {"memory-stores", true},
+	KindVault:       {"vaults", true},
 	KindSkill:       {"skills", false},
 }
 
