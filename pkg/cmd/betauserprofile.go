@@ -220,22 +220,20 @@ var betaUserProfilesList = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{
 			Name:      "limit",
-			Usage:     "Query parameter for limit",
 			QueryPath: "limit",
 		},
 		&requestflag.Flag[string]{
 			Name:      "order",
-			Usage:     "Query parameter for order",
+			Usage:     "ListOrder enum",
 			QueryPath: "order",
 		},
 		&requestflag.Flag[string]{
 			Name:      "order-by",
-			Usage:     "Query parameter for order_by",
+			Usage:     "Sort field for listing user profiles: `created_at` (default) or `name` (case-insensitive; profiles without a name sort last).",
 			QueryPath: "order_by",
 		},
 		&requestflag.Flag[string]{
 			Name:      "page",
-			Usage:     "Query parameter for page",
 			QueryPath: "page",
 		},
 		&requestflag.Flag[[]string]{

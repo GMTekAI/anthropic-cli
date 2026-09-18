@@ -29,12 +29,10 @@ var betaSessionsThreadsEventsList = cli.Command{
 		},
 		&requestflag.Flag[int64]{
 			Name:      "limit",
-			Usage:     "Query parameter for limit",
 			QueryPath: "limit",
 		},
 		&requestflag.Flag[string]{
 			Name:      "page",
-			Usage:     "Query parameter for page",
 			QueryPath: "page",
 		},
 		&requestflag.Flag[[]string]{

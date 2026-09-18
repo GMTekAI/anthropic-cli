@@ -220,7 +220,6 @@ var betaMemoryStoresMemoriesDelete = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:      "expected-content-sha256",
-			Usage:     "Query parameter for expected_content_sha256",
 			QueryPath: "expected_content_sha256",
 		},
 		&requestflag.Flag[[]string]{

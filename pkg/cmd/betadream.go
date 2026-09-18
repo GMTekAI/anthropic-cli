@@ -130,17 +130,14 @@ var betaDreamsList = cli.Command{
 		},
 		&requestflag.Flag[bool]{
 			Name:      "include-archived",
-			Usage:     "Query parameter for include_archived",
 			QueryPath: "include_archived",
 		},
 		&requestflag.Flag[int64]{
 			Name:      "limit",
-			Usage:     "Query parameter for limit",
 			QueryPath: "limit",
 		},
 		&requestflag.Flag[string]{
 			Name:      "page",
-			Usage:     "Query parameter for page",
 			QueryPath: "page",
 		},
 		&requestflag.Flag[[]string]{

@@ -58,7 +58,6 @@ var betaMemoryStoresMemoryVersionsList = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:      "api-key-id",
-			Usage:     "Query parameter for api_key_id",
 			QueryPath: "api_key_id",
 		},
 		&requestflag.Flag[any]{
@@ -73,12 +72,10 @@ var betaMemoryStoresMemoryVersionsList = cli.Command{
 		},
 		&requestflag.Flag[int64]{
 			Name:      "limit",
-			Usage:     "Query parameter for limit",
 			QueryPath: "limit",
 		},
 		&requestflag.Flag[string]{
 			Name:      "memory-id",
-			Usage:     "Query parameter for memory_id",
 			QueryPath: "memory_id",
 		},
 		&requestflag.Flag[string]{
@@ -88,17 +85,14 @@ var betaMemoryStoresMemoryVersionsList = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:      "page",
-			Usage:     "Query parameter for page",
 			QueryPath: "page",
 		},
 		&requestflag.Flag[string]{
 			Name:      "service-account-id",
-			Usage:     "Query parameter for service_account_id",
 			QueryPath: "service_account_id",
 		},
 		&requestflag.Flag[string]{
 			Name:      "session-id",
-			Usage:     "Query parameter for session_id",
 			QueryPath: "session_id",
 		},
 		&requestflag.Flag[string]{
