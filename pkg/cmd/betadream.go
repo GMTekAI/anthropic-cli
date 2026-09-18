@@ -14,25 +14,29 @@ import (
 
 var betaDreamsCreate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "create",
-	Usage:   "Create a Dream",
+	Usage:   "Start an asynchronous job that uses past sessions to produce a reorganized\nversion of a memory store and get back the dream to poll for the result.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[[]map[string]any]{
 			Name:     "input",
+			Usage:    "The memory store and sessions for the dream to read, as exactly one `memory_store` entry and exactly one `sessions` entry.",
 			Required: true,
 			BodyPath: "inputs",
 		},
 		&requestflag.Flag[any]{
 			Name:     "model",
+			Usage:    "The model that runs a dream, given as a model ID or as an object with `id` and `speed`.\n\nIn the object form, `speed` can only be `standard`.\n\nThe [limits table in the Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#limits) lists the supported models.",
 			Required: true,
 			BodyPath: "model",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "instructions",
+			Usage:    "Guidance that steers how the dream reads the sessions and organizes the output memory store, from 1 to 4,096 characters.\n\nSee the [Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#steer-with-instructions) for what kinds of instructions work well.",
 			BodyPath: "instructions",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "output-behavior",
+			Usage:    "Which memory store a dream writes its result to. Defaults to `create_new` when left out of a create request.",
 			BodyPath: "output_behavior",
 		},
 		&requestflag.Flag[[]string]{
@@ -57,6 +61,7 @@ var betaDreamsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[string]{
 			Name:       "input.memory-store-id",
+			Usage:      "The ID of the memory store for the dream to read (`memstore_...`).\n\nThe memory store must be in the same workspace as the dream and must not be archived.",
 			InnerField: "memory_store_id",
 		},
 		&requestflag.InnerFlag[any]{
@@ -84,6 +89,7 @@ var betaDreamsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[string]{
 			Name:       "output-behavior.memory-store-id",
+			Usage:      "The ID of the memory store for the dream to write its result to (`memstore_...`). It must be the memory store in the `memory_store` entry of `inputs`.",
 			InnerField: "memory_store_id",
 		},
 	},
@@ -91,11 +97,12 @@ var betaDreamsCreate = requestflag.WithInnerFlags(cli.Command{
 
 var betaDreamsRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Get a Dream",
+	Usage:   "Get a dream by ID to check its status, output memory store, and token usage.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:        "dream-id",
+			Usage:       "The ID of the dream to get (`drm_...`).",
 			Required:    true,
 			PathParam:   "dream_id",
 			DataAliases: []string{"id"},
@@ -117,7 +124,7 @@ var betaDreamsRetrieve = cli.Command{
 
 var betaDreamsList = cli.Command{
 	Name:    "list",
-	Usage:   "List Dreams",
+	Usage:   "List the dreams in the workspace, newest first.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[any]{
@@ -132,14 +139,17 @@ var betaDreamsList = cli.Command{
 		},
 		&requestflag.Flag[bool]{
 			Name:      "include-archived",
+			Usage:     "Whether to include archived dreams. Defaults to `false`.",
 			QueryPath: "include_archived",
 		},
 		&requestflag.Flag[int64]{
 			Name:      "limit",
+			Usage:     "The maximum number of dreams to return, from 1 to 100. Defaults to 20.",
 			QueryPath: "limit",
 		},
 		&requestflag.Flag[string]{
 			Name:      "page",
+			Usage:     "The cursor for the page to return, taken from `next_page` in a previous response.\n\nLeave it out to get the first page.",
 			QueryPath: "page",
 		},
 		&requestflag.Flag[[]string]{
@@ -168,11 +178,12 @@ var betaDreamsList = cli.Command{
 
 var betaDreamsArchive = cli.Command{
 	Name:    "archive",
-	Usage:   "Archive a Dream",
+	Usage:   "Hide a `completed`, `failed`, or `canceled` dream from the default list of\ndreams.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:        "dream-id",
+			Usage:       "The ID of the dream to archive (`drm_...`).",
 			Required:    true,
 			PathParam:   "dream_id",
 			DataAliases: []string{"id"},
@@ -194,11 +205,12 @@ var betaDreamsArchive = cli.Command{
 
 var betaDreamsCancel = cli.Command{
 	Name:    "cancel",
-	Usage:   "Cancel a Dream",
+	Usage:   "Stop a `pending` or `running` dream.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:        "dream-id",
+			Usage:       "The ID of the dream to cancel (`drm_...`).",
 			Required:    true,
 			PathParam:   "dream_id",
 			DataAliases: []string{"id"},

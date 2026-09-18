@@ -19,11 +19,13 @@ var betaMemoryStoresMemoryVersionsRetrieve = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "memory-store-id",
+			Usage:     "The ID of the memory store that holds the version (`memstore_...`).",
 			Required:  true,
 			PathParam: "memory_store_id",
 		},
 		&requestflag.Flag[string]{
 			Name:      "memory-version-id",
+			Usage:     "The ID of the memory version to retrieve (`memver_...`).",
 			Required:  true,
 			PathParam: "memory_version_id",
 		},
@@ -54,11 +56,13 @@ var betaMemoryStoresMemoryVersionsList = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "memory-store-id",
+			Usage:     "The ID of the memory store whose version history to list (`memstore_...`).",
 			Required:  true,
 			PathParam: "memory_store_id",
 		},
 		&requestflag.Flag[string]{
 			Name:      "api-key-id",
+			Usage:     "Return only versions written with the API key that has this ID.",
 			QueryPath: "api_key_id",
 		},
 		&requestflag.Flag[any]{
@@ -73,10 +77,12 @@ var betaMemoryStoresMemoryVersionsList = cli.Command{
 		},
 		&requestflag.Flag[int64]{
 			Name:      "limit",
+			Usage:     "The maximum number of versions to return per page. Defaults to 20.",
 			QueryPath: "limit",
 		},
 		&requestflag.Flag[string]{
 			Name:      "memory-id",
+			Usage:     "Return only versions of the memory with this ID (`mem_...`).\n\nThe filter still works after the memory is deleted. The results then include the version whose `operation` is `deleted`.",
 			QueryPath: "memory_id",
 		},
 		&requestflag.Flag[string]{
@@ -86,14 +92,17 @@ var betaMemoryStoresMemoryVersionsList = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:      "page",
+			Usage:     "The `next_page` value from a previous response, to get the next page. Omit it to get the first page.",
 			QueryPath: "page",
 		},
 		&requestflag.Flag[string]{
 			Name:      "service-account-id",
+			Usage:     "Return only versions written by the service account with this ID (`svac_...`).",
 			QueryPath: "service_account_id",
 		},
 		&requestflag.Flag[string]{
 			Name:      "session-id",
+			Usage:     "Return only versions written by the session with this ID.",
 			QueryPath: "session_id",
 		},
 		&requestflag.Flag[string]{
@@ -127,11 +136,13 @@ var betaMemoryStoresMemoryVersionsRedact = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "memory-store-id",
+			Usage:     "The ID of the memory store that holds the version (`memstore_...`).",
 			Required:  true,
 			PathParam: "memory_store_id",
 		},
 		&requestflag.Flag[string]{
 			Name:      "memory-version-id",
+			Usage:     "The ID of the memory version to redact (`memver_...`).",
 			Required:  true,
 			PathParam: "memory_version_id",
 		},

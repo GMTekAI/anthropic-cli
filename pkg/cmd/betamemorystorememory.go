@@ -19,6 +19,7 @@ var betaMemoryStoresMemoriesCreate = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "memory-store-id",
+			Usage:     "The ID of the memory store to create the memory in (`memstore_...`).",
 			Required:  true,
 			PathParam: "memory_store_id",
 		},
@@ -61,11 +62,13 @@ var betaMemoryStoresMemoriesRetrieve = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "memory-store-id",
+			Usage:     "The ID of the memory store that holds the memory (`memstore_...`).",
 			Required:  true,
 			PathParam: "memory_store_id",
 		},
 		&requestflag.Flag[string]{
 			Name:      "memory-id",
+			Usage:     "The ID of the memory to retrieve (`mem_...`).",
 			Required:  true,
 			PathParam: "memory_id",
 		},
@@ -96,11 +99,13 @@ var betaMemoryStoresMemoriesUpdate = requestflag.WithInnerFlags(cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "memory-store-id",
+			Usage:     "The ID of the memory store that holds the memory (`memstore_...`).",
 			Required:  true,
 			PathParam: "memory_store_id",
 		},
 		&requestflag.Flag[string]{
 			Name:        "memory-id",
+			Usage:       "The ID of the memory to update (`mem_...`).",
 			Required:    true,
 			PathParam:   "memory_id",
 			DataAliases: []string{"id"},
@@ -160,6 +165,7 @@ var betaMemoryStoresMemoriesList = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "memory-store-id",
+			Usage:     "The ID of the memory store to list memories from (`memstore_...`).",
 			Required:  true,
 			PathParam: "memory_store_id",
 		},
@@ -214,16 +220,19 @@ var betaMemoryStoresMemoriesDelete = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "memory-store-id",
+			Usage:     "The ID of the memory store that holds the memory (`memstore_...`).",
 			Required:  true,
 			PathParam: "memory_store_id",
 		},
 		&requestflag.Flag[string]{
 			Name:      "memory-id",
+			Usage:     "The ID of the memory to delete (`mem_...`).",
 			Required:  true,
 			PathParam: "memory_id",
 		},
 		&requestflag.Flag[string]{
 			Name:      "expected-content-sha256",
+			Usage:     "Delete the memory only if its current `content_sha256` equals this value, given as 64 lowercase hexadecimal characters. Omit it to delete unconditionally.\n\nIf the hashes differ, the request fails with HTTP status 409 and nothing is deleted.",
 			QueryPath: "expected_content_sha256",
 		},
 		&requestflag.Flag[[]string]{
