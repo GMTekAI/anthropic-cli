@@ -49,6 +49,10 @@ func (c *sdkClient) Get(ctx context.Context, kind core.Kind, id string) (map[str
 		return c.call(nil, func(o []option.RequestOption) error {
 			return discard(c.sdk.Beta.MemoryStores.Get(ctx, id, anthropic.BetaMemoryStoreGetParams{}, o...))
 		})
+	case KindVault:
+		return c.call(nil, func(o []option.RequestOption) error {
+			return discard(c.sdk.Beta.Vaults.Get(ctx, id, anthropic.BetaVaultGetParams{}, o...))
+		})
 	case KindAgent:
 		return c.call(nil, func(o []option.RequestOption) error {
 			return discard(c.sdk.Beta.Agents.Get(ctx, id, anthropic.BetaAgentGetParams{}, o...))
@@ -72,6 +76,10 @@ func (c *sdkClient) Create(ctx context.Context, kind core.Kind, req core.Request
 	case KindMemoryStore:
 		return c.call(req.Body, func(o []option.RequestOption) error {
 			return discard(c.sdk.Beta.MemoryStores.New(ctx, anthropic.BetaMemoryStoreNewParams{}, o...))
+		})
+	case KindVault:
+		return c.call(req.Body, func(o []option.RequestOption) error {
+			return discard(c.sdk.Beta.Vaults.New(ctx, anthropic.BetaVaultNewParams{}, o...))
 		})
 	case KindAgent:
 		return c.call(req.Body, func(o []option.RequestOption) error {
@@ -98,6 +106,10 @@ func (c *sdkClient) Update(ctx context.Context, kind core.Kind, id string, req c
 	case KindMemoryStore:
 		return c.call(req.Body, func(o []option.RequestOption) error {
 			return discard(c.sdk.Beta.MemoryStores.Update(ctx, id, anthropic.BetaMemoryStoreUpdateParams{}, o...))
+		})
+	case KindVault:
+		return c.call(req.Body, func(o []option.RequestOption) error {
+			return discard(c.sdk.Beta.Vaults.Update(ctx, id, anthropic.BetaVaultUpdateParams{}, o...))
 		})
 	case KindAgent:
 		return c.call(req.Body, func(o []option.RequestOption) error {
@@ -127,6 +139,12 @@ func (c *sdkClient) Destroy(ctx context.Context, kind core.Kind, id string) erro
 		// with it, and those were written by the agent, not by this config.
 		return discard(c.call(nil, func(o []option.RequestOption) error {
 			return discard(c.sdk.Beta.MemoryStores.Archive(ctx, id, anthropic.BetaMemoryStoreArchiveParams{}, o...))
+		}))
+	case KindVault:
+		// Unlike the other kinds, archiving does not keep everything: it purges
+		// the secret of every credential in the vault, and there is no unarchive.
+		return discard(c.call(nil, func(o []option.RequestOption) error {
+			return discard(c.sdk.Beta.Vaults.Archive(ctx, id, anthropic.BetaVaultArchiveParams{}, o...))
 		}))
 	case KindAgent:
 		return discard(c.call(nil, func(o []option.RequestOption) error {

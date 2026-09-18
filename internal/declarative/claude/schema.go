@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/anthropics/anthropic-cli/internal/declarative/core"
@@ -24,6 +25,7 @@ type schema struct{}
 var kindByDir = map[string]core.Kind{
 	"environments":  KindEnvironment,
 	"memory_stores": KindMemoryStore,
+	"vaults":        KindVault,
 	"agents":        KindAgent,
 	"deployments":   KindDeployment,
 }
@@ -33,11 +35,14 @@ var kindByType = map[string]core.Kind{
 	string(KindSkill):       KindSkill,
 	string(KindEnvironment): KindEnvironment,
 	string(KindMemoryStore): KindMemoryStore,
+	string(KindVault):       KindVault,
 	string(KindAgent):       KindAgent,
 	string(KindDeployment):  KindDeployment,
 }
 
-// fileKinds are the kinds a single file can declare; a skill is a directory.
+// fileKinds are the kinds a filename can name; a skill is a directory. A vault
+// is left out: `vault.yml` and `vault-values.yaml` are what Ansible and Helm
+// call their own files, and a walk must not send those to the API.
 var fileKinds = []core.Kind{KindEnvironment, KindMemoryStore, KindAgent, KindDeployment}
 
 // defaultMarkdownKind is the kind a `.md` file becomes when nothing else says:
@@ -60,6 +65,10 @@ func (schema) Classify(c *core.Candidate, walked bool) (core.Kind, error) {
 	if c.DecodeErr != nil {
 		if walked {
 			return "", nil
+		}
+		if inVaultsDir(c.Path) {
+			// The decoder's message quotes the line it stopped on.
+			return "", fmt.Errorf("%s: does not parse as YAML; the detail is withheld because a file in vaults/ may hold secrets", c.Path)
 		}
 		return "", c.DecodeErr
 	}
@@ -89,12 +98,22 @@ func (schema) Classify(c *core.Candidate, walked bool) (core.Kind, error) {
 	if walked && !looksLikeDeclaration {
 		return "", nil
 	}
+	// vaults/ is also where Ansible and SOPS layouts keep plaintext secrets, so
+	// a walk takes a file there for a vault only when it is shaped like one, and
+	// passes over one that is not. Named outright, such a file is told what is
+	// wrong in keys and never values, here and in buildVault.
+	if walked && fromDir && dirKind == KindVault && !shapedLikeVault(c.Fields) {
+		return "", nil
+	}
 	if declared {
 		// Present but unusable. A named file, or a walked one that otherwise looks
 		// like a declaration, reaches here, so name the problem rather than ignore
 		// the field.
 		if !isString {
 			return "", fmt.Errorf("%s: `type` must be a string", c.Path)
+		}
+		if inVaultsDir(c.Path) {
+			return "", fmt.Errorf("%s: `type` is not a recognized kind (expected one of %s)", c.Path, kindNames())
 		}
 		return "", fmt.Errorf("%s: unknown type %q (expected one of %s)", c.Path, typeName, kindNames())
 	}
@@ -114,6 +133,27 @@ func (schema) Classify(c *core.Candidate, walked bool) (core.Kind, error) {
 	return "", fmt.Errorf(
 		"%s: cannot tell what kind of resource this is — add a `type:` field (one of %s), name the file after its kind (e.g. deployment_%s), or move it into a directory named after its kind",
 		c.Path, kindNames(), filepath.Base(c.Path))
+}
+
+// shapedLikeVault reports whether a file's fields are what a vault declares and
+// nothing else: a written `display_name`, and at most `metadata` beside it.
+func shapedLikeVault(fields map[string]any) bool {
+	if _, ok := fields["display_name"]; !ok {
+		return false
+	}
+	for key := range fields {
+		if !slices.Contains(vaultFields, key) {
+			return false
+		}
+	}
+	return true
+}
+
+// inVaultsDir reports whether a file sits in a directory named for vaults,
+// where no message may quote it.
+func inVaultsDir(path string) bool {
+	kind, ok := kindFromDir(path)
+	return ok && kind == KindVault
 }
 
 // kindFromDir infers a kind from the enclosing directory's name.
@@ -150,7 +190,7 @@ func kindFromFilename(path string) (core.Kind, string, bool) {
 // them in random order.
 func kindNames() string {
 	return strings.Join([]string{
-		string(KindSkill), string(KindEnvironment), string(KindMemoryStore), string(KindAgent), string(KindDeployment),
+		string(KindSkill), string(KindEnvironment), string(KindMemoryStore), string(KindVault), string(KindAgent), string(KindDeployment),
 	}, ", ")
 }
 

@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.34.0 (2026-09-18)
+
+Full Changelog: [v1.33.0...v1.34.0](https://github.com/anthropics/anthropic-cli/compare/v1.33.0...v1.34.0)
+
+### Features
+
+* **apply:** manage vaults ([#105](https://github.com/anthropics/anthropic-cli/issues/105)) ([8c9396f](https://github.com/anthropics/anthropic-cli/commit/8c9396f5aaf0a8377c8ef1ca94523671529f7d2d))
+
+
+### Chores
+
+* bump go sdk to v1.74.0 ([#128](https://github.com/anthropics/anthropic-cli/issues/128)) ([3ed8b96](https://github.com/anthropics/anthropic-cli/commit/3ed8b96e154f636cc394fde0a127a596b054326f))
+* **ci:** update authentication for fetching the Go SDK in CI ([e2b84f4](https://github.com/anthropics/anthropic-cli/commit/e2b84f46838d85bbd661288a8e37d9725e3dd25e))
+* **docs:** remove placeholder parameter descriptions ([62aa6a1](https://github.com/anthropics/anthropic-cli/commit/62aa6a118ca1b4c5929e7ffcd864ea02d0642d8f))
+* **internal:** skip clearing the Go VCS cache when its path is empty ([575920d](https://github.com/anthropics/anthropic-cli/commit/575920d38bc126f5c09ba8ac0bc75c0675a0f3bc))
+
+
+### Documentation
+
+* add path and header parameter descriptions ([09c6a7f](https://github.com/anthropics/anthropic-cli/commit/09c6a7f5ea8187994e1c1c6a22b6d2e493e3b079))
+
 ## 1.33.0 (2026-09-15)
 
 Full Changelog: [v1.32.0...v1.33.0](https://github.com/anthropics/anthropic-cli/compare/v1.32.0...v1.33.0)

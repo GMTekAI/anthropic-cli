@@ -19,6 +19,7 @@ const (
 	KindSkill       core.Kind = "skill"
 	KindEnvironment core.Kind = "environment"
 	KindMemoryStore core.Kind = "memory_store"
+	KindVault       core.Kind = "vault"
 	KindAgent       core.Kind = "agent"
 	KindDeployment  core.Kind = "deployment"
 )
@@ -125,6 +126,19 @@ func Registry() *core.Registry {
 				// Rendered into the system prompt of every session the store is
 				// attached to, so it is worth showing in the plan.
 				"description": {Clearable: true, Summary: true},
+			}),
+		},
+		core.KindSpec{
+			// The vault is the container; the credentials inside it are added by
+			// whoever owns the secrets and are never read or diffed here. Archiving
+			// is the exception to the note on byArchiving: it purges their secrets.
+			Kind:     KindVault,
+			IDPrefix: "vlt",
+			Destroy:  byArchiving,
+			Build:    buildVault,
+			Fields: with(identity, archivable, metadata, core.Fields{
+				// A vault has no `name`; this is what the API calls it.
+				"display_name": {Summary: true},
 			}),
 		},
 		core.KindSpec{

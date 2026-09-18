@@ -29,6 +29,7 @@ var betaTunnelsCreate = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -43,6 +44,7 @@ var betaTunnelsRetrieve = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "tunnel-id",
+			Usage:     "ID of the tunnel (`tnl_...`).",
 			Required:  true,
 			PathParam: "tunnel_id",
 		},
@@ -53,6 +55,7 @@ var betaTunnelsRetrieve = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -87,6 +90,7 @@ var betaTunnelsList = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 		&requestflag.Flag[int64]{
@@ -105,6 +109,7 @@ var betaTunnelsArchive = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "tunnel-id",
+			Usage:     "ID of the tunnel (`tnl_...`).",
 			Required:  true,
 			PathParam: "tunnel_id",
 		},
@@ -115,6 +120,7 @@ var betaTunnelsArchive = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -129,6 +135,7 @@ var betaTunnelsRevealToken = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "tunnel-id",
+			Usage:     "ID of the tunnel (`tnl_...`).",
 			Required:  true,
 			PathParam: "tunnel_id",
 		},
@@ -139,6 +146,7 @@ var betaTunnelsRevealToken = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -153,6 +161,7 @@ var betaTunnelsRotateToken = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "tunnel-id",
+			Usage:     "ID of the tunnel (`tnl_...`).",
 			Required:  true,
 			PathParam: "tunnel_id",
 		},
@@ -168,6 +177,7 @@ var betaTunnelsRotateToken = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},

@@ -53,6 +53,7 @@ var betaUserProfilesCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -115,6 +116,7 @@ var betaUserProfilesRetrieve = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -168,6 +170,7 @@ var betaUserProfilesUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -220,22 +223,20 @@ var betaUserProfilesList = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{
 			Name:      "limit",
-			Usage:     "Query parameter for limit",
 			QueryPath: "limit",
 		},
 		&requestflag.Flag[string]{
 			Name:      "order",
-			Usage:     "Query parameter for order",
+			Usage:     "ListOrder enum",
 			QueryPath: "order",
 		},
 		&requestflag.Flag[string]{
 			Name:      "order-by",
-			Usage:     "Query parameter for order_by",
+			Usage:     "Sort field for listing user profiles: `created_at` (default) or `name` (case-insensitive; profiles without a name sort last).",
 			QueryPath: "order_by",
 		},
 		&requestflag.Flag[string]{
 			Name:      "page",
-			Usage:     "Query parameter for page",
 			QueryPath: "page",
 		},
 		&requestflag.Flag[[]string]{
@@ -245,6 +246,7 @@ var betaUserProfilesList = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 		&requestflag.Flag[int64]{
@@ -273,6 +275,7 @@ var betaUserProfilesCreateEnrollmentURL = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},

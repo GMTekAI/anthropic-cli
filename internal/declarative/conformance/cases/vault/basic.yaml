@@ -1,0 +1,25 @@
+schema: 1
+name: a vault converges and its display name and metadata can change
+resources:
+  test:
+    kind: vault
+    body:
+      display_name: cf-{run}-vault
+      metadata:
+        owner: conformance
+steps:
+  - expect:
+      plan:
+        test: create
+      remote:
+        test:
+          display_name: cf-{run}-vault
+          metadata:
+            owner: conformance
+  - change:
+      test:
+        body:
+          display_name: cf-{run}-vault-renamed
+    expect:
+      plan:
+        test: {update: [display_name]}

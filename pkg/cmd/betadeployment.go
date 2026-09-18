@@ -78,6 +78,7 @@ var betaDeploymentsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -210,6 +211,7 @@ var betaDeploymentsRetrieve = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "deployment-id",
+			Usage:     "Unique identifier of the deployment.",
 			Required:  true,
 			PathParam: "deployment_id",
 		},
@@ -220,6 +222,7 @@ var betaDeploymentsRetrieve = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -234,6 +237,7 @@ var betaDeploymentsUpdate = requestflag.WithInnerFlags(cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:        "deployment-id",
+			Usage:       "Unique identifier of the deployment to update.",
 			Required:    true,
 			PathParam:   "deployment_id",
 			DataAliases: []string{"id"},
@@ -295,6 +299,7 @@ var betaDeploymentsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -476,6 +481,7 @@ var betaDeploymentsList = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 		&requestflag.Flag[int64]{
@@ -494,6 +500,7 @@ var betaDeploymentsArchive = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "deployment-id",
+			Usage:     "Unique identifier of the deployment to archive.",
 			Required:  true,
 			PathParam: "deployment_id",
 		},
@@ -504,6 +511,7 @@ var betaDeploymentsArchive = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -518,6 +526,7 @@ var betaDeploymentsPause = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "deployment-id",
+			Usage:     "Unique identifier of the deployment to pause.",
 			Required:  true,
 			PathParam: "deployment_id",
 		},
@@ -528,6 +537,7 @@ var betaDeploymentsPause = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -542,6 +552,7 @@ var betaDeploymentsRun = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "deployment-id",
+			Usage:     "Unique identifier of the deployment to run.",
 			Required:  true,
 			PathParam: "deployment_id",
 		},
@@ -552,6 +563,7 @@ var betaDeploymentsRun = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -566,6 +578,7 @@ var betaDeploymentsUnpause = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "deployment-id",
+			Usage:     "Unique identifier of the deployment to unpause.",
 			Required:  true,
 			PathParam: "deployment_id",
 		},
@@ -576,6 +589,7 @@ var betaDeploymentsUnpause = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},

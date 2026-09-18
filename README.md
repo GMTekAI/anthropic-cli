@@ -106,9 +106,10 @@ Run `ant --help` for the full list of resources, or append `--help` to any comma
 
 ## Managing agents as code
 
-`ant apply` keeps agents, skills, environments, memory stores and deployments
-in step with files in your repository, so changes to them go through review
-like any other code. Files reference each other by path rather than by ID.
+`ant apply` keeps agents, skills, environments, memory stores, vaults and
+deployments in step with files in your repository, so changes to them go
+through review like any other code. Files reference each other by path rather
+than by ID.
 
 Apply records which remote object each file became in `claude-lock.json`.
 Commit it with the files, so teammates and CI update the same resources
@@ -223,6 +224,14 @@ Apply these changes? (y)es / (n)o / (d)etails
   the file says.
 - **Deleting a file leaves the resource in place.** Run with `--prune` to also
   remove resources whose files are gone.
+- **A vault file declares the container, not what is in it.** `vaults/sentry.yml`
+  takes `display_name` and `metadata`, and must set `display_name`. Add
+  credentials with `ant beta:vaults:credentials create`. `vaults/` is also where
+  some layouts keep plaintext secrets, so a directory walk takes a file there for
+  a vault only when those are its only keys, or it says `type: vault`. Name a
+  file it passed over on the command line to see why. `--prune` archives a vault
+  whose file is gone like any other resource, and archiving a vault permanently
+  discards the secret of every credential in it.
 
 Running `ant apply` with no paths reconciles every resource already in the
 lockfile. `ant apply --help` lists all flags.

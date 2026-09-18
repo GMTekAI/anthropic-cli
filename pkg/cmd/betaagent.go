@@ -71,6 +71,7 @@ var betaAgentsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -188,6 +189,7 @@ var betaAgentsRetrieve = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "agent-id",
+			Usage:     "Unique identifier of the agent to retrieve.",
 			Required:  true,
 			PathParam: "agent_id",
 		},
@@ -203,6 +205,7 @@ var betaAgentsRetrieve = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -217,6 +220,7 @@ var betaAgentsUpdate = requestflag.WithInnerFlags(cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:        "agent-id",
+			Usage:       "Unique identifier of the agent to update.",
 			Required:    true,
 			PathParam:   "agent_id",
 			DataAliases: []string{"id"},
@@ -278,6 +282,7 @@ var betaAgentsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -438,6 +443,7 @@ var betaAgentsList = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 		&requestflag.Flag[int64]{
@@ -456,6 +462,7 @@ var betaAgentsArchive = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "agent-id",
+			Usage:     "Unique identifier of the agent to archive.",
 			Required:  true,
 			PathParam: "agent_id",
 		},
@@ -466,6 +473,7 @@ var betaAgentsArchive = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},

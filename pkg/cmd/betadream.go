@@ -42,6 +42,7 @@ var betaDreamsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -106,6 +107,7 @@ var betaDreamsRetrieve = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -130,17 +132,14 @@ var betaDreamsList = cli.Command{
 		},
 		&requestflag.Flag[bool]{
 			Name:      "include-archived",
-			Usage:     "Query parameter for include_archived",
 			QueryPath: "include_archived",
 		},
 		&requestflag.Flag[int64]{
 			Name:      "limit",
-			Usage:     "Query parameter for limit",
 			QueryPath: "limit",
 		},
 		&requestflag.Flag[string]{
 			Name:      "page",
-			Usage:     "Query parameter for page",
 			QueryPath: "page",
 		},
 		&requestflag.Flag[[]string]{
@@ -155,6 +154,7 @@ var betaDreamsList = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 		&requestflag.Flag[int64]{
@@ -184,6 +184,7 @@ var betaDreamsArchive = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -209,6 +210,7 @@ var betaDreamsCancel = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},

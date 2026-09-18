@@ -33,7 +33,8 @@ jobs:
 
       - uses: ./.github/actions/setup-go
         with:
-          stainless-api-key: ${{ secrets.STAINLESS_API_KEY }}
+          app-id: ${{ vars.GO_PRIVATE_READER_APP_ID }}
+          private-key: ${{ secrets.GO_PRIVATE_READER_PRIVATE_KEY }}
 
       - name: Link staging branch
         if: github.repository == 'anthropics/anthropic-sdk-cli-private'
@@ -61,7 +62,8 @@ jobs:
 
       - uses: ./.github/actions/setup-go
         with:
-          stainless-api-key: ${{ secrets.STAINLESS_API_KEY }}
+          app-id: ${{ vars.GO_PRIVATE_READER_APP_ID }}
+          private-key: ${{ secrets.GO_PRIVATE_READER_PRIVATE_KEY }}
 
       - name: Link staging branch
         if: github.repository == 'anthropics/anthropic-sdk-cli-private'
@@ -175,7 +177,8 @@ jobs:
 
       - uses: ./.github/actions/setup-go
         with:
-          stainless-api-key: ${{ secrets.STAINLESS_API_KEY }}
+          app-id: ${{ vars.GO_PRIVATE_READER_APP_ID }}
+          private-key: ${{ secrets.GO_PRIVATE_READER_PRIVATE_KEY }}
 
       - name: Link staging branch
         if: github.repository == 'anthropics/anthropic-sdk-cli-private'

@@ -19,6 +19,7 @@ var betaVaultsCredentialsCreate = requestflag.WithInnerFlags(cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "vault-id",
+			Usage:     "Identifier of the vault to create the credential in.",
 			Required:  true,
 			PathParam: "vault_id",
 		},
@@ -45,6 +46,7 @@ var betaVaultsCredentialsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -111,11 +113,13 @@ var betaVaultsCredentialsRetrieve = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "vault-id",
+			Usage:     "Identifier of the vault containing the credential.",
 			Required:  true,
 			PathParam: "vault_id",
 		},
 		&requestflag.Flag[string]{
 			Name:      "credential-id",
+			Usage:     "Unique identifier of the credential to retrieve.",
 			Required:  true,
 			PathParam: "credential_id",
 		},
@@ -126,6 +130,7 @@ var betaVaultsCredentialsRetrieve = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -140,11 +145,13 @@ var betaVaultsCredentialsUpdate = requestflag.WithInnerFlags(cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "vault-id",
+			Usage:     "Identifier of the vault containing the credential.",
 			Required:  true,
 			PathParam: "vault_id",
 		},
 		&requestflag.Flag[string]{
 			Name:        "credential-id",
+			Usage:       "Unique identifier of the credential to update.",
 			Required:    true,
 			PathParam:   "credential_id",
 			DataAliases: []string{"id"},
@@ -171,6 +178,7 @@ var betaVaultsCredentialsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -227,6 +235,7 @@ var betaVaultsCredentialsList = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "vault-id",
+			Usage:     "Identifier of the vault to list credentials for.",
 			Required:  true,
 			PathParam: "vault_id",
 		},
@@ -252,6 +261,7 @@ var betaVaultsCredentialsList = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 		&requestflag.Flag[int64]{
@@ -270,11 +280,13 @@ var betaVaultsCredentialsDelete = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "vault-id",
+			Usage:     "Identifier of the vault containing the credential.",
 			Required:  true,
 			PathParam: "vault_id",
 		},
 		&requestflag.Flag[string]{
 			Name:      "credential-id",
+			Usage:     "Unique identifier of the credential to delete.",
 			Required:  true,
 			PathParam: "credential_id",
 		},
@@ -285,6 +297,7 @@ var betaVaultsCredentialsDelete = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -299,11 +312,13 @@ var betaVaultsCredentialsArchive = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "vault-id",
+			Usage:     "Identifier of the vault containing the credential.",
 			Required:  true,
 			PathParam: "vault_id",
 		},
 		&requestflag.Flag[string]{
 			Name:      "credential-id",
+			Usage:     "Unique identifier of the credential to archive.",
 			Required:  true,
 			PathParam: "credential_id",
 		},
@@ -314,6 +329,7 @@ var betaVaultsCredentialsArchive = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},
@@ -328,11 +344,13 @@ var betaVaultsCredentialsMCPOAuthValidate = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "vault-id",
+			Usage:     "Identifier of the vault containing the credential.",
 			Required:  true,
 			PathParam: "vault_id",
 		},
 		&requestflag.Flag[string]{
 			Name:      "credential-id",
+			Usage:     "Unique identifier of the credential to validate.",
 			Required:  true,
 			PathParam: "credential_id",
 		},
@@ -343,6 +361,7 @@ var betaVaultsCredentialsMCPOAuthValidate = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
 			HeaderPath: "anthropic-workspace-id",
 		},
 	},

@@ -33,9 +33,9 @@ var applyCommand = cli.Command{
 	Usage:    "Create, update and remove resources so the API matches your files",
 	UsageText: `ant apply [path...]
 
-Reconciles agents, skills, environments, memory stores and deployments declared
-in local files against the Claude Developer Platform, then records what it did
-in claude-lock.json.
+Reconciles agents, skills, environments, memory stores, vaults and deployments
+declared in local files against the Claude Developer Platform, then records what
+it did in claude-lock.json.
 
 With no paths, apply reconciles everything already tracked in the lockfile.
 Naming a path adds it to the lockfile and reconciles it, along with everything
