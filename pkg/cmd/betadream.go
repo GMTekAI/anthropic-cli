@@ -72,7 +72,7 @@ var betaDreamsCreate = requestflag.WithInnerFlags(cli.Command{
 	"model": {
 		&requestflag.InnerFlag[string]{
 			Name:       "model.id",
-			Usage:      `Model identifier, e.g. "claude-opus-5". 1-256 characters.`,
+			Usage:      "The ID of the model to run the dream with.\n\nThe ID can be 1 to 256 characters long.\n\nThe [limits table in the Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#limits) lists the supported models.",
 			InnerField: "id",
 		},
 		&requestflag.InnerFlag[*string]{
@@ -129,12 +129,12 @@ var betaDreamsList = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[any]{
 			Name:      "created-at-gt",
-			Usage:     "Return dreams with `created_at` strictly after this timestamp (exclusive lower bound, RFC 3339). Unset applies no lower bound.",
+			Usage:     "Return only dreams created after this time (exclusive), in RFC 3339.",
 			QueryPath: "created_at[gt]",
 		},
 		&requestflag.Flag[any]{
 			Name:      "created-at-lt",
-			Usage:     "Return dreams with `created_at` strictly before this timestamp (exclusive upper bound, RFC 3339). Unset applies no upper bound.",
+			Usage:     "Return only dreams created before this time (exclusive), in RFC 3339.",
 			QueryPath: "created_at[lt]",
 		},
 		&requestflag.Flag[bool]{
@@ -154,7 +154,7 @@ var betaDreamsList = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:      "status",
-			Usage:     "Filter by lifecycle status. Repeat the parameter to match any of multiple statuses. Empty applies no status filter.",
+			Usage:     "Return only dreams that have one of these statuses.\n\nRepeat the parameter to give more than one status. Leave it out to return dreams of every status.",
 			QueryPath: "statuses",
 		},
 		&requestflag.Flag[[]string]{
