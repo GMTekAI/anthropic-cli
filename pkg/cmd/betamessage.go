@@ -469,6 +469,10 @@ var betaMessagesCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "When true, guarantees schema validation on tool names and inputs",
 			InnerField: "strict",
 		},
+		&requestflag.InnerFlag[any]{
+			Name:       "tool.tools",
+			InnerField: "tools",
+		},
 		&requestflag.InnerFlag[*string]{
 			Name:       "tool.type",
 			Usage:      `Allowed values: "custom", "bash_20241022", "bash_20250124", "code_execution_20250522", "code_execution_20250825", "code_execution_20260120", "code_execution_20260521", "browser_toolset_20260801", "computer_20241022", "memory_20250818", "computer_20250124", "text_editor_20241022", "computer_20251124", "computer_toolset_20260801", "text_editor_20250124", "text_editor_20250429", "text_editor_20250728", "web_search_20250305", "web_fetch_20250910", "web_search_20260209", "web_fetch_20260209", "web_fetch_20260309", "web_search_20260318", "web_fetch_20260318", "advisor_20260301", "tool_search_tool_bm25_20251119", "tool_search_tool_bm25", "tool_search_tool_regex_20251119", "tool_search_tool_regex", "mcp_toolset".`,
@@ -841,6 +845,10 @@ var betaMessagesCountTokens = requestflag.WithInnerFlags(cli.Command{
 			Name:       "tool.strict",
 			Usage:      "When true, guarantees schema validation on tool names and inputs",
 			InnerField: "strict",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "tool.tools",
+			InnerField: "tools",
 		},
 		&requestflag.InnerFlag[*string]{
 			Name:       "tool.type",
