@@ -106,6 +106,7 @@ var betaUserProfilesRetrieve = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "user-profile-id",
+			Usage:     "The ID of the user profile to get (`uprof_...`).",
 			Required:  true,
 			PathParam: "user_profile_id",
 		},
@@ -131,6 +132,7 @@ var betaUserProfilesUpdate = requestflag.WithInnerFlags(cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "user-profile-id",
+			Usage:     "The ID of the user profile to update (`uprof_...`).",
 			Required:  true,
 			PathParam: "user_profile_id",
 		},
@@ -223,20 +225,22 @@ var betaUserProfilesList = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[int64]{
 			Name:      "limit",
+			Usage:     "The maximum number of user profiles to return, from 1 to 100. Defaults to 20.",
 			QueryPath: "limit",
 		},
 		&requestflag.Flag[string]{
 			Name:      "order",
-			Usage:     "ListOrder enum",
+			Usage:     "The sort direction, applied to the field that `order_by` selects. Defaults to `desc`.",
 			QueryPath: "order",
 		},
 		&requestflag.Flag[string]{
 			Name:      "order-by",
-			Usage:     "Sort field for listing user profiles: `created_at` (default) or `name` (case-insensitive; profiles without a name sort last).",
+			Usage:     "The field to sort user profiles by, in the direction that `order` sets. Defaults to `created_at`.",
 			QueryPath: "order_by",
 		},
 		&requestflag.Flag[string]{
 			Name:      "page",
+			Usage:     "The cursor for the page to return, taken from `next_page` in a previous response.\n\nLeave it out to get the first page.",
 			QueryPath: "page",
 		},
 		&requestflag.Flag[[]string]{
@@ -265,6 +269,7 @@ var betaUserProfilesCreateEnrollmentURL = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "user-profile-id",
+			Usage:     "The ID of the user profile to create an enrollment URL for (`uprof_...`).",
 			Required:  true,
 			PathParam: "user_profile_id",
 		},

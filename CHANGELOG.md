@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.35.0 (2026-09-22)
+
+Full Changelog: [v1.34.0...v1.35.0](https://github.com/anthropics/anthropic-cli/compare/v1.34.0...v1.35.0)
+
+### Features
+
+* **api:** add support for claude-opus-5-5, inline tool definitions and MCP tool-list pinning (beta) ([86bc26c](https://github.com/anthropics/anthropic-cli/commit/86bc26c16459d4ae928964990ab2957e49588888))
+
+
+### Chores
+
+* bump go sdk to v1.75.0 ([#132](https://github.com/anthropics/anthropic-cli/issues/132)) ([72ce520](https://github.com/anthropics/anthropic-cli/commit/72ce520636792818833927bd43b7d5550e1bbda0))
+* **docs:** add descriptions to the Dreams API reference ([69c0904](https://github.com/anthropics/anthropic-cli/commit/69c09042a2a5f50fa36d6bb2b7096ba8454d2184))
+* **docs:** add descriptions to the User Profiles API reference ([69c0904](https://github.com/anthropics/anthropic-cli/commit/69c09042a2a5f50fa36d6bb2b7096ba8454d2184))
+* **docs:** add memory store descriptions to the Managed Agents API reference ([69c0904](https://github.com/anthropics/anthropic-cli/commit/69c09042a2a5f50fa36d6bb2b7096ba8454d2184))
+* **docs:** improve descriptions in the Dreams API reference ([31c4638](https://github.com/anthropics/anthropic-cli/commit/31c4638dbc39e47d0d394daa6d580d8b159b4f62))
+
 ## 1.34.0 (2026-09-18)
 
 Full Changelog: [v1.33.0...v1.34.0](https://github.com/anthropics/anthropic-cli/compare/v1.33.0...v1.34.0)

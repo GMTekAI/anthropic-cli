@@ -60,7 +60,7 @@ Then send your first message:
 
 ```sh
 ant messages create \
-  --model claude-opus-4-8 \
+  --model claude-opus-5-5 \
   --max-tokens 1024 \
   --message '{role: user, content: "Hello, Claude"}'
 ```
@@ -80,18 +80,18 @@ ant <resource>[:<subresource>] <command> [flags...]
 ant models list
 
 # Browse a response in the interactive explorer (the default in a terminal)
-ant models retrieve --model-id claude-opus-4-8
+ant models retrieve --model-id claude-opus-5-5
 
 # Extract a single field from a response, jq-style
 ant messages create \
-  --model claude-opus-4-8 \
+  --model claude-opus-5-5 \
   --max-tokens 1024 \
   --message '{role: user, content: "Hello, Claude"}' \
   --transform content.0.text --raw-output
 
 # Send a file using the @path syntax
 ant messages create \
-  --model claude-opus-4-8 \
+  --model claude-opus-5-5 \
   --max-tokens 1024 \
   --message '{role: user, content: [
     {type: image, source: {type: base64, media_type: image/jpeg, data: "@photo.jpg"}},
