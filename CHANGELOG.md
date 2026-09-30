@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.38.0 (2026-09-30)
+
+Full Changelog: [v1.37.0...v1.38.0](https://github.com/anthropics/anthropic-cli/compare/v1.37.0...v1.38.0)
+
+### Features
+
+* **api:** add list spend limits endpoint ([6ccede8](https://github.com/anthropics/anthropic-cli/commit/6ccede8da03b13efc15a114dc8354faf3b5b9cca))
+
+
+### Bug Fixes
+
+* **apply:** key the remote skill cache by full commit SHA ([#147](https://github.com/anthropics/anthropic-cli/issues/147)) ([5cfdca2](https://github.com/anthropics/anthropic-cli/commit/5cfdca2d4fa1d470698dec1d283eec68c6c39ab2))
+
 ## 1.37.0 (2026-09-30)
 
 Full Changelog: [v1.36.0...v1.37.0](https://github.com/anthropics/anthropic-cli/compare/v1.36.0...v1.37.0)
