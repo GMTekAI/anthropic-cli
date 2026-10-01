@@ -146,7 +146,6 @@ func TestBetaVaultsCredentialsArchive(t *testing.T) {
 }
 
 func TestBetaVaultsCredentialsMCPOAuthValidate(t *testing.T) {
-	t.Skip("prism can't find endpoint with beta only tag")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,

@@ -7,7 +7,6 @@ import (
 )
 
 func TestBetaSessionsResourcesRetrieve(t *testing.T) {
-	t.Skip("prism can't find endpoint with beta only tag")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
@@ -22,7 +21,6 @@ func TestBetaSessionsResourcesRetrieve(t *testing.T) {
 }
 
 func TestBetaSessionsResourcesUpdate(t *testing.T) {
-	t.Skip("prism can't find endpoint with beta only tag")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
@@ -52,7 +50,6 @@ func TestBetaSessionsResourcesUpdate(t *testing.T) {
 }
 
 func TestBetaSessionsResourcesList(t *testing.T) {
-	t.Skip("prism can't find endpoint with beta only tag")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
@@ -69,7 +66,6 @@ func TestBetaSessionsResourcesList(t *testing.T) {
 }
 
 func TestBetaSessionsResourcesDelete(t *testing.T) {
-	t.Skip("prism can't find endpoint with beta only tag")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
@@ -84,7 +80,6 @@ func TestBetaSessionsResourcesDelete(t *testing.T) {
 }
 
 func TestBetaSessionsResourcesAdd(t *testing.T) {
-	t.Skip("prism can't find endpoint with beta only tag")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
