@@ -107,6 +107,10 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 			// the server selects the one matching the credential type.
 			// TODO: drop once the SDK selects the header value per credential type.
 			opts = append(opts, option.WithHeaderAdd("anthropic-beta", betaUserOAuth))
+			profile, dir := activeProfile(root)
+			creds, _, credsErr := readCredentials(cfg, dir, profile)
+			granted := profileGrantedScope(creds, credsErr, resolveRequestedScope("", cfg))
+			opts = append(opts, option.WithMiddleware(orgAdminScopeHint(os.Stderr, profile, granted)))
 		}
 	}
 	if root.IsSet("webhook-key") {

@@ -19,6 +19,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"slices"
 	"strings"
 	"time"
 
@@ -31,6 +32,9 @@ const (
 	defaultConsoleURL = "https://platform.claude.com"
 	defaultBaseURL    = "https://api.anthropic.com"
 	oauthScope        = "user:profile user:inference user:developer"
+	// scopeOrgAdmin is what the /v1/organizations routes require of a
+	// user_oauth token.
+	scopeOrgAdmin = "org:admin"
 
 	// betaUserOAuth is the anthropic-beta header value for user_oauth
 	// credentials (interactive PKCE login). Required on the
@@ -125,6 +129,10 @@ func init() {
 						Name:  "scope",
 						Usage: "OAuth scope to request (space-separated; overrides the profile's stored scope or the default)",
 					},
+					&cli.BoolFlag{
+						Name:  "admin",
+						Usage: "Also request the org:admin scope, which the organization commands require of a login. Adds to --scope, the profile's stored scope or the default, so other commands keep working.",
+					},
 					&cli.StringFlag{
 						Name:  "workspace-id",
 						Usage: "Workspace to bind the access token to (optional). If omitted, Console may show a workspace picker after org selection; login also succeeds with no workspace bound. Find IDs under Settings → Workspaces in the Console (resolved from --console-url / profile / default).",
@@ -206,6 +214,9 @@ func authLogin(ctx context.Context, c *cli.Command) error {
 		fmt.Fprintf(os.Stderr, "warning: ignoring unreadable profile config: %v\n", prevErr)
 	}
 	requestedScope := resolveRequestedScope(c.String("scope"), prev)
+	if c.Bool("admin") {
+		requestedScope = addScope(requestedScope, scopeOrgAdmin)
+	}
 	clientID := resolveClientID(c.String("client-id"), prev)
 	consoleURL := resolveConsoleURL(c.String("console-url"), prev)
 	baseURL := resolveBaseURL(c.String("base-url"), prev)
@@ -427,7 +438,7 @@ func authLogin(ctx context.Context, c *cli.Command) error {
 		}
 		// scope/base_url/console_url are only-if-explicitly-set: those are
 		// runtime defaults that the CLI/SDK fills in.
-		if c.IsSet("scope") {
+		if c.IsSet("scope") || c.Bool("admin") {
 			scope := tok.Scope
 			if scope == "" {
 				scope = requestedScope
@@ -465,6 +476,19 @@ func authLogin(ctx context.Context, c *cli.Command) error {
 				tok.Workspace.Name, effectiveWorkspaceID, profile, prev.WorkspaceID,
 				effectiveWorkspaceID, profile, effectiveWorkspaceID)
 		}
+		if c.Bool("admin") && !hasScope(resolveRequestedScope("", prev), scopeOrgAdmin) {
+			fmt.Fprintf(os.Stderr,
+				"→ This login requested %s, but profile %q does not: a later `ant auth login` without --admin drops it.\n"+
+					"  To request it on every login: ant profile set scope %q --profile %s\n",
+				scopeOrgAdmin, profile, requestedScope, profile)
+		}
+	}
+
+	if c.Bool("admin") && tok.Scope != "" && !hasScope(tok.Scope, scopeOrgAdmin) {
+		fmt.Fprintf(os.Stderr,
+			"⚠  %s was requested but not granted (granted: %s). Only an organization admin can be granted it;\n"+
+				"   the organization commands will be refused with this login.\n",
+			scopeOrgAdmin, tok.Scope)
 	}
 
 	expiresAt := time.Now().Add(time.Duration(tok.ExpiresIn) * time.Second)
@@ -1298,6 +1322,18 @@ func resolveRequestedScope(flag string, prev *config.Config) string {
 		return prev.AuthenticationInfo.UserOAuth.Scope
 	}
 	return oauthScope
+}
+
+func hasScope(scopes, want string) bool {
+	return slices.Contains(strings.Fields(scopes), want)
+}
+
+// addScope appends a scope to a space-separated set unless it is already there.
+func addScope(scopes, add string) string {
+	if hasScope(scopes, add) {
+		return scopes
+	}
+	return strings.Join(append(strings.Fields(scopes), add), " ")
 }
 
 // resolveWorkspaceID picks the workspace_id sent on /oauth/authorize:
