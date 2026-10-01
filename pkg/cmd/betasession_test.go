@@ -177,7 +177,7 @@ func TestBetaSessionsUpdate(t *testing.T) {
 }
 
 func TestBetaSessionsList(t *testing.T) {
-	t.Skip("buildURL drops path-level query params")
+	t.Skip("mock server returns an empty page with a next page cursor")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
