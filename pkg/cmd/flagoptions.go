@@ -471,9 +471,14 @@ func flagOptions(
 	}
 
 	// Add header parameters
+	for k, v := range requestContents.Headers {
+		if rv := reflect.ValueOf(v); rv.Kind() == reflect.Slice && rv.Len() == 0 {
+			delete(requestContents.Headers, k)
+		}
+	}
 	headerSettings := apiquery.QuerySettings{
 		NestedFormat: apiquery.NestedQueryFormatDots,
-		ArrayFormat:  apiquery.ArrayQueryFormatRepeat,
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 	}
 	if values, err := apiquery.MarshalWithSettings(requestContents.Headers, headerSettings); err != nil {
 		return nil, err
