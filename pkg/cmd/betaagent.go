@@ -61,7 +61,7 @@ var betaAgentsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[[]map[string]any]{
 			Name:     "tool",
-			Usage:    "Tool configurations available to the agent. Maximum of 128 tools across all toolsets allowed.",
+			Usage:    "Tool configurations available to the agent. Maximum of 256 tools across all toolsets allowed.",
 			BodyPath: "tools",
 		},
 		&requestflag.Flag[[]string]{
@@ -267,7 +267,7 @@ var betaAgentsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[any]{
 			Name:     "tool",
-			Usage:    "Tool configurations available to the agent. Full replacement. Omit to preserve; send empty array or null to clear. Maximum of 128 tools across all toolsets allowed.",
+			Usage:    "Tool configurations available to the agent. Full replacement. Omit to preserve; send empty array or null to clear. Maximum of 256 tools across all toolsets allowed.",
 			BodyPath: "tools",
 		},
 		&requestflag.Flag[int64]{
