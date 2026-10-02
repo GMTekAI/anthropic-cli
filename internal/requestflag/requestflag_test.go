@@ -1078,6 +1078,56 @@ func TestApplyStdinDataToFlags(t *testing.T) {
 
 		// The explicitly-set value should win.
 		assert.Equal(t, "explicit_value", flag.Get())
+		assert.Empty(t, data, "the piped value must not leak into the body merge")
+	})
+
+	t.Run("sets path param flag from piped data", func(t *testing.T) {
+		t.Parallel()
+
+		pathID := &Flag[string]{Name: "id", PathParam: "id"}
+		name := &Flag[string]{Name: "name", BodyPath: "name"}
+		assert.NoError(t, pathID.PreParse())
+		assert.NoError(t, name.PreParse())
+
+		data := map[string]any{"id": "item_A", "name": "copy"}
+		cmd := &cli.Command{Flags: []cli.Flag{pathID, name}}
+		assert.NoError(t, ApplyStdinDataToFlags(cmd, data))
+
+		assert.Equal(t, "item_A", pathID.Get())
+		assert.Equal(t, map[string]any{"name": "copy"}, data)
+	})
+
+	t.Run("piped key stays in the body when a path param and a body param share its name", func(t *testing.T) {
+		t.Parallel()
+
+		pathID := &Flag[string]{Name: "id", PathParam: "id"}
+		bodyID := &Flag[string]{Name: "source-id", BodyPath: "id"}
+		assert.NoError(t, pathID.PreParse())
+		assert.NoError(t, bodyID.PreParse())
+
+		data := map[string]any{"id": "item_B"}
+		cmd := &cli.Command{Flags: []cli.Flag{pathID, bodyID}}
+		assert.NoError(t, ApplyStdinDataToFlags(cmd, data))
+
+		assert.False(t, pathID.IsSet(), "the path param must come from its own flag")
+		assert.Equal(t, map[string]any{"id": "item_B"}, data)
+	})
+
+	t.Run("path flag and piped body key of the same name each keep their own value", func(t *testing.T) {
+		t.Parallel()
+
+		pathID := &Flag[string]{Name: "id", PathParam: "id"}
+		bodyID := &Flag[string]{Name: "source-id", BodyPath: "id"}
+		assert.NoError(t, pathID.PreParse())
+		assert.NoError(t, bodyID.PreParse())
+		assert.NoError(t, pathID.Set("id", "item_A"))
+
+		data := map[string]any{"id": "item_B"}
+		cmd := &cli.Command{Flags: []cli.Flag{pathID, bodyID}}
+		assert.NoError(t, ApplyStdinDataToFlags(cmd, data))
+
+		assert.Equal(t, "item_A", pathID.Get())
+		assert.Equal(t, map[string]any{"id": "item_B"}, data)
 	})
 
 	t.Run("sets integer query flag from piped data", func(t *testing.T) {

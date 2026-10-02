@@ -165,12 +165,22 @@ type RequestContents struct {
 // PathParam (or any of its DataAliases), the flag is set to that value via flag.Set and the key (plus its
 // aliases) is removed from data so it cannot also reach the request body. A piped null or empty array is
 // consumed the same way but leaves the flag unset: outside the body, null/[] and "omitted" are the same
-// request.
+// request. The keys of a flag that was already set are removed too: the command line wins.
+//
+// The body wins a shared name: a key that is also some flag's BodyPath is left in data untouched, so the
+// path, query, or header parameter of that name can only come from its own flag.
 //
 // Inner flags (those with an outer flag) are also handled: if the outer flag's body path key exists in the
 // data map and contains a nested map with a key matching the inner flag's field (or aliases), the inner
 // flag is set from that nested value.
 func ApplyStdinDataToFlags(cmd *cli.Command, data map[string]any) error {
+	bodyKeys := map[string]bool{}
+	for _, flag := range cmd.Flags {
+		if inReq, ok := flag.(InRequest); ok && inReq.GetBodyPath() != "" {
+			bodyKeys[inReq.GetBodyPath()] = true
+		}
+	}
+
 	for _, flag := range cmd.Flags {
 		if flag.IsSet() {
 			continue
@@ -225,16 +235,15 @@ func ApplyStdinDataToFlags(cmd *cli.Command, data map[string]any) error {
 			var val any
 			var found bool
 			for _, key := range append([]string{path}, inReq.GetDataAliases()...) {
-				if v, ok := data[key]; ok {
-					val, found = v, true
-					break
+				if v, ok := data[key]; ok && !bodyKeys[key] {
+					if !found {
+						val, found = v, true
+					}
+					delete(data, key)
 				}
 			}
 			if !found {
 				continue
-			}
-			for _, key := range append([]string{path}, inReq.GetDataAliases()...) {
-				delete(data, key)
 			}
 			if arr, isArr := val.([]any); val == nil || (isArr && len(arr) == 0) {
 				break
@@ -243,6 +252,22 @@ func ApplyStdinDataToFlags(cmd *cli.Command, data map[string]any) error {
 				return err
 			}
 			break
+		}
+	}
+
+	// Runs last so that an unset flag can still take a key it shares with a flag set on the command line.
+	for _, flag := range cmd.Flags {
+		inReq, ok := flag.(InRequest)
+		if !ok || !flag.IsSet() {
+			continue
+		}
+		if inReq.GetQueryPath() != "" || inReq.GetHeaderPath() != "" || inReq.GetPathParam() != "" {
+			keys := []string{inReq.GetQueryPath(), inReq.GetHeaderPath(), inReq.GetPathParam()}
+			for _, key := range append(keys, inReq.GetDataAliases()...) {
+				if !bodyKeys[key] {
+					delete(data, key)
+				}
+			}
 		}
 	}
 	return nil
