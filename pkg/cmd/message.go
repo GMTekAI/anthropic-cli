@@ -161,6 +161,7 @@ var messagesCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "container.skills",
+			Usage:      "List of skills to load in the container",
 			InnerField: "skills",
 		},
 	},
@@ -267,8 +268,9 @@ var messagesCreate = requestflag.WithInnerFlags(cli.Command{
 			Name:       "tool.input-examples",
 			InnerField: "input_examples",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:       "tool.input-schema",
+			Usage:      "[JSON schema](https://json-schema.org/draft/2020-12) for this tool's input.\n\nThis defines the shape of the `input` that your tool accepts and that the model will produce.",
 			InnerField: "input_schema",
 		},
 		&requestflag.InnerFlag[*int64]{
@@ -494,8 +496,9 @@ var messagesCountTokens = requestflag.WithInnerFlags(cli.Command{
 			Name:       "tool.input-examples",
 			InnerField: "input_examples",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:       "tool.input-schema",
+			Usage:      "[JSON schema](https://json-schema.org/draft/2020-12) for this tool's input.\n\nThis defines the shape of the `input` that your tool accepts and that the model will produce.",
 			InnerField: "input_schema",
 		},
 		&requestflag.InnerFlag[*int64]{

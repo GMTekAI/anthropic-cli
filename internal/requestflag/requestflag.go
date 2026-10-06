@@ -419,7 +419,31 @@ func (f *Flag[T]) Get() any {
 }
 
 func (f *Flag[T]) String() string {
-	return cli.FlagStringer(f)
+	return helpEntry(f, "")
+}
+
+// helpEntry renders a flag's --help line like urfave/cli's default FlagStringer, except that it never lifts the
+// first `backticked` span of Usage into the value placeholder: API descriptions use backticks as markdown.
+func helpEntry(f interface {
+	cli.Flag
+	cli.DocGenerationFlag
+}, indent string) string {
+	placeholder := ""
+	if f.TakesValue() {
+		placeholder = f.TypeName()
+		if placeholder == "" {
+			placeholder = "value"
+		}
+	}
+	names := cli.FlagNamePrefixer(f.Names(), placeholder)
+	if mv, ok := f.(cli.DocGenerationMultiValueFlag); ok && mv.IsMultiValueFlag() {
+		names += " [ " + names + " ]"
+	}
+	usage := f.GetUsage()
+	if rf, ok := f.(cli.RequiredFlag); (!ok || !rf.IsRequired()) && f.IsDefaultVisible() && f.GetDefaultText() != "" {
+		usage += " (default: " + f.GetDefaultText() + ")"
+	}
+	return cli.FlagEnvHinter(f.GetEnvVars(), indent+names+"\t"+strings.TrimSpace(usage))
 }
 
 func (f *Flag[T]) IsSet() bool {
@@ -537,6 +561,8 @@ func (f *Flag[T]) TypeName() string {
 			default:
 				return "string"
 			}
+		case reflect.Map:
+			return "'{key: value}'"
 		default:
 			if t.Name() == "" {
 				return "any"
@@ -545,28 +571,18 @@ func (f *Flag[T]) TypeName() string {
 		}
 	}
 
-	switch ty.Kind() {
-	case reflect.Slice:
-		elemType := ty.Elem()
-		return getTypeName(elemType)
-	case reflect.Map:
-		keyType := ty.Key()
-		valueType := ty.Elem()
-		return fmt.Sprintf("%s=%s", getTypeName(keyType), getTypeName(valueType))
-	default:
-		return getTypeName(ty)
+	if ty.Kind() == reflect.Slice {
+		return getTypeName(ty.Elem())
 	}
+	return getTypeName(ty)
 }
 
 // Implementation for the cli.DocGenerationMultiValueFlag interface
 var _ cli.DocGenerationMultiValueFlag = (*Flag[any])(nil) // Type assertion to ensure interface compliance
 
 func (f *Flag[T]) IsMultiValueFlag() bool {
-	if reflect.TypeOf(f.Default) == nil {
-		return false
-	}
-	kind := reflect.TypeOf(f.Default).Kind()
-	return kind == reflect.Slice || kind == reflect.Map
+	ty := reflect.TypeOf(f.Default)
+	return ty != nil && ty.Kind() == reflect.Slice
 }
 
 func (f *Flag[T]) IsBoolFlag() bool {

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -20,7 +21,6 @@ import (
 	"github.com/anthropics/anthropic-cli/internal/jsonview"
 	"github.com/anthropics/anthropic-sdk-go/config"
 	"github.com/anthropics/anthropic-sdk-go/option"
-
 	"github.com/charmbracelet/x/term"
 	"github.com/itchyny/json2yaml"
 	"github.com/muesli/reflow/wrap"
@@ -80,15 +80,22 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 	//   3. profile named by --profile / ANTHROPIC_PROFILE (explicit)
 	//   4. ANTHROPIC_FEDERATION_RULE_ID + ANTHROPIC_ORGANIZATION_ID +
 	//      ANTHROPIC_IDENTITY_TOKEN[_FILE]
-	//   5. profile from active_config → "default" (implicit)
+	//   5. --google-cloud-project / --google-cloud-location /
+	//      --google-cloud-workspace-id or their ANTHROPIC_GOOGLE_CLOUD_* env vars
+	//      (Claude Platform on Google Cloud, Google Application Default Credentials)
+	//   6. profile from active_config → "default" (implicit)
 	// The explicit/implicit profile split means: a profile you named beats
-	// federation env vars (you asked for it), but federation env vars beat a
-	// profile that just happened to be lying around in active_config.
+	// federation env vars and Google Cloud settings (you asked for it), but
+	// those beat a profile that just happened to be lying around in
+	// active_config.
 	apiKeySet := root.IsSet("api-key")
 	authTokenSet := root.IsSet("auth-token")
 	cfg, profileExplicit := loadProfileIfUsable(root)
 	fed := federationFromRoot(root)
 	fedAnySet := fed.AnySet()
+	gc := googleCloudFromRoot(root)
+	gcAnySet := gc.AnySet()
+	extra := extraClientFlagsFromCmd(cmd)
 	apiKeySrc, authTokenSrc := "", ""
 	if apiKeySet {
 		apiKeySrc = credentialSourceLabel(root, "api-key")
@@ -96,7 +103,7 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 	if authTokenSet {
 		authTokenSrc = credentialSourceLabel(root, "auth-token")
 	}
-	warnIfMultipleAuthSources(apiKeySrc, authTokenSrc, cfg != nil && profileExplicit, fedAnySet, cfg != nil && !profileExplicit)
+	warnIfMultipleAuthSources(apiKeySrc, authTokenSrc, cfg != nil && profileExplicit, fedAnySet, gcAnySet, cfg != nil && !profileExplicit)
 
 	useProfile := func() {
 		opts = append(opts, option.WithConfigQuiet(cfg))
@@ -137,13 +144,23 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 		if opt != nil {
 			opts = append(opts, opt...)
 		}
+	case gcAnySet:
+		gcOpts, err := gc.requestOptions(context.Background())
+		if err != nil {
+			// TODO: same os.Exit wart as the OAuth resolution failure above.
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		opts = append(opts, gcOpts...)
+		gc.noteIgnoredBaseURL(os.Stderr, extra.BaseURL)
+		extra.BaseURL = ""
 	case cfg != nil:
 		useProfile()
 	}
 
 	// Appended last so an explicit --base-url wins over any base URL the
 	// loaded config may have set.
-	opts = append(opts, extraClientFlagsFromCmd(cmd).requestOptions()...)
+	opts = append(opts, extra.requestOptions()...)
 
 	return opts
 }
@@ -151,10 +168,10 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 // warnIfMultipleAuthSources emits a one-shot stderr notice when more than one
 // credential source is configured, naming the sources and the precedence
 // winner. No secret values are printed. Order matches the User Guide's
-// 5-tier precedence (explicit profile beats federation; implicit doesn't).
-// apiKeySrc / authTokenSrc are the source labels for those tiers ("" when
-// unset) so a stdin-supplied credential isn't reported as --api-key.
-func warnIfMultipleAuthSources(apiKeySrc, authTokenSrc string, profileExplicit, federation, profileImplicit bool) {
+// precedence (explicit profile beats federation and Google Cloud; implicit
+// doesn't). apiKeySrc / authTokenSrc are the source labels for those tiers (""
+// when unset) so a stdin-supplied credential isn't reported as --api-key.
+func warnIfMultipleAuthSources(apiKeySrc, authTokenSrc string, profileExplicit, federation, googleCloud, profileImplicit bool) {
 	type src struct {
 		on   bool
 		name string
@@ -168,6 +185,7 @@ func warnIfMultipleAuthSources(apiKeySrc, authTokenSrc string, profileExplicit, 
 		{authTokenSrc != "", authTokenSrc},
 		{profileExplicit, "profile from --profile / ANTHROPIC_PROFILE"},
 		{federation, "federation env"},
+		{googleCloud, "Google Cloud (--google-cloud-* / ANTHROPIC_GOOGLE_CLOUD_*)"},
 		{profileImplicit, "active profile (active_config)"},
 	}
 	var on []string

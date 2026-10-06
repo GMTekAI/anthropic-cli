@@ -131,6 +131,10 @@ func TestWithInnerFlags(t *testing.T) {
 	assert.Equal(t, outerFlag, cmd.Flags[0], "First flag should be outerFlag")
 	assert.Equal(t, innerFlag, cmd.Flags[1], "Second flag should be innerFlag")
 	assert.Same(t, outerFlag, innerFlag.OuterFlag, "innerFlag.OuterFlag should point to outerFlag")
+	assert.Equal(t, []cli.Flag{outerFlag, innerFlag}, cmd.VisibleFlags(), "--help lists the inner flag right after its outer flag")
+
+	outerFlag.Hidden = true
+	assert.Empty(t, cmd.VisibleFlags(), "hiding the outer flag hides its inner flags")
 }
 
 func TestInnerFlagTypeNames(t *testing.T) {
@@ -149,6 +153,7 @@ func TestInnerFlagTypeNames(t *testing.T) {
 		{"date", &InnerFlag[DateValue]{}, "date"},
 		{"datetime", &InnerFlag[DateTimeValue]{}, "datetime"},
 		{"time", &InnerFlag[TimeValue]{}, "time"},
+		{"map", &InnerFlag[map[string]any]{}, "'{key: value}'"},
 	}
 
 	for _, tt := range tests {

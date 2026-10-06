@@ -63,8 +63,9 @@ var betaEnvironmentsCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "Environment type",
 			InnerField: "type",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:       "config.networking",
+			Usage:      "Network configuration policy. Omit on update to preserve the existing value.",
 			InnerField: "networking",
 		},
 		&requestflag.InnerFlag[map[string]any]{
@@ -156,8 +157,9 @@ var betaEnvironmentsUpdate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "Environment type",
 			InnerField: "type",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:       "config.networking",
+			Usage:      "Network configuration policy. Omit on update to preserve the existing value.",
 			InnerField: "networking",
 		},
 		&requestflag.InnerFlag[map[string]any]{

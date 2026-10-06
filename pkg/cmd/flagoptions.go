@@ -21,7 +21,6 @@ import (
 	"github.com/anthropics/anthropic-cli/internal/debugmiddleware"
 	"github.com/anthropics/anthropic-cli/internal/requestflag"
 	"github.com/anthropics/anthropic-sdk-go/option"
-
 	"github.com/goccy/go-yaml"
 	"github.com/urfave/cli/v3"
 )

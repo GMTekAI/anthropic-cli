@@ -13,7 +13,7 @@ func TestBetaAgentsCreate(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"beta:agents", "create",
-			"--model", "{id: claude-opus-5, effort: low, inference_geo: inference_geo, speed: standard}",
+			"--model", "claude-opus-5",
 			"--name", "My First Agent",
 			"--description", "A general-purpose starter agent.",
 			"--mcp-server", "{name: example-mcp, type: url, url: https://example-server.modelcontextprotocol.io/sse}",
@@ -36,7 +36,7 @@ func TestBetaAgentsCreate(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"beta:agents", "create",
-			"--model", "{id: claude-opus-5, effort: low, inference_geo: inference_geo, speed: standard}",
+			"--model", "claude-opus-5",
 			"--name", "My First Agent",
 			"--description", "A general-purpose starter agent.",
 			"--mcp-server.name", "example-mcp",
@@ -56,11 +56,7 @@ func TestBetaAgentsCreate(t *testing.T) {
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"model:\n" +
-			"  id: claude-opus-5\n" +
-			"  effort: low\n" +
-			"  inference_geo: inference_geo\n" +
-			"  speed: standard\n" +
+			"model: claude-opus-5\n" +
 			"name: My First Agent\n" +
 			"description: A general-purpose starter agent.\n" +
 			"mcp_servers:\n" +

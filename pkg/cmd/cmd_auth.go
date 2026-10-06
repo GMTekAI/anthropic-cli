@@ -3,6 +3,7 @@ package cmd
 import (
 	"bufio"
 	"bytes"
+	"cmp"
 	"context"
 	"crypto/rand"
 	"crypto/sha256"
@@ -678,6 +679,8 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 	fed := federationFromRoot(root)
 	fedReady := fed.AnySet() && len(fed.Missing()) == 0
 	fedMissing := fed.Missing()
+	gc := googleCloudFromRoot(root)
+	gcSet := gc.AnySet()
 
 	// Credential tier mirrors getDefaultRequestOptions exactly. Note that
 	// partial federation config (fed.AnySet() but not fedReady) does NOT
@@ -694,13 +697,15 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 		credWinner = 3
 	case fedReady:
 		credWinner = 4
-	case profileTokenPresent:
+	case gcSet:
 		credWinner = 5
+	case profileTokenPresent:
+		credWinner = 6
 	}
 
 	fmt.Fprintln(out)
 	fmt.Fprintln(out, "Credentials")
-	if credWinner == 3 || credWinner == 5 {
+	if credWinner == 3 || credWinner == 6 {
 		if who := loggedInSummary(creds.OrganizationName, creds.AccountEmail); who != "" {
 			fmt.Fprintf(out, "  Logged in %s\n", who)
 		}
@@ -734,7 +739,7 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 		} else {
 			profileLabel += " [via active_config]"
 		}
-		writeRow(out, credWinner == 3 || credWinner == 5, profileLabel, formatSecret(creds.AccessToken, true))
+		writeRow(out, credWinner == 3 || credWinner == 6, profileLabel, formatSecret(creds.AccessToken, true))
 		exp := time.Unix(creds.ExpiresAt, 0)
 		writeDetail(out, "expires", fmt.Sprintf("%s (%s)", exp.Format(time.RFC3339), formatRemaining(time.Until(exp))))
 		// Prefer the credentials file's scope (what the live token was granted)
@@ -771,6 +776,12 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 		writeRow(out, credWinner == 4, "Federation (jwt-bearer)", "see 'Federation inputs' below")
 	} else if fed.AnySet() {
 		writeRow(out, false, "Federation (jwt-bearer)", "partial — missing required inputs")
+	}
+	if gcSet {
+		writeRow(out, credWinner == 5, "Google Cloud", "Application Default Credentials")
+		writeDetail(out, "project", cmp.Or(gc.Project, "(from GOOGLE_CLOUD_PROJECT or the credentials)"))
+		writeDetail(out, "location", cmp.Or(gc.Location, "global"))
+		writeDetail(out, "workspace_id", cmp.Or(gc.WorkspaceID, "(not set)"))
 	}
 
 	// Surface the surprising-override case: the user ran `ant auth login` but
@@ -813,6 +824,10 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 	}
 	baseWinner := 4 // SDK default when nothing else is set
 	switch {
+	case credWinner == 5:
+		// The Google Cloud tier takes only its own base URL: the rows below
+		// name hosts for Anthropic credentials and are not in play.
+		baseWinner = 5
 	case flagBaseURL != "":
 		baseWinner = 1
 	case envBaseURL != "":
@@ -831,6 +846,13 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 	}
 	if baseWinner == 4 {
 		writeRow(out, true, "SDK default", defaultBaseURL)
+	}
+	if baseWinner == 5 {
+		label := "Google Cloud gateway"
+		if gc.BaseURL != "" {
+			label = "--google-cloud-base-url / ANTHROPIC_GOOGLE_CLOUD_BASE_URL"
+		}
+		writeRow(out, true, label, gc.host())
 	}
 
 	fmt.Fprintln(out)

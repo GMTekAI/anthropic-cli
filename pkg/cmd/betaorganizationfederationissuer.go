@@ -69,8 +69,9 @@ var betaOrganizationFederationIssuersCreate = requestflag.WithInnerFlags(cli.Com
 			Usage:      "Set when the discovery URL differs from `issuer_url`.",
 			InnerField: "discovery_base",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[[]map[string]any]{
 			Name:       "jwks.keys",
+			Usage:      "Inline JWK objects.",
 			InnerField: "keys",
 		},
 		&requestflag.InnerFlag[string]{
@@ -168,8 +169,9 @@ var betaOrganizationFederationIssuersUpdate = requestflag.WithInnerFlags(cli.Com
 			Usage:      "Set when the discovery URL differs from `issuer_url`.",
 			InnerField: "discovery_base",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[[]map[string]any]{
 			Name:       "jwks.keys",
+			Usage:      "Inline JWK objects.",
 			InnerField: "keys",
 		},
 		&requestflag.InnerFlag[string]{

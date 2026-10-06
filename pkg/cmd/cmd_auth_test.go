@@ -393,9 +393,11 @@ func resetWarnOnce(t *testing.T) {
 	t.Helper()
 	multiAuthWarnOnce = sync.Once{}
 	clientIDDefaultedOnce = sync.Once{}
+	googleCloudBaseURLNoticeOnce = sync.Once{}
 	t.Cleanup(func() {
 		multiAuthWarnOnce = sync.Once{}
 		clientIDDefaultedOnce = sync.Once{}
+		googleCloudBaseURLNoticeOnce = sync.Once{}
 	})
 }
 
@@ -407,7 +409,7 @@ func TestMultiAuthWarning(t *testing.T) {
 
 	t.Run("api-key and explicit profile", func(t *testing.T) {
 		reset()
-		out := captureStderr(t, func() { warnIfMultipleAuthSources("--api-key / ANTHROPIC_API_KEY", "", true, false, false) })
+		out := captureStderr(t, func() { warnIfMultipleAuthSources("--api-key / ANTHROPIC_API_KEY", "", true, false, false, false) })
 		assert.Contains(t, out, "multiple auth sources configured")
 		assert.Contains(t, out, "--api-key / ANTHROPIC_API_KEY")
 		assert.Contains(t, out, "profile from --profile / ANTHROPIC_PROFILE")
@@ -417,7 +419,7 @@ func TestMultiAuthWarning(t *testing.T) {
 
 	t.Run("federation beats implicit profile", func(t *testing.T) {
 		reset()
-		out := captureStderr(t, func() { warnIfMultipleAuthSources("", "", false, true, true) })
+		out := captureStderr(t, func() { warnIfMultipleAuthSources("", "", false, true, false, true) })
 		assert.Contains(t, out, "federation env")
 		assert.Contains(t, out, "active profile (active_config)")
 		assert.Contains(t, out, "using federation env per precedence")
@@ -425,20 +427,20 @@ func TestMultiAuthWarning(t *testing.T) {
 
 	t.Run("explicit profile beats federation", func(t *testing.T) {
 		reset()
-		out := captureStderr(t, func() { warnIfMultipleAuthSources("", "", true, true, false) })
+		out := captureStderr(t, func() { warnIfMultipleAuthSources("", "", true, true, false, false) })
 		assert.Contains(t, out, "using profile from --profile / ANTHROPIC_PROFILE per precedence")
 	})
 
 	t.Run("single source is silent", func(t *testing.T) {
 		reset()
-		out := captureStderr(t, func() { warnIfMultipleAuthSources("--api-key / ANTHROPIC_API_KEY", "", false, false, false) })
+		out := captureStderr(t, func() { warnIfMultipleAuthSources("--api-key / ANTHROPIC_API_KEY", "", false, false, false, false) })
 		assert.Empty(t, out)
 	})
 
 	t.Run("emits once", func(t *testing.T) {
 		reset()
-		first := captureStderr(t, func() { warnIfMultipleAuthSources("", "--auth-token / ANTHROPIC_AUTH_TOKEN", true, true, false) })
-		second := captureStderr(t, func() { warnIfMultipleAuthSources("", "--auth-token / ANTHROPIC_AUTH_TOKEN", true, true, false) })
+		first := captureStderr(t, func() { warnIfMultipleAuthSources("", "--auth-token / ANTHROPIC_AUTH_TOKEN", true, true, false, false) })
+		second := captureStderr(t, func() { warnIfMultipleAuthSources("", "--auth-token / ANTHROPIC_AUTH_TOKEN", true, true, false, false) })
 		assert.NotEmpty(t, first)
 		assert.Empty(t, second)
 	})
@@ -1904,6 +1906,10 @@ func runStatus(t *testing.T, globalArgs ...string) (string, error) {
 			&cli.StringFlag{Name: "federation-rule"},
 			&cli.StringFlag{Name: "service-account-id"},
 			&cli.StringFlag{Name: "workspace-id", Sources: cli.EnvVars("ANTHROPIC_WORKSPACE_ID")},
+			&cli.StringFlag{Name: "google-cloud-project", Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_PROJECT")},
+			&cli.StringFlag{Name: "google-cloud-location", Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_LOCATION")},
+			&cli.StringFlag{Name: "google-cloud-workspace-id", Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_WORKSPACE_ID")},
+			&cli.StringFlag{Name: "google-cloud-base-url", Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_BASE_URL")},
 		},
 		Commands: []*cli.Command{{
 			Name: "auth", Commands: []*cli.Command{{

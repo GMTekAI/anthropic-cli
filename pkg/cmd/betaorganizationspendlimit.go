@@ -101,6 +101,11 @@ var betaOrganizationSpendLimitsSet = requestflag.WithInnerFlags(cli.Command{
 			Usage:    `Allowed values: "daily", "monthly", "weekly".`,
 			BodyPath: "period",
 		},
+		&requestflag.Flag[[]string]{
+			Name:       "beta",
+			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			HeaderPath: "anthropic-beta",
+		},
 	},
 	Action:          handleBetaOrganizationSpendLimitsSet,
 	HideHelpCommand: true,
