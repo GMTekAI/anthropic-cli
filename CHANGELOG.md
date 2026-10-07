@@ -1,5 +1,43 @@
 # Changelog
 
+## 1.39.0 (2026-10-07)
+
+Full Changelog: [v1.38.0...v1.39.0](https://github.com/anthropics/anthropic-cli/compare/v1.38.0...v1.39.0)
+
+### Features
+
+* **api:** add claude-haiku-5-5 and typed computer and browser toolset tool calls ([9a19671](https://github.com/anthropics/anthropic-cli/commit/9a19671db8b1ae9223acb815871360fa114511d8))
+* **api:** add include_default parameter to list workspaces ([5d26503](https://github.com/anthropics/anthropic-cli/commit/5d26503b5388e89b90cc778899a019bcc647d00b))
+* **api:** add lifecycle stage fields and filter to /v1/models ([86c6973](https://github.com/anthropics/anthropic-cli/commit/86c6973da12ac32f9fe383f60ab89bd21ad38d60))
+* **auth:** add ant auth login --admin to request the org:admin scope ([#149](https://github.com/anthropics/anthropic-cli/issues/149)) ([8f7ce5f](https://github.com/anthropics/anthropic-cli/commit/8f7ce5f4d71e3aa35c4cfcd9d6aef562b7672241))
+* **cli:** support Claude Platform on Google Cloud ([#151](https://github.com/anthropics/anthropic-cli/issues/151)) ([5f16257](https://github.com/anthropics/anthropic-cli/commit/5f162570bcbdca7279ba00fc9c6ab14b3ccae9f1))
+
+
+### Bug Fixes
+
+* add help text and types to flags specific to one union variant ([5f16257](https://github.com/anthropics/anthropic-cli/commit/5f162570bcbdca7279ba00fc9c6ab14b3ccae9f1))
+* **cli:** accept a bare model id for agents --model, show object flag syntax and sub-flags in help ([5f16257](https://github.com/anthropics/anthropic-cli/commit/5f162570bcbdca7279ba00fc9c6ab14b3ccae9f1))
+* **client:** keep a piped value in the request body when a path parameter has the same name ([f0b8001](https://github.com/anthropics/anthropic-cli/commit/f0b8001156b5819e12adb4cb690ccd178d6b42fe))
+* **client:** send array header params as a single comma-separated header ([f50220f](https://github.com/anthropics/anthropic-cli/commit/f50220ff88fa9f56f9a8a701e8b1fbb4026f04e5))
+
+
+### Chores
+
+* **docs:** describe a federation rule's target by its type ([5f16257](https://github.com/anthropics/anthropic-cli/commit/5f162570bcbdca7279ba00fc9c6ab14b3ccae9f1))
+* **docs:** fix example IDs in sessions, agents and vault credentials ([5f16257](https://github.com/anthropics/anthropic-cli/commit/5f162570bcbdca7279ba00fc9c6ab14b3ccae9f1))
+* **docs:** update Managed Agents multiagent and thread descriptions ([5f16257](https://github.com/anthropics/anthropic-cli/commit/5f162570bcbdca7279ba00fc9c6ab14b3ccae9f1))
+* **internal:** add REVIEW.md with review instructions ([5f16257](https://github.com/anthropics/anthropic-cli/commit/5f162570bcbdca7279ba00fc9c6ab14b3ccae9f1))
+* **internal:** group imports in two blocks in all files ([5f16257](https://github.com/anthropics/anthropic-cli/commit/5f162570bcbdca7279ba00fc9c6ab14b3ccae9f1))
+* **tests:** run tests skipped for a query param bug that is now fixed ([4d8e250](https://github.com/anthropics/anthropic-cli/commit/4d8e25047606f421b8c33609fd5ffb4232b38329))
+* **tests:** run tests that an older mock server could not serve ([dc98ed1](https://github.com/anthropics/anthropic-cli/commit/dc98ed15baec9bc8e8ae702c46f2074132e41da0))
+* **tests:** run the skipped skill create tests ([#150](https://github.com/anthropics/anthropic-cli/issues/150)) ([5f16257](https://github.com/anthropics/anthropic-cli/commit/5f162570bcbdca7279ba00fc9c6ab14b3ccae9f1))
+* **tests:** run the tests skipped for incomplete example responses ([c80fcf5](https://github.com/anthropics/anthropic-cli/commit/c80fcf518c5a60a08310f59099a94b33f62afb7b))
+
+
+### Documentation
+
+* **api:** state the agent tools limit as 256 ([57cb228](https://github.com/anthropics/anthropic-cli/commit/57cb22820abdf989cb991a290d4a8fc1b0388fe7))
+
 ## 1.38.0 (2026-09-30)
 
 Full Changelog: [v1.37.0...v1.38.0](https://github.com/anthropics/anthropic-cli/compare/v1.37.0...v1.38.0)
