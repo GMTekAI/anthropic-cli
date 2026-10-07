@@ -88,8 +88,8 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 	// federation env vars and Google Cloud settings (you asked for it), but
 	// those beat a profile that just happened to be lying around in
 	// active_config.
-	apiKeySet := root.IsSet("api-key")
-	authTokenSet := root.IsSet("auth-token")
+	apiKey, apiKeySet := directCredential(root, "api-key")
+	authToken, authTokenSet := directCredential(root, "auth-token")
 	cfg, profileExplicit := loadProfileIfUsable(root)
 	fed := federationFromRoot(root)
 	fedAnySet := fed.AnySet()
@@ -126,9 +126,9 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 
 	switch {
 	case apiKeySet:
-		opts = append(opts, option.WithAPIKey(root.String("api-key")))
+		opts = append(opts, option.WithAPIKey(apiKey))
 	case authTokenSet:
-		opts = append(opts, option.WithAuthToken(root.String("auth-token")))
+		opts = append(opts, option.WithAuthToken(authToken))
 	case cfg != nil && profileExplicit:
 		useProfile()
 	case fedAnySet:

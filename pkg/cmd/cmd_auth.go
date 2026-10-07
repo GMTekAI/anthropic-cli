@@ -682,8 +682,8 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 	if err := applyStdinCredential(root); err != nil {
 		return err
 	}
-	apiKeySet := root.IsSet("api-key")
-	authTokenSet := root.IsSet("auth-token")
+	apiKey, apiKeySet := directCredential(root, "api-key")
+	authToken, authTokenSet := directCredential(root, "auth-token")
 	fed := federationFromRoot(root)
 	fedReady := fed.AnySet() && len(fed.Missing()) == 0
 	fedMissing := fed.Missing()
@@ -731,10 +731,10 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 		fmt.Fprintln(out, "  (no credential configured — set ANTHROPIC_API_KEY or run `ant auth login`)")
 	}
 	if apiKeySet {
-		writeRow(out, credWinner == 1, credentialSourceLabel(root, "api-key"), formatSecret(root.String("api-key"), true))
+		writeRow(out, credWinner == 1, credentialSourceLabel(root, "api-key"), formatSecret(apiKey, true))
 	}
 	if authTokenSet {
-		writeRow(out, credWinner == 2, credentialSourceLabel(root, "auth-token"), formatSecret(root.String("auth-token"), true))
+		writeRow(out, credWinner == 2, credentialSourceLabel(root, "auth-token"), formatSecret(authToken, true))
 	}
 	if profileTokenPresent {
 		authType := "unknown"

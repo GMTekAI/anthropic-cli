@@ -295,8 +295,10 @@ func profileInUse(cmd *cli.Command) *config.Config {
 	cfg, explicit := loadProfileIfUsable(cmd)
 	root := cmd.Root()
 	fed := federationFromRoot(root)
+	_, apiKeySet := directCredential(root, "api-key")
+	_, authTokenSet := directCredential(root, "auth-token")
 	switch {
-	case cfg == nil, root.IsSet("api-key"), root.IsSet("auth-token"):
+	case cfg == nil, apiKeySet, authTokenSet:
 		return nil
 	case explicit:
 		return cfg
@@ -312,7 +314,9 @@ func profileInUse(cmd *cli.Command) *config.Config {
 // Google Cloud tier, by the client's own precedence.
 func googleCloudInUse(cmd *cli.Command) bool {
 	root := cmd.Root()
-	if root.IsSet("api-key") || root.IsSet("auth-token") || !googleCloudFromRoot(root).AnySet() {
+	_, apiKeySet := directCredential(root, "api-key")
+	_, authTokenSet := directCredential(root, "auth-token")
+	if apiKeySet || authTokenSet || !googleCloudFromRoot(root).AnySet() {
 		return false
 	}
 	if cfg, explicit := loadProfileIfUsable(cmd); cfg != nil && explicit {
@@ -338,6 +342,8 @@ func describeOrigin(cmd *cli.Command, o core.Origin) render.OriginSummary {
 	c := render.OriginSummary{Host: hostOf(o.BaseURL), Organization: o.OrganizationID, Workspace: o.WorkspaceID}
 	root := cmd.Root()
 	cfg := profileInUse(cmd)
+	_, apiKeySet := directCredential(root, "api-key")
+	_, authTokenSet := directCredential(root, "auth-token")
 	switch {
 	case cfg != nil:
 		name, dir := activeProfile(cmd)
@@ -350,9 +356,9 @@ func describeOrigin(cmd *cli.Command, o core.Origin) render.OriginSummary {
 				c.Workspace = nameAndID(creds.WorkspaceName, o.WorkspaceID)
 			}
 		}
-	case root.IsSet("api-key"):
+	case apiKeySet:
 		c.Credentials = "API key (--api-key / ANTHROPIC_API_KEY)"
-	case root.IsSet("auth-token"):
+	case authTokenSet:
 		c.Credentials = "auth token (--auth-token / ANTHROPIC_AUTH_TOKEN)"
 	case googleCloudInUse(cmd):
 		c.Credentials = "Google Cloud (Application Default Credentials)"

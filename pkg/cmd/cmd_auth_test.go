@@ -1891,6 +1891,8 @@ func TestAuthLogoutAllWithoutActiveConfig(t *testing.T) {
 // on undefined-flag behaviour.
 func runStatus(t *testing.T, globalArgs ...string) (string, error) {
 	t.Helper()
+	clearEnv(t, "ANTHROPIC_API_KEY")
+	clearEnv(t, "ANTHROPIC_AUTH_TOKEN")
 	root := &cli.Command{
 		Name: "ant",
 		Flags: []cli.Flag{

@@ -30,6 +30,11 @@ var stdinCredentialFlags = []struct{ stdinFlag, target string }{
 	{"auth-token-stdin", "auth-token"},
 }
 
+var directCredentialEnv = map[string]string{
+	"api-key":    "ANTHROPIC_API_KEY",
+	"auth-token": "ANTHROPIC_AUTH_TOKEN",
+}
+
 // Vars so tests can substitute argv and stdin.
 var (
 	commandLineArgs        = func() []string { return os.Args[1:] }
@@ -38,6 +43,8 @@ var (
 	argvCredentialWarnOnce sync.Once
 	stdinCredentialOnce    sync.Once
 	stdinCredentialErr     error
+	// stdinCredential is the credential read from stdin; stdin carries at most one.
+	stdinCredential struct{ target, value string }
 	// stdinConsumedByCredential names the *-stdin flag that drained stdin, so
 	// flagOptions can refuse a second stdin consumer with a clear error.
 	stdinConsumedByCredential string
@@ -80,18 +87,31 @@ func warnIfCredentialOnCommandLine(w io.Writer) {
 }
 
 // applyStdinCredential reads a credential from stdin when --api-key-stdin or
-// --auth-token-stdin is set and stores it on the corresponding credential
-// flag, so the precedence chain in getDefaultRequestOptions (and `auth
-// status`) treats it exactly like --api-key / --auth-token. It consumes all
+// --auth-token-stdin is set, for directCredential to return. It consumes all
 // of stdin: a command using it must take its request body from flags.
 func applyStdinCredential(cmd *cli.Command) error {
 	stdinCredentialOnce.Do(func() {
-		stdinCredentialErr = readStdinCredential(cmd, credentialStdin(), credentialStdinIsTTY(), credentialFlagsOnCommandLine())
+		stdinCredential.target, stdinCredential.value, stdinCredentialErr = readStdinCredential(cmd, credentialStdin(), credentialStdinIsTTY(), credentialFlagsOnCommandLine())
 	})
 	return stdinCredentialErr
 }
 
-func readStdinCredential(cmd *cli.Command, in io.Reader, isTTY bool, onCommandLine []string) error {
+// directCredential returns the api-key or auth-token credential for this run,
+// the two that skip profiles and federation: the value piped to
+// --<target>-stdin, else the env var. applyStdinCredential must run first.
+func directCredential(root *cli.Command, target string) (string, bool) {
+	if stdinCredential.target == target {
+		return stdinCredential.value, true
+	}
+	// While the root still declares the deprecated --api-key / --auth-token,
+	// that flag holds the argv value, or the env var's through its Sources.
+	if root.IsSet(target) {
+		return root.String(target), true
+	}
+	return os.LookupEnv(directCredentialEnv[target])
+}
+
+func readStdinCredential(cmd *cli.Command, in io.Reader, isTTY bool, onCommandLine []string) (target, secret string, err error) {
 	var chosen []struct{ stdinFlag, target string }
 	for _, f := range stdinCredentialFlags {
 		if cmd.Bool(f.stdinFlag) {
@@ -100,30 +120,30 @@ func readStdinCredential(cmd *cli.Command, in io.Reader, isTTY bool, onCommandLi
 	}
 	switch len(chosen) {
 	case 0:
-		return nil
+		return "", "", nil
 	case 1:
 	default:
-		return errors.New("--api-key-stdin and --auth-token-stdin are mutually exclusive: stdin can carry only one credential")
+		return "", "", errors.New("--api-key-stdin and --auth-token-stdin are mutually exclusive: stdin can carry only one credential")
 	}
 	f := chosen[0]
 	for _, name := range onCommandLine {
 		if name == f.target {
-			return fmt.Errorf("--%s cannot be combined with --%s", f.stdinFlag, f.target)
+			return "", "", fmt.Errorf("--%s cannot be combined with --%s", f.stdinFlag, f.target)
 		}
 	}
 	if isTTY {
-		return fmt.Errorf("--%s reads the credential from standard input; pipe it in (e.g. op read op://vault/item/credential | ant --%s ...)", f.stdinFlag, f.stdinFlag)
+		return "", "", fmt.Errorf("--%s reads the credential from standard input; pipe it in (e.g. op read op://vault/item/credential | ant --%s ...)", f.stdinFlag, f.stdinFlag)
 	}
 	stdinConsumedByCredential = "--" + f.stdinFlag
 	data, err := io.ReadAll(io.LimitReader(in, 64<<10))
 	if err != nil {
-		return fmt.Errorf("--%s: reading stdin: %w", f.stdinFlag, err)
+		return "", "", fmt.Errorf("--%s: reading stdin: %w", f.stdinFlag, err)
 	}
-	secret := strings.TrimSpace(string(data))
+	secret = strings.TrimSpace(string(data))
 	if secret == "" {
-		return fmt.Errorf("--%s: stdin was empty", f.stdinFlag)
+		return "", "", fmt.Errorf("--%s: stdin was empty", f.stdinFlag)
 	}
-	return cmd.Set(f.target, secret)
+	return f.target, secret, nil
 }
 
 func credentialFromStdin(cmd *cli.Command, target string) bool {
@@ -141,9 +161,5 @@ func credentialSourceLabel(cmd *cli.Command, target string) string {
 	if credentialFromStdin(cmd, target) {
 		return "--" + target + "-stdin"
 	}
-	env := "ANTHROPIC_API_KEY"
-	if target == "auth-token" {
-		env = "ANTHROPIC_AUTH_TOKEN"
-	}
-	return fmt.Sprintf("--%s / %s", target, env)
+	return fmt.Sprintf("--%s / %s", target, directCredentialEnv[target])
 }
