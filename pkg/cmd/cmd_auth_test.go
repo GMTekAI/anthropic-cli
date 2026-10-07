@@ -2022,3 +2022,82 @@ func mustRead(t *testing.T, path string) []byte {
 	require.NoError(t, err)
 	return b
 }
+
+// TestTokenRequestsRefuseCleartextBaseURL guards the two token requests the
+// CLI makes itself: neither may send an authorization code or a refresh token
+// to a base URL that is neither https nor loopback.
+func TestTokenRequestsRefuseCleartextBaseURL(t *testing.T) {
+	const cleartext = "http://gateway.example.com"
+
+	t.Run("code exchange", func(t *testing.T) {
+		_, err := exchangeCode(context.Background(), cleartext, "client-x", "code-x", "verifier-x", "http://localhost:1/cb", "state-x", false)
+		require.ErrorContains(t, err, "non-https token endpoint")
+	})
+
+	t.Run("refresh", func(t *testing.T) {
+		_, err := refreshAccessToken(context.Background(), cleartext, "client-x", "rt-x")
+		require.ErrorContains(t, err, "non-https token endpoint")
+	})
+
+	t.Run("print-credentials with an expired token", func(t *testing.T) {
+		dir := t.TempDir()
+		t.Setenv("ANTHROPIC_CONFIG_DIR", dir)
+		clearEnv(t, "ANTHROPIC_PROFILE")
+		t.Setenv("ANTHROPIC_BASE_URL", cleartext)
+		require.NoError(t, config.SaveProfile(dir, "default", &config.Config{
+			AuthenticationInfo: &config.AuthenticationInfo{Type: config.AuthenticationTypeUserOAuth, UserOAuth: &config.UserOAuth{}},
+		}))
+		require.NoError(t, config.SetActiveProfile(dir, "default"))
+		exp := time.Now().Add(-time.Hour)
+		require.NoError(t, config.WriteCredentials(config.ProfileCredentialsPath(dir, "default"), config.Credentials{
+			AccessToken: "sk-ant-oat01-STALE", RefreshToken: "rt-STALE", ExpiresAt: &exp,
+		}))
+
+		// A failed refresh warns and prints what is on disk, so the refusal
+		// shows up as that warning.
+		var out string
+		stderr := captureStderr(t, func() {
+			var err error
+			out, err = runPrintCredentials(t, "--access-token")
+			require.NoError(t, err)
+		})
+		assert.Contains(t, stderr, "non-https token endpoint")
+		assert.Equal(t, "sk-ant-oat01-STALE\n", out)
+	})
+
+	for name, tc := range map[string]struct{ baseURL, consoleURL, want string }{
+		"login refuses a cleartext base URL before the browser opens":    {cleartext, "https://console.test", "non-https token endpoint"},
+		"login refuses a cleartext console URL before the browser opens": {"https://api.test", cleartext, "non-https console URL"},
+	} {
+		t.Run(name, func(t *testing.T) {
+			t.Setenv("ANTHROPIC_CONFIG_DIR", t.TempDir())
+			clearEnv(t, "ANTHROPIC_PROFILE")
+			origOpenBrowser := openBrowser
+			opened := false
+			openBrowser = func(string) error { opened = true; return nil }
+			t.Cleanup(func() { openBrowser = origOpenBrowser })
+
+			err := run(t, loginCmdDef(), "auth", "login", "--base-url", tc.baseURL, "--console-url", tc.consoleURL)
+			require.ErrorContains(t, err, tc.want)
+			assert.False(t, opened, "a refused URL must not start the browser flow")
+		})
+	}
+}
+
+// TestTokenRequestsDoNotFollowRedirects: a 307 replays the body, so following
+// one would hand the code or refresh token to a host the base URL check never saw.
+func TestTokenRequestsDoNotFollowRedirects(t *testing.T) {
+	replayed := 0
+	elsewhere := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) { replayed++ }))
+	t.Cleanup(elsewhere.Close)
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, elsewhere.URL+r.URL.Path, http.StatusTemporaryRedirect)
+	}))
+	t.Cleanup(srv.Close)
+
+	_, err := exchangeCode(context.Background(), srv.URL, "client-x", "code-x", "verifier-x", "http://localhost:1/cb", "state-x", false)
+	require.Error(t, err)
+	_, err = refreshAccessToken(context.Background(), srv.URL, "client-x", "rt-x")
+	require.Error(t, err)
+	assert.Zero(t, replayed, "the token request body must not reach the redirect target")
+}
