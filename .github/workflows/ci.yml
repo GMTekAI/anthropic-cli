@@ -25,6 +25,10 @@ jobs:
   lint:
     timeout-minutes: 10
     name: lint
+    # Finding the branch's PR base reads its open PRs, which needs `pull-requests: read`.
+    permissions:
+      contents: read
+      pull-requests: read
     runs-on: ${{ github.repository == 'anthropics/anthropic-cli' && 'ubuntu-latest' || 'ubuntu-latest-16-core' }}
     if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
 
@@ -36,12 +40,27 @@ jobs:
           app-id: ${{ vars.GO_PRIVATE_READER_APP_ID }}
           private-key: ${{ secrets.GO_PRIVATE_READER_PRIVATE_KEY }}
 
+      # A branch with no Go SDK branch of its own builds against the Go SDK branch of its PR's base.
+      # With more than one open PR from the branch there is no single base, so none is used.
+      - name: Find the PR's base branch
+        if: github.repository == 'anthropics/anthropic-sdk-cli-private'
+        id: pr-base
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          BASE_REF="$(gh api -X GET "repos/${GITHUB_REPOSITORY}/pulls" -f head="${GITHUB_REPOSITORY_OWNER}:${REF_NAME}" -f state=open --jq 'if length == 1 then .[0].base.ref else empty end' || true)"
+          echo "ref=${BASE_REF}" >> "$GITHUB_OUTPUT"
+
       - name: Link staging branch
         if: github.repository == 'anthropics/anthropic-sdk-cli-private'
         env:
           REF_NAME: ${{ github.ref_name }}
+          BASE_REF: ${{ steps.pr-base.outputs.ref }}
         run: |
-          ./scripts/link "github.com/anthropics/anthropic-sdk-go-private@${REF_NAME}" || true
+          if ! ./scripts/link "github.com/anthropics/anthropic-sdk-go-private@${REF_NAME}" ${BASE_REF:+"github.com/anthropics/anthropic-sdk-go-private@${BASE_REF}"}; then
+            echo "::warning::Could not link the Go SDK at ${REF_NAME}${BASE_REF:+ or ${BASE_REF}}, so this build uses the Go SDK version in go.mod"
+          fi
 
       - name: Bootstrap
         run: ./scripts/bootstrap
@@ -55,6 +74,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      pull-requests: read
     runs-on: ${{ github.repository == 'anthropics/anthropic-cli' && 'ubuntu-latest' || 'ubuntu-latest-16-core' }}
     if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
     steps:
@@ -65,12 +85,27 @@ jobs:
           app-id: ${{ vars.GO_PRIVATE_READER_APP_ID }}
           private-key: ${{ secrets.GO_PRIVATE_READER_PRIVATE_KEY }}
 
+      # A branch with no Go SDK branch of its own builds against the Go SDK branch of its PR's base.
+      # With more than one open PR from the branch there is no single base, so none is used.
+      - name: Find the PR's base branch
+        if: github.repository == 'anthropics/anthropic-sdk-cli-private'
+        id: pr-base
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          BASE_REF="$(gh api -X GET "repos/${GITHUB_REPOSITORY}/pulls" -f head="${GITHUB_REPOSITORY_OWNER}:${REF_NAME}" -f state=open --jq 'if length == 1 then .[0].base.ref else empty end' || true)"
+          echo "ref=${BASE_REF}" >> "$GITHUB_OUTPUT"
+
       - name: Link staging branch
         if: github.repository == 'anthropics/anthropic-sdk-cli-private'
         env:
           REF_NAME: ${{ github.ref_name }}
+          BASE_REF: ${{ steps.pr-base.outputs.ref }}
         run: |
-          ./scripts/link "github.com/anthropics/anthropic-sdk-go-private@${REF_NAME}" || true
+          if ! ./scripts/link "github.com/anthropics/anthropic-sdk-go-private@${REF_NAME}" ${BASE_REF:+"github.com/anthropics/anthropic-sdk-go-private@${BASE_REF}"}; then
+            echo "::warning::Could not link the Go SDK at ${REF_NAME}${BASE_REF:+ or ${BASE_REF}}, so this build uses the Go SDK version in go.mod"
+          fi
 
       - name: Bootstrap
         run: ./scripts/bootstrap
@@ -170,6 +205,9 @@ jobs:
   test:
     timeout-minutes: 20
     name: test
+    permissions:
+      contents: read
+      pull-requests: read
     runs-on: ${{ github.repository == 'anthropics/anthropic-cli' && 'ubuntu-latest' || 'ubuntu-latest-16-core' }}
     if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
     steps:
@@ -180,12 +218,27 @@ jobs:
           app-id: ${{ vars.GO_PRIVATE_READER_APP_ID }}
           private-key: ${{ secrets.GO_PRIVATE_READER_PRIVATE_KEY }}
 
+      # A branch with no Go SDK branch of its own builds against the Go SDK branch of its PR's base.
+      # With more than one open PR from the branch there is no single base, so none is used.
+      - name: Find the PR's base branch
+        if: github.repository == 'anthropics/anthropic-sdk-cli-private'
+        id: pr-base
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          BASE_REF="$(gh api -X GET "repos/${GITHUB_REPOSITORY}/pulls" -f head="${GITHUB_REPOSITORY_OWNER}:${REF_NAME}" -f state=open --jq 'if length == 1 then .[0].base.ref else empty end' || true)"
+          echo "ref=${BASE_REF}" >> "$GITHUB_OUTPUT"
+
       - name: Link staging branch
         if: github.repository == 'anthropics/anthropic-sdk-cli-private'
         env:
           REF_NAME: ${{ github.ref_name }}
+          BASE_REF: ${{ steps.pr-base.outputs.ref }}
         run: |
-          ./scripts/link "github.com/anthropics/anthropic-sdk-go-private@${REF_NAME}" || true
+          if ! ./scripts/link "github.com/anthropics/anthropic-sdk-go-private@${REF_NAME}" ${BASE_REF:+"github.com/anthropics/anthropic-sdk-go-private@${BASE_REF}"}; then
+            echo "::warning::Could not link the Go SDK at ${REF_NAME}${BASE_REF:+ or ${BASE_REF}}, so this build uses the Go SDK version in go.mod"
+          fi
 
       - name: Bootstrap
         run: ./scripts/bootstrap

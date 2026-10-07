@@ -7,16 +7,22 @@ cd "$(dirname "$0")/.."
 # Mark the necessary Go modules as private to avoid Go's proxy
 export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/anthropics/anthropic-sdk-go,github.com/anthropics/anthropic-sdk-go-private"
 
-REPLACEMENT="${1:-"../anthropic-go"}"
-echo "==> Replacing Go SDK with $REPLACEMENT"
+# Each argument is a local directory or module@version to try, in order; the first that exists is linked.
+if [[ $# -eq 0 ]]; then
+    set -- "../anthropic-go"
+fi
 # Clear any stale shallow clone restored from the actions/setup-go cache; otherwise
 # `go list -m` can hit "fatal: shallow file has changed since we read it" and skip.
 if MODCACHE="$(go env GOMODCACHE)" && [[ -n "$MODCACHE" ]]; then
     rm -rf "$MODCACHE/cache/vcs" 2>/dev/null || true
 fi
-if [[ -d "$REPLACEMENT" ]] || go list -m "$REPLACEMENT" >/dev/null; then
-    go mod edit -replace github.com/anthropics/anthropic-sdk-go="$REPLACEMENT"
-    go mod tidy -e
-else
-    echo "Skipping Go SDK replacement (branch may not exist on Go SDK)"
-fi
+for REPLACEMENT in "$@"; do
+    if [[ -d "$REPLACEMENT" ]] || go list -m "$REPLACEMENT" >/dev/null; then
+        echo "==> Replacing Go SDK with $REPLACEMENT"
+        go mod edit -replace github.com/anthropics/anthropic-sdk-go="$REPLACEMENT"
+        go mod tidy -e
+        exit 0
+    fi
+done
+echo "Skipping Go SDK replacement: none of $* exists"
+exit 1
