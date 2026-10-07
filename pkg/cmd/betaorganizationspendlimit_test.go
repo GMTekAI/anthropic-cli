@@ -52,6 +52,7 @@ func TestBetaOrganizationSpendLimitsSet(t *testing.T) {
 			"--amount", "50000",
 			"--scope", "{type: user, user_id: user_01WCz1FkmYMm4gnmykNKUu3Q}",
 			"--period", "monthly",
+			"--beta", "message-batches-2024-09-24",
 		)
 	})
 
@@ -67,6 +68,7 @@ func TestBetaOrganizationSpendLimitsSet(t *testing.T) {
 			t, pipeData,
 			"--api-key", "string",
 			"beta:organization:spend-limits", "set",
+			"--beta", "message-batches-2024-09-24",
 		)
 	})
 }

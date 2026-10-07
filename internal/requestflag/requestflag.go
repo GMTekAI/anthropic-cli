@@ -165,12 +165,22 @@ type RequestContents struct {
 // PathParam (or any of its DataAliases), the flag is set to that value via flag.Set and the key (plus its
 // aliases) is removed from data so it cannot also reach the request body. A piped null or empty array is
 // consumed the same way but leaves the flag unset: outside the body, null/[] and "omitted" are the same
-// request.
+// request. The keys of a flag that was already set are removed too: the command line wins.
+//
+// The body wins a shared name: a key that is also some flag's BodyPath is left in data untouched, so the
+// path, query, or header parameter of that name can only come from its own flag.
 //
 // Inner flags (those with an outer flag) are also handled: if the outer flag's body path key exists in the
 // data map and contains a nested map with a key matching the inner flag's field (or aliases), the inner
 // flag is set from that nested value.
 func ApplyStdinDataToFlags(cmd *cli.Command, data map[string]any) error {
+	bodyKeys := map[string]bool{}
+	for _, flag := range cmd.Flags {
+		if inReq, ok := flag.(InRequest); ok && inReq.GetBodyPath() != "" {
+			bodyKeys[inReq.GetBodyPath()] = true
+		}
+	}
+
 	for _, flag := range cmd.Flags {
 		if flag.IsSet() {
 			continue
@@ -225,16 +235,15 @@ func ApplyStdinDataToFlags(cmd *cli.Command, data map[string]any) error {
 			var val any
 			var found bool
 			for _, key := range append([]string{path}, inReq.GetDataAliases()...) {
-				if v, ok := data[key]; ok {
-					val, found = v, true
-					break
+				if v, ok := data[key]; ok && !bodyKeys[key] {
+					if !found {
+						val, found = v, true
+					}
+					delete(data, key)
 				}
 			}
 			if !found {
 				continue
-			}
-			for _, key := range append([]string{path}, inReq.GetDataAliases()...) {
-				delete(data, key)
 			}
 			if arr, isArr := val.([]any); val == nil || (isArr && len(arr) == 0) {
 				break
@@ -243,6 +252,22 @@ func ApplyStdinDataToFlags(cmd *cli.Command, data map[string]any) error {
 				return err
 			}
 			break
+		}
+	}
+
+	// Runs last so that an unset flag can still take a key it shares with a flag set on the command line.
+	for _, flag := range cmd.Flags {
+		inReq, ok := flag.(InRequest)
+		if !ok || !flag.IsSet() {
+			continue
+		}
+		if inReq.GetQueryPath() != "" || inReq.GetHeaderPath() != "" || inReq.GetPathParam() != "" {
+			keys := []string{inReq.GetQueryPath(), inReq.GetHeaderPath(), inReq.GetPathParam()}
+			for _, key := range append(keys, inReq.GetDataAliases()...) {
+				if !bodyKeys[key] {
+					delete(data, key)
+				}
+			}
 		}
 	}
 	return nil
@@ -394,7 +419,31 @@ func (f *Flag[T]) Get() any {
 }
 
 func (f *Flag[T]) String() string {
-	return cli.FlagStringer(f)
+	return helpEntry(f, "")
+}
+
+// helpEntry renders a flag's --help line like urfave/cli's default FlagStringer, except that it never lifts the
+// first `backticked` span of Usage into the value placeholder: API descriptions use backticks as markdown.
+func helpEntry(f interface {
+	cli.Flag
+	cli.DocGenerationFlag
+}, indent string) string {
+	placeholder := ""
+	if f.TakesValue() {
+		placeholder = f.TypeName()
+		if placeholder == "" {
+			placeholder = "value"
+		}
+	}
+	names := cli.FlagNamePrefixer(f.Names(), placeholder)
+	if mv, ok := f.(cli.DocGenerationMultiValueFlag); ok && mv.IsMultiValueFlag() {
+		names += " [ " + names + " ]"
+	}
+	usage := f.GetUsage()
+	if rf, ok := f.(cli.RequiredFlag); (!ok || !rf.IsRequired()) && f.IsDefaultVisible() && f.GetDefaultText() != "" {
+		usage += " (default: " + f.GetDefaultText() + ")"
+	}
+	return cli.FlagEnvHinter(f.GetEnvVars(), indent+names+"\t"+strings.TrimSpace(usage))
 }
 
 func (f *Flag[T]) IsSet() bool {
@@ -512,6 +561,8 @@ func (f *Flag[T]) TypeName() string {
 			default:
 				return "string"
 			}
+		case reflect.Map:
+			return "'{key: value}'"
 		default:
 			if t.Name() == "" {
 				return "any"
@@ -520,28 +571,18 @@ func (f *Flag[T]) TypeName() string {
 		}
 	}
 
-	switch ty.Kind() {
-	case reflect.Slice:
-		elemType := ty.Elem()
-		return getTypeName(elemType)
-	case reflect.Map:
-		keyType := ty.Key()
-		valueType := ty.Elem()
-		return fmt.Sprintf("%s=%s", getTypeName(keyType), getTypeName(valueType))
-	default:
-		return getTypeName(ty)
+	if ty.Kind() == reflect.Slice {
+		return getTypeName(ty.Elem())
 	}
+	return getTypeName(ty)
 }
 
 // Implementation for the cli.DocGenerationMultiValueFlag interface
 var _ cli.DocGenerationMultiValueFlag = (*Flag[any])(nil) // Type assertion to ensure interface compliance
 
 func (f *Flag[T]) IsMultiValueFlag() bool {
-	if reflect.TypeOf(f.Default) == nil {
-		return false
-	}
-	kind := reflect.TypeOf(f.Default).Kind()
-	return kind == reflect.Slice || kind == reflect.Map
+	ty := reflect.TypeOf(f.Default)
+	return ty != nil && ty.Kind() == reflect.Slice
 }
 
 func (f *Flag[T]) IsBoolFlag() bool {

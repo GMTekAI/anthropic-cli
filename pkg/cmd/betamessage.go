@@ -221,6 +221,7 @@ var betaMessagesCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "container.skills",
+			Usage:      "List of skills to load in the container",
 			InnerField: "skills",
 		},
 	},
@@ -420,8 +421,9 @@ var betaMessagesCreate = requestflag.WithInnerFlags(cli.Command{
 			Name:       "tool.input-examples",
 			InnerField: "input_examples",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:       "tool.input-schema",
+			Usage:      "[JSON schema](https://json-schema.org/draft/2020-12) for this tool's input.\n\nThis defines the shape of the `input` that your tool accepts and that the model will produce.",
 			InnerField: "input_schema",
 		},
 		&requestflag.InnerFlag[*int64]{
@@ -471,6 +473,7 @@ var betaMessagesCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "tool.tools",
+			Usage:      "The server's tool listing, pinned: when present, the server is not asked for its tools before sampling and exactly these entries, with `default_config` and `configs` applied, are the toolset's tools. Copy it from the `mcp_tool_listing` block of an earlier response.",
 			InnerField: "tools",
 		},
 		&requestflag.InnerFlag[*string]{
@@ -797,8 +800,9 @@ var betaMessagesCountTokens = requestflag.WithInnerFlags(cli.Command{
 			Name:       "tool.input-examples",
 			InnerField: "input_examples",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:       "tool.input-schema",
+			Usage:      "[JSON schema](https://json-schema.org/draft/2020-12) for this tool's input.\n\nThis defines the shape of the `input` that your tool accepts and that the model will produce.",
 			InnerField: "input_schema",
 		},
 		&requestflag.InnerFlag[*int64]{
@@ -848,6 +852,7 @@ var betaMessagesCountTokens = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "tool.tools",
+			Usage:      "The server's tool listing, pinned: when present, the server is not asked for its tools before sampling and exactly these entries, with `default_config` and `configs` applied, are the toolset's tools. Copy it from the `mcp_tool_listing` block of an earlier response.",
 			InnerField: "tools",
 		},
 		&requestflag.InnerFlag[*string]{

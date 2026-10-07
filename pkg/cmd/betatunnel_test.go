@@ -32,7 +32,6 @@ func TestBetaTunnelsCreate(t *testing.T) {
 }
 
 func TestBetaTunnelsRetrieve(t *testing.T) {
-	t.Skip("buildURL drops path-level query params")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
@@ -46,7 +45,6 @@ func TestBetaTunnelsRetrieve(t *testing.T) {
 }
 
 func TestBetaTunnelsList(t *testing.T) {
-	t.Skip("buildURL drops path-level query params")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,

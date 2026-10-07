@@ -64,8 +64,9 @@ var betaDreamsCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "The ID of the memory store for the dream to read (`memstore_...`).\n\nThe memory store must be in the same workspace as the dream and must not be archived.",
 			InnerField: "memory_store_id",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[[]string]{
 			Name:       "input.session-ids",
+			Usage:      "The IDs of the sessions whose transcripts the dream reads (`sesn_...`).\n\nGive 1 to 100 IDs, with no duplicates. Each session must be in the same workspace as the dream. Responses list the IDs in sorted order.\n\nThe [limits table in the Dreams guide](https://platform.claude.com/docs/en/managed-agents/dreams#limits) lists all the limits on a dream.",
 			InnerField: "session_ids",
 		},
 	},

@@ -49,7 +49,7 @@ func TestBetaVaultsCredentialsRetrieve(t *testing.T) {
 			"--api-key", "string",
 			"beta:vaults:credentials", "retrieve",
 			"--vault-id", "vlt_011CZkZDLs7fYzm1hXNPeRjv",
-			"--credential-id", "vcrd_011CZkZEMt8gZan2iYOQfSkw",
+			"--credential-id", "vcrd_011CZkZEMt8gZan2iYPQfSkw",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
@@ -63,7 +63,7 @@ func TestBetaVaultsCredentialsUpdate(t *testing.T) {
 			"--api-key", "string",
 			"beta:vaults:credentials", "update",
 			"--vault-id", "vlt_011CZkZDLs7fYzm1hXNPeRjv",
-			"--credential-id", "vcrd_011CZkZEMt8gZan2iYOQfSkw",
+			"--credential-id", "vcrd_011CZkZEMt8gZan2iYPQfSkw",
 			"--auth", "{type: mcp_oauth, access_token: x, expires_at: '2019-12-27T18:11:19.117Z', refresh: {refresh_token: x, scope: scope, token_endpoint_auth: {type: client_secret_basic, client_secret: x}}}",
 			"--display-name", "Example credential",
 			"--metadata", "{environment: production}",
@@ -93,7 +93,7 @@ func TestBetaVaultsCredentialsUpdate(t *testing.T) {
 			"--api-key", "string",
 			"beta:vaults:credentials", "update",
 			"--vault-id", "vlt_011CZkZDLs7fYzm1hXNPeRjv",
-			"--credential-id", "vcrd_011CZkZEMt8gZan2iYOQfSkw",
+			"--credential-id", "vcrd_011CZkZEMt8gZan2iYPQfSkw",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
@@ -101,7 +101,6 @@ func TestBetaVaultsCredentialsUpdate(t *testing.T) {
 }
 
 func TestBetaVaultsCredentialsList(t *testing.T) {
-	t.Skip("buildURL drops path-level query params")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
@@ -125,7 +124,7 @@ func TestBetaVaultsCredentialsDelete(t *testing.T) {
 			"--api-key", "string",
 			"beta:vaults:credentials", "delete",
 			"--vault-id", "vlt_011CZkZDLs7fYzm1hXNPeRjv",
-			"--credential-id", "vcrd_011CZkZEMt8gZan2iYOQfSkw",
+			"--credential-id", "vcrd_011CZkZEMt8gZan2iYPQfSkw",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
@@ -139,7 +138,7 @@ func TestBetaVaultsCredentialsArchive(t *testing.T) {
 			"--api-key", "string",
 			"beta:vaults:credentials", "archive",
 			"--vault-id", "vlt_011CZkZDLs7fYzm1hXNPeRjv",
-			"--credential-id", "vcrd_011CZkZEMt8gZan2iYOQfSkw",
+			"--credential-id", "vcrd_011CZkZEMt8gZan2iYPQfSkw",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
@@ -147,14 +146,13 @@ func TestBetaVaultsCredentialsArchive(t *testing.T) {
 }
 
 func TestBetaVaultsCredentialsMCPOAuthValidate(t *testing.T) {
-	t.Skip("prism can't find endpoint with beta only tag")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
 			"beta:vaults:credentials", "mcp-oauth-validate",
 			"--vault-id", "vlt_011CZkZDLs7fYzm1hXNPeRjv",
-			"--credential-id", "vcrd_011CZkZEMt8gZan2iYOQfSkw",
+			"--credential-id", "vcrd_011CZkZEMt8gZan2iYPQfSkw",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)

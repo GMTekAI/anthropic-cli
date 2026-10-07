@@ -122,8 +122,9 @@ var betaDeploymentsCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "Eval→revision cycles before giving up. Default 3, max 20.",
 			InnerField: "max_iterations",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:       "initial-event.rubric",
+			Usage:      "How to grade the outcome. Text or file reference.",
 			InnerField: "rubric",
 		},
 	},
@@ -155,8 +156,9 @@ var betaDeploymentsCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "GitHub authorization token used to clone the repository. Required for private repositories; optional for public ones.",
 			InnerField: "authorization_token",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:       "resource.checkout",
+			Usage:      "Branch or commit to check out. Defaults to the repository's default branch.",
 			InnerField: "checkout",
 		},
 		&requestflag.InnerFlag[string]{
@@ -355,8 +357,9 @@ var betaDeploymentsUpdate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "Eval→revision cycles before giving up. Default 3, max 20.",
 			InnerField: "max_iterations",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:       "initial-event.rubric",
+			Usage:      "How to grade the outcome. Text or file reference.",
 			InnerField: "rubric",
 		},
 	},
@@ -379,8 +382,9 @@ var betaDeploymentsUpdate = requestflag.WithInnerFlags(cli.Command{
 			InnerField:            "authorization_token",
 			OuterIsArrayOfObjects: true,
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:                  "resource.checkout",
+			Usage:                 "Branch or commit to check out. Defaults to the repository's default branch.",
 			InnerField:            "checkout",
 			OuterIsArrayOfObjects: true,
 		},

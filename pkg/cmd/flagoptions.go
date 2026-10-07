@@ -21,7 +21,6 @@ import (
 	"github.com/anthropics/anthropic-cli/internal/debugmiddleware"
 	"github.com/anthropics/anthropic-cli/internal/requestflag"
 	"github.com/anthropics/anthropic-sdk-go/option"
-
 	"github.com/goccy/go-yaml"
 	"github.com/urfave/cli/v3"
 )
@@ -353,31 +352,13 @@ func flagOptions(
 			}
 			if bodyMap, ok := bodyData.(map[string]any); ok {
 				applyDataAliases(cmd, bodyMap)
-				// Apply any matching keys from the piped data to path, query, and header flags
-				// that have not already been set via the command line.
+				// Move the piped path, query, and header params out of bodyMap and into their flags,
+				// so they don't leak into the request body via the maps.Copy merge below.
 				if err := requestflag.ApplyStdinDataToFlags(cmd, bodyMap); err != nil {
 					return nil, err
 				}
 				// Re-extract request contents now that flags may have been updated.
 				requestContents = requestflag.ExtractRequestContents(cmd)
-				// Remove keys that were consumed as query, header, or path params so they
-				// don't also leak into the request body via the maps.Copy merge below.
-				// We delete both the canonical key and any aliases since the user may have
-				// piped data using an alias name rather than the canonical API name.
-				for _, flag := range cmd.Flags {
-					inReq, ok := flag.(requestflag.InRequest)
-					if !ok || !flag.IsSet() {
-						continue
-					}
-					if inReq.GetQueryPath() != "" || inReq.GetHeaderPath() != "" || inReq.GetPathParam() != "" {
-						delete(bodyMap, inReq.GetQueryPath())
-						delete(bodyMap, inReq.GetHeaderPath())
-						delete(bodyMap, inReq.GetPathParam())
-						for _, alias := range inReq.GetDataAliases() {
-							delete(bodyMap, alias)
-						}
-					}
-				}
 				if bodyType != EmptyBody {
 					if flagMap, ok := requestContents.Body.(map[string]any); ok {
 						maps.Copy(bodyMap, flagMap)
@@ -471,9 +452,14 @@ func flagOptions(
 	}
 
 	// Add header parameters
+	for k, v := range requestContents.Headers {
+		if rv := reflect.ValueOf(v); rv.Kind() == reflect.Slice && rv.Len() == 0 {
+			delete(requestContents.Headers, k)
+		}
+	}
 	headerSettings := apiquery.QuerySettings{
 		NestedFormat: apiquery.NestedQueryFormatDots,
-		ArrayFormat:  apiquery.ArrayQueryFormatRepeat,
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 	}
 	if values, err := apiquery.MarshalWithSettings(requestContents.Headers, headerSettings); err != nil {
 		return nil, err

@@ -808,6 +808,8 @@ func TestFlagTypeNames(t *testing.T) {
 		{"date slice", &Flag[[]DateValue]{}, "date"},
 		{"datetime slice", &Flag[[]DateTimeValue]{}, "datetime"},
 		{"time slice", &Flag[[]TimeValue]{}, "time"},
+		{"map", &Flag[map[string]any]{}, "'{key: value}'"},
+		{"map slice", &Flag[[]map[string]any]{}, "'{key: value}'"},
 	}
 
 	for _, tt := range tests {
@@ -816,6 +818,32 @@ func TestFlagTypeNames(t *testing.T) {
 
 			typeName := tt.flag.TypeName()
 			assert.Equal(t, tt.expected, typeName, "Expected type name %q, got %q", tt.expected, typeName)
+		})
+	}
+}
+
+func TestHelpEntry(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		flag     cli.Flag
+		expected string
+	}{
+		{"backticks stay in usage", &Flag[string]{Name: "model", Usage: "The model, e.g. `claude`."}, "--model string\tThe model, e.g. `claude`."},
+		{"object placeholder", &Flag[map[string]any]{Name: "metadata"}, "--metadata '{key: value}'\t"},
+		{"repeatable", &Flag[[]map[string]any]{Name: "message", Usage: "A message."}, "--message '{key: value}' [ --message '{key: value}' ]\tA message."},
+		{"untyped", &Flag[any]{Name: "system"}, "--system value\t"},
+		{"bool", &Flag[bool]{Name: "stream", Usage: "Defaults to `false`."}, "--stream\tDefaults to `false`."},
+		{"default text", &Flag[int64]{Name: "limit", DefaultText: "20"}, "--limit int\t(default: 20)"},
+		{"inner flag is indented", &InnerFlag[string]{Name: "metadata.key", Usage: "Allowed values: \"a\"."}, "  --metadata.key string\tAllowed values: \"a\"."},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			assert.Equal(t, tt.expected, tt.flag.String())
 		})
 	}
 }
@@ -1078,6 +1106,56 @@ func TestApplyStdinDataToFlags(t *testing.T) {
 
 		// The explicitly-set value should win.
 		assert.Equal(t, "explicit_value", flag.Get())
+		assert.Empty(t, data, "the piped value must not leak into the body merge")
+	})
+
+	t.Run("sets path param flag from piped data", func(t *testing.T) {
+		t.Parallel()
+
+		pathID := &Flag[string]{Name: "id", PathParam: "id"}
+		name := &Flag[string]{Name: "name", BodyPath: "name"}
+		assert.NoError(t, pathID.PreParse())
+		assert.NoError(t, name.PreParse())
+
+		data := map[string]any{"id": "item_A", "name": "copy"}
+		cmd := &cli.Command{Flags: []cli.Flag{pathID, name}}
+		assert.NoError(t, ApplyStdinDataToFlags(cmd, data))
+
+		assert.Equal(t, "item_A", pathID.Get())
+		assert.Equal(t, map[string]any{"name": "copy"}, data)
+	})
+
+	t.Run("piped key stays in the body when a path param and a body param share its name", func(t *testing.T) {
+		t.Parallel()
+
+		pathID := &Flag[string]{Name: "id", PathParam: "id"}
+		bodyID := &Flag[string]{Name: "source-id", BodyPath: "id"}
+		assert.NoError(t, pathID.PreParse())
+		assert.NoError(t, bodyID.PreParse())
+
+		data := map[string]any{"id": "item_B"}
+		cmd := &cli.Command{Flags: []cli.Flag{pathID, bodyID}}
+		assert.NoError(t, ApplyStdinDataToFlags(cmd, data))
+
+		assert.False(t, pathID.IsSet(), "the path param must come from its own flag")
+		assert.Equal(t, map[string]any{"id": "item_B"}, data)
+	})
+
+	t.Run("path flag and piped body key of the same name each keep their own value", func(t *testing.T) {
+		t.Parallel()
+
+		pathID := &Flag[string]{Name: "id", PathParam: "id"}
+		bodyID := &Flag[string]{Name: "source-id", BodyPath: "id"}
+		assert.NoError(t, pathID.PreParse())
+		assert.NoError(t, bodyID.PreParse())
+		assert.NoError(t, pathID.Set("id", "item_A"))
+
+		data := map[string]any{"id": "item_B"}
+		cmd := &cli.Command{Flags: []cli.Flag{pathID, bodyID}}
+		assert.NoError(t, ApplyStdinDataToFlags(cmd, data))
+
+		assert.Equal(t, "item_A", pathID.Get())
+		assert.Equal(t, map[string]any{"id": "item_B"}, data)
 	})
 
 	t.Run("sets integer query flag from piped data", func(t *testing.T) {

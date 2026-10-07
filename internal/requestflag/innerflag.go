@@ -102,7 +102,7 @@ func (f *InnerFlag[T]) Get() any {
 }
 
 func (f *InnerFlag[T]) String() string {
-	return cli.FlagStringer(f)
+	return helpEntry(f, "  ")
 }
 
 func (f *InnerFlag[T]) IsSet() bool {
@@ -111,6 +111,14 @@ func (f *InnerFlag[T]) IsSet() bool {
 
 func (f *InnerFlag[T]) Names() []string {
 	return cli.FlagNames(f.Name, f.Aliases)
+}
+
+// Implementation for the cli.VisibleFlag interface
+var _ cli.VisibleFlag = (*InnerFlag[any])(nil) // Type assertion to ensure interface compliance
+
+func (f *InnerFlag[T]) IsVisible() bool {
+	outer, ok := f.OuterFlag.(cli.VisibleFlag)
+	return !ok || outer.IsVisible()
 }
 
 // Implementation for the cli.DocGenerationFlag interface
@@ -172,6 +180,8 @@ func (f *InnerFlag[T]) TypeName() string {
 			default:
 				return "string"
 			}
+		case reflect.Map:
+			return "'{key: value}'"
 		default:
 			if t.Name() == "" {
 				return "any"
@@ -180,17 +190,10 @@ func (f *InnerFlag[T]) TypeName() string {
 		}
 	}
 
-	switch ty.Kind() {
-	case reflect.Slice:
-		elemType := ty.Elem()
-		return getTypeName(elemType)
-	case reflect.Map:
-		keyType := ty.Key()
-		valueType := ty.Elem()
-		return fmt.Sprintf("%s=%s", getTypeName(keyType), getTypeName(valueType))
-	default:
-		return getTypeName(ty)
+	if ty.Kind() == reflect.Slice {
+		return getTypeName(ty.Elem())
 	}
+	return getTypeName(ty)
 }
 
 // Implementation for the cli.DocGenerationMultiValueFlag interface

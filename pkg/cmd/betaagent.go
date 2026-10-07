@@ -17,7 +17,7 @@ var betaAgentsCreate = requestflag.WithInnerFlags(cli.Command{
 	Usage:   "Create Agent",
 	Suggest: true,
 	Flags: []cli.Flag{
-		&requestflag.Flag[map[string]any]{
+		&requestflag.Flag[any]{
 			Name:     "model",
 			Usage:    "Model identifier. Accepts the [model string](https://platform.claude.com/docs/en/about-claude/models/overview#latest-models-comparison), e.g. `claude-opus-5`, or a `model_config` object for additional configuration control",
 			Required: true,
@@ -46,7 +46,7 @@ var betaAgentsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "multiagent",
-			Usage:    "Multiagent orchestration configuration. Currently supports the `coordinator` topology.",
+			Usage:    "Multiagent orchestration configuration.",
 			BodyPath: "multiagent",
 		},
 		&requestflag.Flag[[]map[string]any]{
@@ -61,7 +61,7 @@ var betaAgentsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[[]map[string]any]{
 			Name:     "tool",
-			Usage:    "Tool configurations available to the agent. Maximum of 128 tools across all toolsets allowed.",
+			Usage:    "Tool configurations available to the agent. Maximum of 256 tools across all toolsets allowed.",
 			BodyPath: "tools",
 		},
 		&requestflag.Flag[[]string]{
@@ -86,6 +86,7 @@ var betaAgentsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "model.effort",
+			Usage:      "How hard Claude works on each inference call. Accepts a bare level string (`\"high\"`) or `{\"type\": \"high\"}`. On create, omitting it resolves the per-model default; on update, omitting it leaves the stored value unchanged.",
 			InnerField: "effort",
 		},
 		&requestflag.InnerFlag[*string]{
@@ -240,14 +241,14 @@ var betaAgentsUpdate = requestflag.WithInnerFlags(cli.Command{
 			Usage:    "Metadata patch. Set a key to a string to upsert it, or to null to delete it. Omit the field to preserve. The stored bag is limited to 16 keys (up to 64 chars each) with values up to 512 chars.",
 			BodyPath: "metadata",
 		},
-		&requestflag.Flag[map[string]any]{
+		&requestflag.Flag[any]{
 			Name:     "model",
 			Usage:    "Model identifier. Accepts the [model string](https://platform.claude.com/docs/en/about-claude/models/overview#latest-models-comparison), e.g. `claude-opus-5`, or a `model_config` object for additional configuration control. Omit to preserve. Cannot be cleared.",
 			BodyPath: "model",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "multiagent",
-			Usage:    "Multiagent orchestration configuration. Currently supports the `coordinator` topology.",
+			Usage:    "Multiagent orchestration configuration.",
 			BodyPath: "multiagent",
 		},
 		&requestflag.Flag[string]{
@@ -267,7 +268,7 @@ var betaAgentsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[any]{
 			Name:     "tool",
-			Usage:    "Tool configurations available to the agent. Full replacement. Omit to preserve; send empty array or null to clear. Maximum of 128 tools across all toolsets allowed.",
+			Usage:    "Tool configurations available to the agent. Full replacement. Omit to preserve; send empty array or null to clear. Maximum of 256 tools across all toolsets allowed.",
 			BodyPath: "tools",
 		},
 		&requestflag.Flag[int64]{
@@ -317,6 +318,7 @@ var betaAgentsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "model.effort",
+			Usage:      "How hard Claude works on each inference call. Accepts a bare level string (`\"high\"`) or `{\"type\": \"high\"}`. On create, omitting it resolves the per-model default; on update, omitting it leaves the stored value unchanged.",
 			InnerField: "effort",
 		},
 		&requestflag.InnerFlag[*string]{

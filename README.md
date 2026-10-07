@@ -67,6 +67,20 @@ ant messages create \
 
 Structured flags accept relaxed JSON or YAML, so unquoted keys are fine.
 
+### Claude Platform on Google Cloud
+
+Sign in with Google and name your workspace; the CLI then sends requests through the Google Cloud gateway and keeps the Google access token fresh:
+
+```sh
+gcloud auth application-default login
+
+export ANTHROPIC_GOOGLE_CLOUD_PROJECT=my-project
+export ANTHROPIC_GOOGLE_CLOUD_WORKSPACE_ID=wrkspc_...
+ant models list
+```
+
+The same settings are available as `--google-cloud-project`, `--google-cloud-workspace-id` and `--google-cloud-location` (default `global`). The project defaults to the one your Google credentials carry. Any credentials Google's Application Default Credentials find are used, including a service account key named by `GOOGLE_APPLICATION_CREDENTIALS`. An API key, an auth token or a profile named with `--profile` takes precedence; `ant auth status` shows which is in use. Google credentials are sent only to the gateway: `--base-url` and `ANTHROPIC_BASE_URL` are not used, and `--google-cloud-base-url` (`ANTHROPIC_GOOGLE_CLOUD_BASE_URL`) overrides the gateway URL. `ant beta:worker` is not supported on Google Cloud.
+
 ## Usage
 
 The CLI follows a resource-based command structure, with nested resources separated by colons:

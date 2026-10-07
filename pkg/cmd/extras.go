@@ -112,5 +112,25 @@ func init() {
 			Usage:   "Workspace ID (wrkspc_...) to send as the anthropic-workspace-id header. Only needed for API keys that aren't scoped to a single workspace or on Claude Platform on AWS.",
 			Sources: cli.EnvVars("ANTHROPIC_WORKSPACE_ID"),
 		},
+		&cli.StringFlag{
+			Name:    "google-cloud-project",
+			Usage:   "Google Cloud project ID. Setting this, --google-cloud-location or --google-cloud-workspace-id sends requests to Claude Platform on Google Cloud, signed in with Google Application Default Credentials. Defaults to the credentials' project.",
+			Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_PROJECT"),
+		},
+		&cli.StringFlag{
+			Name:    "google-cloud-location",
+			Usage:   "Google Cloud location for Claude Platform on Google Cloud (default: global).",
+			Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_LOCATION"),
+		},
+		&cli.StringFlag{
+			Name:    "google-cloud-workspace-id",
+			Usage:   "Workspace ID (wrkspc_...) to address on Claude Platform on Google Cloud. It is part of the gateway URL there, so --workspace-id is not needed.",
+			Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_WORKSPACE_ID"),
+		},
+		&cli.StringFlag{
+			Name:    "google-cloud-base-url",
+			Usage:   "Override the gateway URL for Claude Platform on Google Cloud, once another --google-cloud-* flag has selected it. Google credentials are sent only here or to the gateway, never to --base-url.",
+			Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_BASE_URL"),
+		},
 	)
 }

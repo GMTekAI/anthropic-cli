@@ -140,6 +140,7 @@ func TestBetaOrganizationWorkspacesList(t *testing.T) {
 			"--after-id", "after_id",
 			"--before-id", "before_id",
 			"--include-archived=true",
+			"--include-default=true",
 			"--limit", "1",
 		)
 	})

@@ -9,7 +9,6 @@ import (
 
 func TestBetaSkillsVersionsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
-		t.Skip("CLI multipart serialization does not handle complex array elements (e.g. --file [null])")
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",

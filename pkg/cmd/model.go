@@ -53,6 +53,11 @@ var modelsList = cli.Command{
 			Usage:     "ID of the object to use as a cursor for pagination. When provided, returns the page of results immediately before this object.",
 			QueryPath: "before_id",
 		},
+		&requestflag.Flag[[]string]{
+			Name:      "lifecycle",
+			Usage:     "Filter the list to models in any of the given lifecycle stages (`active`, `deprecated`, or `retired`). Up to 3 values. When omitted, the list contains the `active` and `deprecated` models; `retired` models appear only when `retired` is requested explicitly.",
+			QueryPath: "lifecycle",
+		},
 		&requestflag.Flag[int64]{
 			Name:      "limit",
 			Usage:     "Number of items to return per page.\n\nDefaults to `20`. Ranges from `1` to `1000`.",

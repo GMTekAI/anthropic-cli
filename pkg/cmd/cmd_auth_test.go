@@ -393,9 +393,11 @@ func resetWarnOnce(t *testing.T) {
 	t.Helper()
 	multiAuthWarnOnce = sync.Once{}
 	clientIDDefaultedOnce = sync.Once{}
+	googleCloudBaseURLNoticeOnce = sync.Once{}
 	t.Cleanup(func() {
 		multiAuthWarnOnce = sync.Once{}
 		clientIDDefaultedOnce = sync.Once{}
+		googleCloudBaseURLNoticeOnce = sync.Once{}
 	})
 }
 
@@ -407,7 +409,7 @@ func TestMultiAuthWarning(t *testing.T) {
 
 	t.Run("api-key and explicit profile", func(t *testing.T) {
 		reset()
-		out := captureStderr(t, func() { warnIfMultipleAuthSources("--api-key / ANTHROPIC_API_KEY", "", true, false, false) })
+		out := captureStderr(t, func() { warnIfMultipleAuthSources("--api-key / ANTHROPIC_API_KEY", "", true, false, false, false) })
 		assert.Contains(t, out, "multiple auth sources configured")
 		assert.Contains(t, out, "--api-key / ANTHROPIC_API_KEY")
 		assert.Contains(t, out, "profile from --profile / ANTHROPIC_PROFILE")
@@ -417,7 +419,7 @@ func TestMultiAuthWarning(t *testing.T) {
 
 	t.Run("federation beats implicit profile", func(t *testing.T) {
 		reset()
-		out := captureStderr(t, func() { warnIfMultipleAuthSources("", "", false, true, true) })
+		out := captureStderr(t, func() { warnIfMultipleAuthSources("", "", false, true, false, true) })
 		assert.Contains(t, out, "federation env")
 		assert.Contains(t, out, "active profile (active_config)")
 		assert.Contains(t, out, "using federation env per precedence")
@@ -425,20 +427,20 @@ func TestMultiAuthWarning(t *testing.T) {
 
 	t.Run("explicit profile beats federation", func(t *testing.T) {
 		reset()
-		out := captureStderr(t, func() { warnIfMultipleAuthSources("", "", true, true, false) })
+		out := captureStderr(t, func() { warnIfMultipleAuthSources("", "", true, true, false, false) })
 		assert.Contains(t, out, "using profile from --profile / ANTHROPIC_PROFILE per precedence")
 	})
 
 	t.Run("single source is silent", func(t *testing.T) {
 		reset()
-		out := captureStderr(t, func() { warnIfMultipleAuthSources("--api-key / ANTHROPIC_API_KEY", "", false, false, false) })
+		out := captureStderr(t, func() { warnIfMultipleAuthSources("--api-key / ANTHROPIC_API_KEY", "", false, false, false, false) })
 		assert.Empty(t, out)
 	})
 
 	t.Run("emits once", func(t *testing.T) {
 		reset()
-		first := captureStderr(t, func() { warnIfMultipleAuthSources("", "--auth-token / ANTHROPIC_AUTH_TOKEN", true, true, false) })
-		second := captureStderr(t, func() { warnIfMultipleAuthSources("", "--auth-token / ANTHROPIC_AUTH_TOKEN", true, true, false) })
+		first := captureStderr(t, func() { warnIfMultipleAuthSources("", "--auth-token / ANTHROPIC_AUTH_TOKEN", true, true, false, false) })
+		second := captureStderr(t, func() { warnIfMultipleAuthSources("", "--auth-token / ANTHROPIC_AUTH_TOKEN", true, true, false, false) })
 		assert.NotEmpty(t, first)
 		assert.Empty(t, second)
 	})
@@ -668,6 +670,7 @@ func loginCmdDef() *cli.Command {
 				&cli.DurationFlag{Name: "timeout", Value: 30 * time.Second},
 				&cli.StringFlag{Name: "client-id"},
 				&cli.StringFlag{Name: "scope"},
+				&cli.BoolFlag{Name: "admin"},
 				&cli.StringFlag{Name: "workspace-id"},
 				&cli.BoolFlag{Name: "debug"},
 			},
@@ -1435,6 +1438,109 @@ func TestAuthPrintCredentials_RefreshFailureWarnsAndPrintsStale(t *testing.T) {
 // TestAuthLoginBootstrapOnly covers the principle that `auth login` writes
 // configs/<profile>.json only when the profile doesn't already exist;
 // re-login on an existing profile produces credentials only.
+// TestAuthLoginAdmin: --admin adds org:admin to whatever scope login would
+// otherwise request (--scope, the profile's, or the default) rather than
+// replacing it, so a profile used for the admin commands keeps working for
+// everything else. It persists like --scope: on a new profile only, with the
+// usual `ant profile set` hint on re-login.
+func TestAuthLoginAdmin(t *testing.T) {
+	dir := t.TempDir()
+	t.Setenv("ANTHROPIC_CONFIG_DIR", dir)
+	clearEnv(t, "ANTHROPIC_PROFILE")
+
+	granted := oauthScope + " " + scopeOrgAdmin
+	srv := newTokenServer(t, tokenResponse{
+		AccessToken: "tok", RefreshToken: "rt", ExpiresIn: 600, Scope: granted,
+		Organization: tokenOrganization{UUID: "org-ADMIN", Name: "Admin"},
+	})
+	storedScope := func(t *testing.T, profile string) (string, bool) {
+		t.Helper()
+		var cfg map[string]any
+		require.NoError(t, json.Unmarshal(mustRead(t, config.ProfilePath(dir, profile)), &cfg))
+		scope, ok := cfg["authentication"].(map[string]any)["scope"].(string)
+		return scope, ok
+	}
+	seed := func(t *testing.T, profile, scope string) []byte {
+		t.Helper()
+		require.NoError(t, config.SaveProfile(dir, profile, &config.Config{
+			AuthenticationInfo: &config.AuthenticationInfo{
+				Type: config.AuthenticationTypeUserOAuth, UserOAuth: &config.UserOAuth{Scope: scope},
+			},
+			WorkspaceID: "wrkspc_test", OrganizationID: "org-ADMIN",
+		}))
+		return mustRead(t, config.ProfilePath(dir, profile))
+	}
+
+	t.Run("new profile: default scope plus org:admin, persisted", func(t *testing.T) {
+		u, out, err := driveLoginErr(t, srv.URL, "--profile", "fresh", "--admin")
+		require.NoError(t, err)
+		assert.Equal(t, granted, u.Query().Get("scope"))
+		scope, ok := storedScope(t, "fresh")
+		require.True(t, ok, "--admin persists the scope on a new profile, as --scope does")
+		assert.Equal(t, granted, scope)
+		assert.NotContains(t, out, "ant profile set scope")
+	})
+
+	t.Run("existing profile: adds to its stored scope, config untouched, hint names the command", func(t *testing.T) {
+		before := seed(t, "narrow", "user:inference")
+		u, out, err := driveLoginErr(t, srv.URL, "--profile", "narrow", "--admin")
+		require.NoError(t, err)
+		assert.Equal(t, "user:inference org:admin", u.Query().Get("scope"))
+		assert.Equal(t, string(before), string(mustRead(t, config.ProfilePath(dir, "narrow"))),
+			"re-login must not rewrite configs/<profile>.json")
+		assert.Contains(t, out, `ant profile set scope "user:inference org:admin" --profile narrow`)
+	})
+
+	t.Run("profile that already stores org:admin: not repeated, no hint", func(t *testing.T) {
+		seed(t, "already", granted)
+		u, out, err := driveLoginErr(t, srv.URL, "--profile", "already", "--admin")
+		require.NoError(t, err)
+		assert.Equal(t, granted, u.Query().Get("scope"))
+		assert.NotContains(t, out, "ant profile set scope")
+	})
+
+	t.Run("without --admin the scope is unchanged", func(t *testing.T) {
+		u, _, err := driveLoginErr(t, srv.URL, "--profile", "plain")
+		require.NoError(t, err)
+		assert.Equal(t, oauthScope, u.Query().Get("scope"))
+		_, ok := storedScope(t, "plain")
+		assert.False(t, ok)
+	})
+
+	t.Run("--admin with --scope: adds org:admin to the listed scopes", func(t *testing.T) {
+		u, _, err := driveLoginErr(t, srv.URL, "--profile", "both", "--admin", "--scope", "user:profile")
+		require.NoError(t, err)
+		assert.Equal(t, "user:profile org:admin", u.Query().Get("scope"))
+		_, ok := storedScope(t, "both")
+		assert.True(t, ok)
+	})
+
+	t.Run("--scope that already lists org:admin: not repeated", func(t *testing.T) {
+		u, _, err := driveLoginErr(t, srv.URL, "--profile", "listed", "--admin", "--scope", "org:admin user:profile")
+		require.NoError(t, err)
+		assert.Equal(t, "org:admin user:profile", u.Query().Get("scope"))
+	})
+
+	t.Run("org:admin requested but not granted: says so", func(t *testing.T) {
+		notAdmin := newTokenServer(t, tokenResponse{
+			AccessToken: "tok", RefreshToken: "rt", ExpiresIn: 600, Scope: oauthScope,
+			Organization: tokenOrganization{UUID: "org-ADMIN", Name: "Admin"},
+		})
+		_, out, err := driveLoginErr(t, notAdmin.URL, "--profile", "member", "--admin")
+		require.NoError(t, err)
+		assert.Contains(t, out, "org:admin was requested but not granted")
+		assert.Contains(t, out, "granted: "+oauthScope)
+	})
+}
+
+func TestAddScope(t *testing.T) {
+	assert.Equal(t, "a b org:admin", addScope("a b", "org:admin"))
+	assert.Equal(t, "a org:admin b", addScope("a org:admin b", "org:admin"), "already present: unchanged")
+	assert.Equal(t, "org:admin", addScope("", "org:admin"))
+	assert.Equal(t, "a b org:admin", addScope(" a  b ", "org:admin"), "whitespace normalised")
+	assert.False(t, hasScope("org:administrator", "org:admin"), "whole-token match only")
+}
+
 func TestAuthLoginBootstrapOnly(t *testing.T) {
 	dir := t.TempDir()
 	t.Setenv("ANTHROPIC_CONFIG_DIR", dir)
@@ -1800,6 +1906,10 @@ func runStatus(t *testing.T, globalArgs ...string) (string, error) {
 			&cli.StringFlag{Name: "federation-rule"},
 			&cli.StringFlag{Name: "service-account-id"},
 			&cli.StringFlag{Name: "workspace-id", Sources: cli.EnvVars("ANTHROPIC_WORKSPACE_ID")},
+			&cli.StringFlag{Name: "google-cloud-project", Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_PROJECT")},
+			&cli.StringFlag{Name: "google-cloud-location", Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_LOCATION")},
+			&cli.StringFlag{Name: "google-cloud-workspace-id", Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_WORKSPACE_ID")},
+			&cli.StringFlag{Name: "google-cloud-base-url", Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_BASE_URL")},
 		},
 		Commands: []*cli.Command{{
 			Name: "auth", Commands: []*cli.Command{{

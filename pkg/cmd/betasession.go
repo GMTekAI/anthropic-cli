@@ -84,16 +84,19 @@ var betaSessionsCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      `Allowed values: "agent", "agent_with_overrides".`,
 			InnerField: "type",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[[]map[string]any]{
 			Name:       "agent.mcp-servers",
+			Usage:      "Replacement MCP server list. Full replacement: the provided array becomes the MCP servers. Send an empty array to clear; omit to preserve the agent's servers.",
 			InnerField: "mcp_servers",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "agent.model",
+			Usage:      "Replacement model. Accepts the model string, e.g. `claude-opus-5`, or a `model_config` object. Omit to use the agent's model.",
 			InnerField: "model",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[[]map[string]any]{
 			Name:       "agent.skills",
+			Usage:      "Replacement skill list. Full replacement: the provided array becomes the skills. Send an empty array to clear; omit to preserve the agent's skills.",
 			InnerField: "skills",
 		},
 		&requestflag.InnerFlag[*string]{
@@ -101,8 +104,9 @@ var betaSessionsCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "Replacement system prompt. Up to 100,000 characters. Set to null to clear the agent's system prompt; omit to preserve it.",
 			InnerField: "system",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[[]map[string]any]{
 			Name:       "agent.tools",
+			Usage:      "Replacement tool list. Full replacement: the provided array becomes the tool configuration. Send an empty array to clear; omit to preserve the agent's tools.",
 			InnerField: "tools",
 		},
 		&requestflag.InnerFlag[int64]{
@@ -129,8 +133,9 @@ var betaSessionsCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      `Allowed values: "user.message", "user.define_outcome".`,
 			InnerField: "type",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[[]map[string]any]{
 			Name:       "initial-event.content",
+			Usage:      "Array of content blocks for the user message.",
 			InnerField: "content",
 		},
 		&requestflag.InnerFlag[string]{
@@ -143,8 +148,9 @@ var betaSessionsCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "Eval→revision cycles before giving up. Default 3, max 20.",
 			InnerField: "max_iterations",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:       "initial-event.rubric",
+			Usage:      "How to grade the outcome. Text or file reference.",
 			InnerField: "rubric",
 		},
 	},
@@ -164,8 +170,9 @@ var betaSessionsCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "GitHub authorization token used to clone the repository. Required for private repositories; optional for public ones.",
 			InnerField: "authorization_token",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:       "resource.checkout",
+			Usage:      "Branch or commit to check out. Defaults to the repository's default branch.",
 			InnerField: "checkout",
 		},
 		&requestflag.InnerFlag[string]{

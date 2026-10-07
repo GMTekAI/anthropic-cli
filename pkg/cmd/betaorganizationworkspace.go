@@ -159,6 +159,12 @@ var betaOrganizationWorkspacesList = cli.Command{
 			Default:   false,
 			QueryPath: "include_archived",
 		},
+		&requestflag.Flag[bool]{
+			Name:      "include-default",
+			Usage:     "Whether to include the organization's default Workspace in the response",
+			Default:   false,
+			QueryPath: "include_default",
+		},
 		&requestflag.Flag[int64]{
 			Name:      "limit",
 			Usage:     "Number of items to return per page.\n\nDefaults to `20`. Ranges from `1` to `1000`.",

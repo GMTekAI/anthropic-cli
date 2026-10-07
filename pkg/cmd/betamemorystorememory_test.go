@@ -114,7 +114,6 @@ func TestBetaMemoryStoresMemoriesUpdate(t *testing.T) {
 }
 
 func TestBetaMemoryStoresMemoriesList(t *testing.T) {
-	t.Skip("buildURL drops path-level query params")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,

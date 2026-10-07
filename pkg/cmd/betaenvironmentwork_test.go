@@ -52,7 +52,6 @@ func TestBetaEnvironmentsWorkUpdate(t *testing.T) {
 }
 
 func TestBetaEnvironmentsWorkList(t *testing.T) {
-	t.Skip("buildURL drops path-level query params")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
@@ -111,7 +110,6 @@ func TestBetaEnvironmentsWorkPoll(t *testing.T) {
 }
 
 func TestBetaEnvironmentsWorkStats(t *testing.T) {
-	t.Skip("buildURL drops path-level query params")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
