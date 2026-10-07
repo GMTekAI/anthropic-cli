@@ -28,6 +28,7 @@ func TestBetaModelsList(t *testing.T) {
 			"--max-items", "10",
 			"--after-id", "after_id",
 			"--before-id", "before_id",
+			"--lifecycle", "active",
 			"--limit", "1",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
