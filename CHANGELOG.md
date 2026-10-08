@@ -2,9 +2,16 @@
 
 ## [1.39.1](https://github.com/anthropics/anthropic-cli/compare/v1.39.0...v1.39.1) (2026-10-08)
 
+### Bug Fixes
+
+* **auth:** refuse to send login codes or refresh tokens over cleartext http (#152)
+
+
 ### Chores
 
+* **ci:** build against the Go SDK branch of a pull request's base
 * **ci:** check that pull requests update the changelog
+* **internal:** resolve api-key and auth-token credentials without the root flags (#148)
 
 ## 1.39.0 (2026-10-07)
 
