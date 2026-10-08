@@ -357,6 +357,25 @@ func TestGoogleCloudInUse(t *testing.T) {
 		assert.Equal(t, defaultBaseURL, baseURL)
 	})
 
+	t.Run("an API key piped on stdin wins", func(t *testing.T) {
+		setup(t)
+		argv := []string{"--api-key-stdin", "--google-cloud-workspace-id", "wrkspc_01", "leaf"}
+		withCommandLine(t, argv...)
+		withStdinCredential(t, "test-fake-api-key-not-real\n")
+		var inUse bool
+		var baseURL string
+		root := googleCloudTestRoot(func(ctx context.Context, c *cli.Command) error {
+			if err := applyStdinCredential(c.Root()); err != nil {
+				return err
+			}
+			inUse, baseURL = googleCloudInUse(c), currentBaseURL(c)
+			return nil
+		})
+		require.NoError(t, root.Run(context.Background(), append([]string{"ant"}, argv...)))
+		assert.False(t, inUse)
+		assert.Equal(t, defaultBaseURL, baseURL)
+	})
+
 	t.Run("an implicit profile is not in use", func(t *testing.T) {
 		setup(t)
 		dir := os.Getenv("ANTHROPIC_CONFIG_DIR")

@@ -220,7 +220,15 @@ func authLogin(ctx context.Context, c *cli.Command) error {
 	}
 	clientID := resolveClientID(c.String("client-id"), prev)
 	consoleURL := resolveConsoleURL(c.String("console-url"), prev)
+	// Same rule as the token endpoint: over cleartext the authorize request's
+	// code_challenge can be swapped in flight, which defeats PKCE.
+	if config.RequireSecureTokenEndpoint(consoleURL) != nil {
+		return fmt.Errorf("refusing to sign in through non-https console URL %q", consoleURL)
+	}
 	baseURL := resolveBaseURL(c.String("base-url"), prev)
+	if err := config.RequireSecureTokenEndpoint(baseURL); err != nil {
+		return err
+	}
 	workspaceID := resolveWorkspaceID(c.String("workspace-id"), prev)
 	// workspaceID may be empty here — Console may show a workspace picker
 	// after the org selection step, in which case the resolved workspace
@@ -674,8 +682,8 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 	if err := applyStdinCredential(root); err != nil {
 		return err
 	}
-	apiKeySet := root.IsSet("api-key")
-	authTokenSet := root.IsSet("auth-token")
+	apiKey, apiKeySet := directCredential(root, "api-key")
+	authToken, authTokenSet := directCredential(root, "auth-token")
 	fed := federationFromRoot(root)
 	fedReady := fed.AnySet() && len(fed.Missing()) == 0
 	fedMissing := fed.Missing()
@@ -723,10 +731,10 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 		fmt.Fprintln(out, "  (no credential configured — set ANTHROPIC_API_KEY or run `ant auth login`)")
 	}
 	if apiKeySet {
-		writeRow(out, credWinner == 1, credentialSourceLabel(root, "api-key"), formatSecret(root.String("api-key"), true))
+		writeRow(out, credWinner == 1, credentialSourceLabel(root, "api-key"), formatSecret(apiKey, true))
 	}
 	if authTokenSet {
-		writeRow(out, credWinner == 2, credentialSourceLabel(root, "auth-token"), formatSecret(root.String("auth-token"), true))
+		writeRow(out, credWinner == 2, credentialSourceLabel(root, "auth-token"), formatSecret(authToken, true))
 	}
 	if profileTokenPresent {
 		authType := "unknown"
@@ -1158,6 +1166,9 @@ func readFullCredentials(cfg *config.Config, dir, profile string) (config.Creden
 // user_oauth credentials. The federation beta is intentionally absent so the
 // request is not gateway-routed to api-go's jwt-bearer-only handler.
 func refreshAccessToken(ctx context.Context, baseURL, clientID, refreshToken string) (*tokenResponse, error) {
+	if err := config.RequireSecureTokenEndpoint(baseURL); err != nil {
+		return nil, err
+	}
 	body, err := json.Marshal(map[string]string{
 		"grant_type":    "refresh_token",
 		"refresh_token": refreshToken,
@@ -1166,14 +1177,14 @@ func refreshAccessToken(ctx context.Context, baseURL, clientID, refreshToken str
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequestWithContext(ctx, "POST", baseURL+"/v1/oauth/token", bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, "POST", baseURL+config.TokenEndpoint, bytes.NewReader(body))
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("anthropic-beta", betaUserOAuth)
 
-	client := &http.Client{Timeout: 30 * time.Second}
+	client := config.NewTokenHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -1274,6 +1285,9 @@ func waitForCallback(ctx context.Context, listener net.Listener, wantState strin
 // check across both legs — omitting it returns a 400 with
 // `oauth_request_parse_error`.
 func exchangeCode(ctx context.Context, baseURL, clientID, code, verifier, redirectURI, state string, debug bool) (*tokenResponse, error) {
+	if err := config.RequireSecureTokenEndpoint(baseURL); err != nil {
+		return nil, err
+	}
 	form := url.Values{
 		"grant_type":    {"authorization_code"},
 		"code":          {code},
@@ -1282,14 +1296,14 @@ func exchangeCode(ctx context.Context, baseURL, clientID, code, verifier, redire
 		"redirect_uri":  {redirectURI},
 		"state":         {state},
 	}
-	req, err := http.NewRequestWithContext(ctx, "POST", baseURL+"/v1/oauth/token",
+	req, err := http.NewRequestWithContext(ctx, "POST", baseURL+config.TokenEndpoint,
 		strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	client := &http.Client{Timeout: 30 * time.Second}
+	client := config.NewTokenHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err

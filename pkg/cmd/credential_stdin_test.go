@@ -71,18 +71,24 @@ func TestArgvCredentialWarning(t *testing.T) {
 	assert.Empty(t, b.String(), "silent when the credential came from env or a profile")
 }
 
-// stdinCredentialApp mirrors the root flags readStdinCredential touches so
+// stdinCredentialApp mirrors the root flags the credential helpers touch so
 // tests exercise real urfave parsing without the package-level Command tree
-// (which caches flag state across Runs).
-func stdinCredentialApp(action func(*cli.Command) error) *cli.Command {
-	return &cli.Command{
-		Name: "ant",
-		Flags: []cli.Flag{
+// (which caches flag state across Runs). argvFlags adds the deprecated
+// --api-key / --auth-token the generated root still declares.
+func stdinCredentialApp(argvFlags bool, action func(*cli.Command) error) *cli.Command {
+	flags := []cli.Flag{
+		&cli.BoolFlag{Name: "api-key-stdin"},
+		&cli.BoolFlag{Name: "auth-token-stdin"},
+	}
+	if argvFlags {
+		flags = append(flags,
 			&requestflag.Flag[string]{Name: "api-key", Sources: cli.EnvVars("ANTHROPIC_API_KEY")},
 			&requestflag.Flag[string]{Name: "auth-token", Sources: cli.EnvVars("ANTHROPIC_AUTH_TOKEN")},
-			&cli.BoolFlag{Name: "api-key-stdin"},
-			&cli.BoolFlag{Name: "auth-token-stdin"},
-		},
+		)
+	}
+	return &cli.Command{
+		Name:     "ant",
+		Flags:    flags,
 		Commands: []*cli.Command{{Name: "probe", Action: func(_ context.Context, c *cli.Command) error { return action(c) }}},
 	}
 }
@@ -91,37 +97,30 @@ func TestReadStdinCredential(t *testing.T) {
 	clearEnv(t, "ANTHROPIC_API_KEY")
 	clearEnv(t, "ANTHROPIC_AUTH_TOKEN")
 
-	type result struct{ apiKey, authToken string }
+	type result struct{ target, secret string }
 	runProbe := func(t *testing.T, stdin string, isTTY bool, onCommandLine []string, argv ...string) (result, error) {
 		t.Helper()
 		var got result
 		var readErr error
-		app := stdinCredentialApp(func(c *cli.Command) error {
-			readErr = readStdinCredential(c, strings.NewReader(stdin), isTTY, onCommandLine)
-			got = result{c.String("api-key"), c.String("auth-token")}
+		app := stdinCredentialApp(true, func(c *cli.Command) error {
+			got.target, got.secret, readErr = readStdinCredential(c, strings.NewReader(stdin), isTTY, onCommandLine)
 			return nil
 		})
 		require.NoError(t, app.Run(context.Background(), append([]string{"ant"}, argv...)))
 		return got, readErr
 	}
 
-	t.Run("api key from stdin lands on --api-key, whitespace trimmed", func(t *testing.T) {
+	t.Run("api key from stdin, whitespace trimmed", func(t *testing.T) {
 		got, err := runProbe(t, "  sk-ant-from-stdin\n", false, nil, "probe", "--api-key-stdin")
 		require.NoError(t, err)
-		assert.Equal(t, result{apiKey: "sk-ant-from-stdin"}, got)
+		assert.Equal(t, result{"api-key", "sk-ant-from-stdin"}, got)
 	})
-	t.Run("auth token from stdin lands on --auth-token", func(t *testing.T) {
+	t.Run("auth token from stdin", func(t *testing.T) {
 		got, err := runProbe(t, "tok\n", false, nil, "--auth-token-stdin", "probe")
 		require.NoError(t, err)
-		assert.Equal(t, result{authToken: "tok"}, got)
+		assert.Equal(t, result{"auth-token", "tok"}, got)
 	})
-	t.Run("stdin beats the env var for the same credential", func(t *testing.T) {
-		t.Setenv("ANTHROPIC_API_KEY", "sk-from-env")
-		got, err := runProbe(t, "sk-from-stdin", false, nil, "probe", "--api-key-stdin")
-		require.NoError(t, err)
-		assert.Equal(t, "sk-from-stdin", got.apiKey)
-	})
-	t.Run("no stdin flag: stdin untouched, nothing set", func(t *testing.T) {
+	t.Run("no stdin flag: stdin untouched, nothing read", func(t *testing.T) {
 		got, err := runProbe(t, "ignored", false, nil, "probe")
 		require.NoError(t, err)
 		assert.Equal(t, result{}, got)
@@ -144,15 +143,73 @@ func TestReadStdinCredential(t *testing.T) {
 	})
 }
 
+func resetStdinCredential() {
+	stdinCredentialOnce, stdinCredentialErr, stdinConsumedByCredential = sync.Once{}, nil, ""
+	stdinCredential.target, stdinCredential.value = "", ""
+}
+
 func withStdinCredential(t *testing.T, stdin string) {
 	t.Helper()
 	savedIn, savedTTY := credentialStdin, credentialStdinIsTTY
 	credentialStdin = func() io.Reader { return strings.NewReader(stdin) }
 	credentialStdinIsTTY = func() bool { return false }
-	stdinCredentialOnce, stdinCredentialErr, stdinConsumedByCredential = sync.Once{}, nil, ""
+	resetStdinCredential()
 	t.Cleanup(func() {
 		credentialStdin, credentialStdinIsTTY = savedIn, savedTTY
-		stdinCredentialOnce, stdinCredentialErr, stdinConsumedByCredential = sync.Once{}, nil, ""
+		resetStdinCredential()
+	})
+}
+
+// TestDirectCredential pins where the api-key / auth-token credential comes
+// from, with and without the deprecated argv flags on the root: the chain
+// must read the env var and stdin the same either way.
+func TestDirectCredential(t *testing.T) {
+	type result struct {
+		apiKey, authToken string
+		apiKeySet, tokSet bool
+	}
+	run := func(t *testing.T, argvFlags bool, stdin string, argv ...string) result {
+		t.Helper()
+		withCommandLine(t, argv...)
+		withStdinCredential(t, stdin)
+		var got result
+		app := stdinCredentialApp(argvFlags, func(c *cli.Command) error {
+			if err := applyStdinCredential(c.Root()); err != nil {
+				return err
+			}
+			got.apiKey, got.apiKeySet = directCredential(c.Root(), "api-key")
+			got.authToken, got.tokSet = directCredential(c.Root(), "auth-token")
+			return nil
+		})
+		require.NoError(t, app.Run(context.Background(), append([]string{"ant"}, argv...)))
+		return got
+	}
+	for _, argvFlags := range []bool{true, false} {
+		t.Run(fmt.Sprintf("root declares argv flags=%t", argvFlags), func(t *testing.T) {
+			clearEnv(t, "ANTHROPIC_API_KEY")
+			clearEnv(t, "ANTHROPIC_AUTH_TOKEN")
+			t.Run("nothing configured", func(t *testing.T) {
+				assert.Equal(t, result{}, run(t, argvFlags, "", "probe"))
+			})
+			t.Run("env var", func(t *testing.T) {
+				t.Setenv("ANTHROPIC_AUTH_TOKEN", "tok-env")
+				assert.Equal(t, result{authToken: "tok-env", tokSet: true}, run(t, argvFlags, "", "probe"))
+			})
+			t.Run("stdin beats the env var for the same credential", func(t *testing.T) {
+				t.Setenv("ANTHROPIC_API_KEY", "sk-env")
+				assert.Equal(t, result{apiKey: "sk-stdin", apiKeySet: true}, run(t, argvFlags, "sk-stdin\n", "probe", "--api-key-stdin"))
+			})
+			t.Run("stdin for one credential leaves the other's env var in place", func(t *testing.T) {
+				t.Setenv("ANTHROPIC_AUTH_TOKEN", "tok-env")
+				assert.Equal(t, result{apiKey: "sk-stdin", apiKeySet: true, authToken: "tok-env", tokSet: true},
+					run(t, argvFlags, "sk-stdin", "--api-key-stdin", "probe"))
+			})
+		})
+	}
+	t.Run("deprecated argv flag still works while declared", func(t *testing.T) {
+		clearEnv(t, "ANTHROPIC_API_KEY")
+		clearEnv(t, "ANTHROPIC_AUTH_TOKEN")
+		assert.Equal(t, result{apiKey: "sk-argv", apiKeySet: true}, run(t, true, "", "--api-key", "sk-argv", "probe"))
 	})
 }
 
