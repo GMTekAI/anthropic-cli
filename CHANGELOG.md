@@ -9,6 +9,7 @@
 
 ### Chores
 
+* bump go sdk to v1.79.1
 * **ci:** build against the Go SDK branch of a pull request's base
 * **ci:** check that pull requests update the changelog
 * **internal:** resolve api-key and auth-token credentials without the root flags (#148)
