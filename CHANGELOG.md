@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.40.0](https://github.com/anthropics/anthropic-cli/compare/v1.39.1...v1.40.0) (2026-10-08)
+
+### Features
+
+* **api:** add types for the Chat and Cowork unified analytics metrics
+* **api:** declare error codes on the Files operations
+
 ## [1.39.1](https://github.com/anthropics/anthropic-cli/compare/v1.39.0...v1.39.1) (2026-10-08)
 
 ### Bug Fixes
