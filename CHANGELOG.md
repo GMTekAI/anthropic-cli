@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.39.1](https://github.com/anthropics/anthropic-cli/compare/v1.39.0...v1.39.1) (2026-10-08)
+
+### Chores
+
+* **ci:** check that pull requests update the changelog
+
 ## 1.39.0 (2026-10-07)
 
 Full Changelog: [v1.38.0...v1.39.0](https://github.com/anthropics/anthropic-cli/compare/v1.38.0...v1.39.0)
