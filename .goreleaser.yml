@@ -66,6 +66,7 @@ archives:
     name_template: '{{ .ProjectName }}_{{ .Version }}_linux_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
     formats: [tar.gz]
     files:
+      - LICENSE*
       - completions/*
       - man/*/*
   - id: macos-archive
@@ -73,6 +74,7 @@ archives:
     name_template: '{{ .ProjectName }}_{{ .Version }}_macos_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
     formats: [zip]
     files:
+      - LICENSE*
       - completions/*
       - man/*/*
   - id: windows-archive
@@ -80,6 +82,7 @@ archives:
     name_template: '{{ .ProjectName }}_{{ .Version }}_windows_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
     formats: [zip]
     files:
+      - LICENSE*
       - completions/*
       - man/*/*
 
@@ -99,6 +102,8 @@ nfpms:
     contents:
       - src: man/man1/*.1.gz
         dst: /usr/share/man/man1/
+      - src: LICENSE*
+        dst: /usr/share/doc/ant/
 homebrew_casks:
   - name: ant
     repository:
