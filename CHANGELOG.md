@@ -1,10 +1,11 @@
 # Changelog
 
-## [1.40.0](https://github.com/anthropics/anthropic-cli/compare/v1.39.1...v1.40.0) (2026-10-08)
+## [1.40.0](https://github.com/anthropics/anthropic-cli/compare/v1.39.1...v1.40.0) (2026-10-09)
 
 ### Features
 
 * **api:** add types for the Chat and Cowork unified analytics metrics
+* **api:** add workflows, multiagent configuration and thread status filtering to Managed Agents
 * **api:** declare error codes on the Files operations
 
 ## [1.39.1](https://github.com/anthropics/anthropic-cli/compare/v1.39.0...v1.39.1) (2026-10-08)

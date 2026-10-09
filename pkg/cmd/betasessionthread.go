@@ -63,6 +63,11 @@ var betaSessionsThreadsList = cli.Command{
 			QueryPath: "page",
 		},
 		&requestflag.Flag[[]string]{
+			Name:      "status",
+			Usage:     "Return only threads that have one of these statuses.\n\nRepeat the parameter to give more than one status. Leave it out to return threads of every status.",
+			QueryPath: "statuses",
+		},
+		&requestflag.Flag[[]string]{
 			Name:       "beta",
 			Usage:      "Optional header to specify the beta version(s) you want to use.",
 			HeaderPath: "anthropic-beta",
