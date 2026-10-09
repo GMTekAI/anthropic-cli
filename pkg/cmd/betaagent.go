@@ -118,15 +118,30 @@ var betaAgentsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 	},
 	"multiagent": {
+		&requestflag.InnerFlag[string]{
+			Name:       "multiagent.type",
+			Usage:      `Allowed values: "coordinator", "multiagent_20261001".`,
+			InnerField: "type",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "multiagent.advisor",
+			Usage:      "Whether the session's primary thread can consult an advisor model.",
+			InnerField: "advisor",
+		},
 		&requestflag.InnerFlag[[]any]{
 			Name:       "multiagent.agents",
 			Usage:      "Agents the coordinator may spawn as session threads. 1–20 entries. Each entry is an agent ID string, a versioned `{\"type\":\"agent\",\"id\",\"version\"}` reference, or `{\"type\":\"self\"}` to allow recursive self-invocation. Entries must reference distinct agents (after resolving `self` and string forms); at most one `self`. Referenced agents must exist, must not be archived, and must not themselves have `multiagent` set (depth limit 1).",
 			InnerField: "agents",
 		},
-		&requestflag.InnerFlag[string]{
-			Name:       "multiagent.type",
-			Usage:      `Allowed values: "coordinator".`,
-			InnerField: "type",
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "multiagent.subagents",
+			Usage:      "Whether the agent can spawn session threads.",
+			InnerField: "subagents",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "multiagent.workflows",
+			Usage:      "Whether the agent can start workflow runs.",
+			InnerField: "workflows",
 		},
 	},
 	"skill": {
@@ -333,15 +348,30 @@ var betaAgentsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 	},
 	"multiagent": {
+		&requestflag.InnerFlag[string]{
+			Name:       "multiagent.type",
+			Usage:      `Allowed values: "coordinator", "multiagent_20261001".`,
+			InnerField: "type",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "multiagent.advisor",
+			Usage:      "Whether the session's primary thread can consult an advisor model.",
+			InnerField: "advisor",
+		},
 		&requestflag.InnerFlag[[]any]{
 			Name:       "multiagent.agents",
 			Usage:      "Agents the coordinator may spawn as session threads. 1–20 entries. Each entry is an agent ID string, a versioned `{\"type\":\"agent\",\"id\",\"version\"}` reference, or `{\"type\":\"self\"}` to allow recursive self-invocation. Entries must reference distinct agents (after resolving `self` and string forms); at most one `self`. Referenced agents must exist, must not be archived, and must not themselves have `multiagent` set (depth limit 1).",
 			InnerField: "agents",
 		},
-		&requestflag.InnerFlag[string]{
-			Name:       "multiagent.type",
-			Usage:      `Allowed values: "coordinator".`,
-			InnerField: "type",
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "multiagent.subagents",
+			Usage:      "Whether the agent can spawn session threads.",
+			InnerField: "subagents",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "multiagent.workflows",
+			Usage:      "Whether the agent can start workflow runs.",
+			InnerField: "workflows",
 		},
 	},
 	"skill": {

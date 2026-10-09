@@ -30,6 +30,7 @@ func TestBetaSessionsThreadsList(t *testing.T) {
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
 			"--limit", "0",
 			"--page", "page",
+			"--status", "running",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
