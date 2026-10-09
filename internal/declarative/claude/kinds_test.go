@@ -29,7 +29,12 @@ func TestAgentSchemaFlattensAsExpected(t *testing.T) {
 	for _, slot := range spec.RefSlots() {
 		paths[slot.Path] = true
 	}
-	assert.Equal(t, map[string]bool{"skills": true, "multiagent.agents": true}, paths)
+	assert.Equal(t, map[string]bool{
+		"skills":                                 true,
+		"multiagent.agents":                      true,
+		"multiagent.subagents.predefined_agents": true,
+		"multiagent.workflows.predefined_agents": true,
+	}, paths)
 }
 
 func TestDeploymentTokenIsWriteOnly(t *testing.T) {

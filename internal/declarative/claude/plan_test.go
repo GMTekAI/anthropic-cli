@@ -66,6 +66,43 @@ func TestReferencesArePinnedToConcreteVersions(t *testing.T) {
 	assert.Equal(t, int64(1), entry["version"])
 }
 
+func TestPredefinedAgentsArePinnedToConcreteVersions(t *testing.T) {
+	h := newHarness(t, map[string]string{
+		"agents/reviewer.md":    "---\nmodel: claude-sonnet-5\n---\nreview\n",
+		"agents/test-writer.md": "---\nmodel: claude-sonnet-5\n---\nwrite tests\n",
+		"agents/engineering-lead.md": `---
+model: claude-sonnet-5
+multiagent:
+  type: multiagent_20261001
+  subagents:
+    type: enabled
+    predefined_agents:
+      - ./reviewer.md
+      - type: self
+  workflows:
+    type: enabled
+    predefined_agents:
+      - ./test-writer.md
+---
+lead
+`,
+	})
+	h.apply()
+
+	pinned := func(key string) map[string]any {
+		return map[string]any{"type": "agent", "id": h.lock.Resources[key].ID, "version": int64(1)}
+	}
+	multiagent := h.client.objects[h.lock.Resources["./agents/engineering-lead.md"].ID]["multiagent"].(map[string]any)
+	assert.Equal(t,
+		[]any{pinned("./agents/reviewer.md"), map[string]any{"type": "self"}},
+		multiagent["subagents"].(map[string]any)["predefined_agents"])
+	assert.Equal(t,
+		[]any{pinned("./agents/test-writer.md")},
+		multiagent["workflows"].(map[string]any)["predefined_agents"])
+
+	assert.False(t, h.plan().HasWork(), "a repeated apply must converge")
+}
+
 // A pinned reference has to move when its target does. Otherwise editing a
 // sub-agent leaves its coordinator quietly running the previous prompt, with
 // nothing in the plan to say so.

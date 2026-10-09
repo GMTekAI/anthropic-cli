@@ -8,6 +8,11 @@
 * **api:** add workflows, multiagent configuration and thread status filtering to Managed Agents
 * **api:** declare error codes on the Files operations
 
+
+### Bug Fixes
+
+* **apply:** resolve file paths in an agent's predefined agent lists
+
 ## [1.39.1](https://github.com/anthropics/anthropic-cli/compare/v1.39.0...v1.39.1) (2026-10-08)
 
 ### Bug Fixes

@@ -169,6 +169,12 @@ func Registry() *core.Registry {
 				"multiagent.agents": {
 					Ref: &core.Ref{To: []core.Kind{KindAgent}, List: true, As: core.EncodeObject("agent", "id")},
 				},
+				"multiagent.subagents.predefined_agents": {
+					Ref: &core.Ref{To: []core.Kind{KindAgent}, List: true, As: core.EncodeObject("agent", "id")},
+				},
+				"multiagent.workflows.predefined_agents": {
+					Ref: &core.Ref{To: []core.Kind{KindAgent}, List: true, As: core.EncodeObject("agent", "id")},
+				},
 			}),
 		},
 		core.KindSpec{
