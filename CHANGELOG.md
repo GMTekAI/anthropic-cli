@@ -13,6 +13,11 @@
 
 * **apply:** resolve file paths in an agent's predefined agent lists
 
+
+### Chores
+
+* bump go sdk to v1.80.0
+
 ## [1.39.1](https://github.com/anthropics/anthropic-cli/compare/v1.39.0...v1.39.1) (2026-10-08)
 
 ### Bug Fixes
