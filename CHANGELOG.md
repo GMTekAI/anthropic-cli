@@ -1,6 +1,11 @@
 # Changelog
 
-## [1.40.1](https://github.com/anthropics/anthropic-cli/compare/v1.40.0...v1.40.1) (2026-10-09)
+## [1.41.0](https://github.com/anthropics/anthropic-cli/compare/v1.40.0...v1.41.0) (2026-10-09)
+
+### Features
+
+* **api:** add organization_type_not_supported error to spend limit lists
+
 
 ### Chores
 
