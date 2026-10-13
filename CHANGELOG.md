@@ -9,6 +9,7 @@
 
 ### Bug Fixes
 
+* **apply:** accept null for a field that takes references
 * **client:** treat proxy-authorization as a sensitive header
 
 

@@ -134,6 +134,33 @@ func TestMissingReferenceNamesThePath(t *testing.T) {
 	require.ErrorContains(t, err, "../skills/nope")
 }
 
+func TestNullReferenceFieldIsSentAsWritten(t *testing.T) {
+	root := writeTree(t, map[string]string{
+		"agents/a.md": `---
+model: m
+multiagent:
+  type: multiagent_20261001
+  subagents:
+    type: enabled
+    predefined_agents: null
+  workflows:
+    type: enabled
+    predefined_agents:
+---
+a
+`,
+	})
+	l := core.NewLoader(Registry(), root, nil)
+	require.NoError(t, l.Add(context.Background(), []string{filepath.Join(root, "agents/a.md")}))
+
+	multiagent := plannedField(t, l, "./agents/a.md", "multiagent").(map[string]any)
+	for _, part := range []string{"subagents", "workflows"} {
+		config := multiagent[part].(map[string]any)
+		require.Contains(t, config, "predefined_agents", part)
+		assert.Nil(t, config["predefined_agents"], part)
+	}
+}
+
 func TestInlineIDReferenceCreatesNoDependency(t *testing.T) {
 	const id = "agent_011CZkYpogX7uDKUyvBTophP"
 	root := writeTree(t, map[string]string{
