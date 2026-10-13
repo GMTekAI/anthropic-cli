@@ -24,6 +24,7 @@ const redactedPlaceholder = "<REDACTED>"
 var sensitiveHeaders = []string{
 	"api-key",
 	"x-api-key",
+	"x-amz-security-token", // AWS session token on SigV4-signed requests
 	"cookie",
 	"set-cookie",
 }

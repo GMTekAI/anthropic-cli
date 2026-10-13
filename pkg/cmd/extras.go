@@ -17,7 +17,7 @@ import (
 type extraClientFlags struct {
 	BaseURL string
 	// Sent as the anthropic-workspace-id header. Picks the workspace for API keys
-	// that have access to multiple workspaces; required on Claude Platform on AWS.
+	// that have access to multiple workspaces.
 	WorkspaceID string
 }
 
@@ -109,7 +109,7 @@ func init() {
 		},
 		&cli.StringFlag{
 			Name:    "workspace-id",
-			Usage:   "Workspace ID (wrkspc_...) to send as the anthropic-workspace-id header. Only needed for API keys that aren't scoped to a single workspace or on Claude Platform on AWS.",
+			Usage:   "Workspace ID (wrkspc_...) to send as the anthropic-workspace-id header. Only needed for API keys that aren't scoped to a single workspace. On Claude Platform on AWS, use --aws-workspace-id.",
 			Sources: cli.EnvVars("ANTHROPIC_WORKSPACE_ID"),
 		},
 		&cli.StringFlag{
@@ -132,34 +132,22 @@ func init() {
 			Usage:   "Override the gateway URL for Claude Platform on Google Cloud, once another --google-cloud-* flag has selected it. Google credentials are sent only here or to the gateway, never to --base-url.",
 			Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_BASE_URL"),
 		},
-		// Claude Platform on AWS credential tier. Opt-in only via --aws or the
-		// dedicated ANTHROPIC_USE_AWS toggle (not ambient AWS env vars); when
-		// active, getDefaultRequestOptions short-circuits to the SDK's AWS
-		// gateway backend (SigV4 or x-api-key) ahead of the first-party
-		// precedence switch.
-		&cli.BoolFlag{
-			Name:    "aws",
-			Usage:   "Route requests through the Claude Platform on AWS gateway (SigV4 via the AWS credential chain, or x-api-key when --aws-api-key is set). Persistent CI toggle: ANTHROPIC_USE_AWS.",
-			Sources: cli.EnvVars("ANTHROPIC_USE_AWS"),
-		},
 		&cli.StringFlag{
-			Name:    "aws-region",
-			Usage:   "AWS region for the gateway URL and SigV4 signing scope (required with --aws). Resolves from --aws-region > AWS_REGION > AWS_DEFAULT_REGION; NOT from the AWS profile's config.",
-			Sources: cli.EnvVars("AWS_REGION", "AWS_DEFAULT_REGION"),
+			Name:  "aws-region",
+			Usage: "AWS region for Claude Platform on AWS. Setting this or --aws-workspace-id sends requests to Claude Platform on AWS, signed with AWS credentials from the default credential chain. Defaults to AWS_REGION, then AWS_DEFAULT_REGION.",
 		},
 		&cli.StringFlag{
 			Name:    "aws-workspace-id",
-			Usage:   "Anthropic workspace ID (wrkspc_...) sent as the anthropic-workspace-id header (required with --aws).",
+			Usage:   "Workspace ID (wrkspc_...) to address on Claude Platform on AWS. It is sent as the anthropic-workspace-id header there, so --workspace-id is not needed.",
 			Sources: cli.EnvVars("ANTHROPIC_AWS_WORKSPACE_ID"),
 		},
-		&cli.StringFlag{
-			Name:    "aws-api-key",
-			Usage:   "Optional Anthropic API key for the AWS gateway (x-api-key). Its presence selects API-key mode; when unset, SigV4 is used via the default AWS credential chain.",
-			Sources: cli.EnvVars("ANTHROPIC_AWS_API_KEY"),
+		&cli.BoolFlag{
+			Name:  "aws-api-key-stdin",
+			Usage: "Read an API key for Claude Platform on AWS from standard input, instead of signing with AWS credentials (or set ANTHROPIC_AWS_API_KEY). Consumes stdin, so the request body must come from flags.",
 		},
 		&cli.StringFlag{
 			Name:    "aws-base-url",
-			Usage:   "Override the gateway URL for Claude Platform on AWS, once --aws has selected it. AWS credentials are sent only here or to the regional gateway, never to --base-url.",
+			Usage:   "Override the gateway URL for Claude Platform on AWS, once --aws-region or --aws-workspace-id has selected it. AWS credentials are sent only here or to the gateway, never to --base-url.",
 			Sources: cli.EnvVars("ANTHROPIC_AWS_BASE_URL"),
 		},
 	)
