@@ -3,6 +3,9 @@
 package apischema
 
 type Resource struct {
+	// Type is the single value of "type" in the retrieve response, if it has one.
+	// Two resources can share a Type.
+	Type string
 	// Fields are the fields of the create and update bodies and of the retrieve
 	// response, sorted by Path. The values of a map have no fields here.
 	Fields []Field

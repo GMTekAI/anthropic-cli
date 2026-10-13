@@ -19,6 +19,7 @@
 * **docs:** document the scope required to assign the managed role
 * **docs:** update model examples
 * include the license files in the published packages
+* **internal:** generate each resource's type beside its fields
 * **internal:** generate resource fields as a slice
 * **internal:** generate tables of resource fields
 * **internal:** narrow the tripwire test rule in the contributor guides

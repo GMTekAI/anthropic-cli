@@ -4,6 +4,7 @@ package apischema
 // such as "parent.child".
 var Resources = map[string]Resource{
 	"beta.agents": {
+		Type: "agent",
 		Fields: []Field{
 			{Path: "archived_at", InResponse: true},
 			{Path: "created_at", InResponse: true},
@@ -99,6 +100,7 @@ var Resources = map[string]Resource{
 		},
 	},
 	"beta.environments": {
+		Type: "environment",
 		Fields: []Field{
 			{Path: "archived_at", InResponse: true},
 			{Path: "config", InCreate: true, InResponse: true},
@@ -127,6 +129,7 @@ var Resources = map[string]Resource{
 		},
 	},
 	"beta.deployments": {
+		Type: "deployment",
 		Fields: []Field{
 			{Path: "agent", InCreate: true, InResponse: true, References: []Reference{{Resource: "beta.agents", Type: "agent", IDField: "id"}}},
 			{Path: "agent.id", InCreate: true, InResponse: true},
@@ -193,6 +196,7 @@ var Resources = map[string]Resource{
 		},
 	},
 	"beta.vaults": {
+		Type: "vault",
 		Fields: []Field{
 			{Path: "archived_at", InResponse: true},
 			{Path: "created_at", InResponse: true},
@@ -204,6 +208,7 @@ var Resources = map[string]Resource{
 		},
 	},
 	"beta.memory_stores": {
+		Type: "memory_store",
 		Fields: []Field{
 			{Path: "archived_at", InResponse: true},
 			{Path: "created_at", InResponse: true},
@@ -216,6 +221,7 @@ var Resources = map[string]Resource{
 		},
 	},
 	"beta.skills": {
+		Type: "skill",
 		Fields: []Field{
 			{Path: "created_at", InResponse: true},
 			{Path: "display_name", InCreate: true, InResponse: true},
