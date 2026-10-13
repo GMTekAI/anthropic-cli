@@ -4,12 +4,14 @@ package apischema
 
 type Resource struct {
 	// Fields are the fields of the create and update bodies and of the retrieve
-	// response, keyed by path, such as "chapters[].title". "[]" stands for every
-	// element of a list. The values of a map have no fields here.
-	Fields map[string]Field
+	// response, sorted by Path. The values of a map have no fields here.
+	Fields []Field
 }
 
 type Field struct {
+	// Path is where the field is in the resource, such as "chapters[].title". "[]"
+	// stands for every element of a list. No two fields of a resource share a Path.
+	Path string
 	// A field with neither InCreate nor InResponse is only in the update body.
 	InCreate, InResponse bool
 	// List is set if the value can be a list.
