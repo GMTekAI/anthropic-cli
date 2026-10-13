@@ -1,10 +1,15 @@
 # Changelog
 
-## [1.41.0](https://github.com/anthropics/anthropic-cli/compare/v1.40.0...v1.41.0) (2026-10-09)
+## [1.41.0](https://github.com/anthropics/anthropic-cli/compare/v1.40.0...v1.41.0) (2026-10-13)
 
 ### Features
 
 * **api:** add organization_type_not_supported error to spend limit lists
+
+
+### Bug Fixes
+
+* **client:** treat proxy-authorization as a sensitive header
 
 
 ### Chores
