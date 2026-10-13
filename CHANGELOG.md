@@ -19,6 +19,7 @@
 * **docs:** update model examples
 * include the license files in the published packages
 * **internal:** generate tables of resource fields
+* **internal:** narrow the tripwire test rule in the contributor guides
 
 
 ### Documentation
