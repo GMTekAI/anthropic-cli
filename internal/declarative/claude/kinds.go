@@ -3,18 +3,20 @@
 // the server owns, and how to talk to the API.
 //
 // Everything Claude-specific in `ant apply` lives here. The core package holds
-// the reconciler itself and does not import this one, so a fact about the API
-// has exactly one home — and when the spec moves, this is the only directory
-// to re-read.
+// the reconciler itself and does not import this one, so a hand-written fact
+// about the API has exactly one home — and when the spec moves, this is the
+// only directory to re-read.
 package claude
 
 import (
 	"maps"
 
+	"github.com/anthropics/anthropic-cli/internal/apischema"
 	"github.com/anthropics/anthropic-cli/internal/declarative/core"
 )
 
-// The kinds `ant apply` manages.
+// The kinds `ant apply` manages. Each is the `type` of its API resource, by
+// which fromAPI finds its rows.
 const (
 	KindSkill       core.Kind = "skill"
 	KindEnvironment core.Kind = "environment"
@@ -35,33 +37,19 @@ var (
 // Field sets shared across kinds, so each kind's own Fields list only what is
 // its own.
 var (
-	// identity is on every resource: the server's fields, and the name a
-	// plan shows for it.
-	identity = core.Fields{
-		"id":         {Computed: true},
-		"type":       {Computed: true},
-		"created_at": {Computed: true},
-		"updated_at": {Computed: true},
-		"name":       {Summary: true},
+	// named kinds show their name in a plan.
+	named = core.Fields{
+		"name": {Summary: true},
 	}
 	// archivable kinds report when they were archived; there is no unarchive.
 	archivable = core.Fields{
-		"archived_at": {Computed: true, Archived: true},
+		"archived_at": {Archived: true},
 	}
 	// metadata is the user key-value bag, patched key by key.
 	metadata = core.Fields{
 		"metadata": {Metadata: true},
 	}
 )
-
-// computed marks each named field as set by the server.
-func computed(names ...string) core.Fields {
-	f := core.Fields{}
-	for _, name := range names {
-		f[name] = core.Field{Computed: true}
-	}
-	return f
-}
 
 // with merges field sets into one; a later set wins on a shared path.
 func with(sets ...core.Fields) core.Fields {
@@ -72,19 +60,45 @@ func with(sets ...core.Fields) core.Fields {
 	return out
 }
 
+// fromAPI overwrites Computed, WriteOnly and Ref on every path apischema has
+// for the kind.
+func fromAPI(kind core.Kind, byHand core.Fields) core.Fields {
+	for _, resource := range apischema.Resources {
+		if resource.Type != string(kind) {
+			continue
+		}
+		for _, f := range resource.Fields {
+			field := byHand[f.Path]
+			field.Computed = f.InResponse && !f.InCreate
+			field.WriteOnly = f.InCreate && !f.InResponse
+			field.Ref = reference(f)
+			byHand[f.Path] = field
+		}
+	}
+	return byHand
+}
+
+func reference(f apischema.Field) *core.Ref {
+	for _, r := range f.References {
+		resource, ok := apischema.Resources[r.Resource]
+		// A path names a skill of the user's own, never one of Anthropic's.
+		if !ok || r.Type == "anthropic" {
+			continue
+		}
+		as := core.EncodeID
+		if r.IDField != "" {
+			as = core.EncodeObject(r.Type, r.IDField)
+		}
+		return &core.Ref{To: []core.Kind{core.Kind(resource.Type)}, List: f.List, As: as}
+	}
+	return nil
+}
+
 // Registry describes every kind to the reconciler.
 //
-// The Fields below are hand-transcribed from the API specification, and
-// nothing enforces that they stay in step with it. When the SDK is bumped,
-// re-check each one against the endpoint's params and response structs:
-//
-//   - a new server-computed response field not marked Computed causes
-//     permanent phantom drift, blocking every plan;
-//   - a new secret not marked WriteOnly gets printed in the plan;
-//   - a new clearable field not marked Clearable means deleting the line
-//     from a file silently does nothing.
-//
-// None of these show up at build time.
+// What each kind passes to fromAPI is written by hand, and nothing checks it
+// against the API: a new clearable field not marked Clearable means deleting
+// the line from a file silently does nothing.
 //
 // Order matters: a kind must come after everything it can reference.
 // TestKindOrderIsTopological holds that.
@@ -97,7 +111,7 @@ func Registry() *core.Registry {
 			// description from SKILL.md and mints a version per upload.
 			VersionField: "latest_version_id",
 			Destroy:      byDeleting,
-			Fields: with(identity, computed("latest_version_id", "source"), core.Fields{
+			Fields: fromAPI(KindSkill, core.Fields{
 				// Skills have no update endpoint and a version upload carries
 				// only files, so a title change cannot be applied at all; and
 				// the `name` in SKILL.md is the skill's identity, which a new
@@ -111,9 +125,9 @@ func Registry() *core.Registry {
 			IDPrefix: "env",
 			Destroy:  byArchiving,
 			Build:    build(prose{field: "description"}),
-			Fields: with(identity, archivable, metadata, core.Fields{
+			Fields: fromAPI(KindEnvironment, with(named, archivable, metadata, core.Fields{
 				"description": {Clearable: true},
-			}),
+			})),
 		},
 		core.KindSpec{
 			// The store is the container; the memories inside it are the
@@ -122,11 +136,11 @@ func Registry() *core.Registry {
 			IDPrefix: "memstore",
 			Destroy:  byArchiving,
 			Build:    build(prose{field: "description"}),
-			Fields: with(identity, archivable, metadata, core.Fields{
+			Fields: fromAPI(KindMemoryStore, with(named, archivable, metadata, core.Fields{
 				// Rendered into the system prompt of every session the store is
 				// attached to, so it is worth showing in the plan.
 				"description": {Clearable: true, Summary: true},
-			}),
+			})),
 		},
 		core.KindSpec{
 			// The vault is the container; the credentials inside it are added by
@@ -136,10 +150,10 @@ func Registry() *core.Registry {
 			IDPrefix: "vlt",
 			Destroy:  byArchiving,
 			Build:    buildVault,
-			Fields: with(identity, archivable, metadata, core.Fields{
+			Fields: fromAPI(KindVault, with(archivable, metadata, core.Fields{
 				// A vault has no `name`; this is what the API calls it.
 				"display_name": {Summary: true},
-			}),
+			})),
 		},
 		core.KindSpec{
 			Kind:               KindAgent,
@@ -149,7 +163,7 @@ func Registry() *core.Registry {
 			UpdateNeedsVersion: true,
 			Destroy:            byArchiving,
 			Build:              build(prose{field: "system"}),
-			Fields: with(identity, archivable, metadata, computed("version"), core.Fields{
+			Fields: fromAPI(KindAgent, with(named, archivable, metadata, core.Fields{
 				// `model: x` is accepted, but read back as `{id: x, speed: …}`.
 				"model":       {Shorthand: "id", Summary: true},
 				"description": {Clearable: true},
@@ -161,50 +175,25 @@ func Registry() *core.Registry {
 				"tools":       {Clearable: true, MatchBy: []string{"name", "type"}, Include: true},
 				"mcp_servers": {Clearable: true, MatchBy: []string{"name", "url"}, Include: true},
 				"multiagent":  {Clearable: true},
-				"skills": {
-					Clearable: true,
-					MatchBy:   []string{"skill_id"},
-					Ref:       &core.Ref{To: []core.Kind{KindSkill}, List: true, As: core.EncodeObject("custom", "skill_id")},
-				},
-				"multiagent.agents": {
-					Ref: &core.Ref{To: []core.Kind{KindAgent}, List: true, As: core.EncodeObject("agent", "id")},
-				},
-				"multiagent.subagents.predefined_agents": {
-					Ref: &core.Ref{To: []core.Kind{KindAgent}, List: true, As: core.EncodeObject("agent", "id")},
-				},
-				"multiagent.workflows.predefined_agents": {
-					Ref: &core.Ref{To: []core.Kind{KindAgent}, List: true, As: core.EncodeObject("agent", "id")},
-				},
-			}),
+				"skills":      {Clearable: true, MatchBy: []string{"skill_id"}},
+			})),
 		},
 		core.KindSpec{
 			Kind:     KindDeployment,
 			IDPrefix: "depl",
 			Destroy:  byArchiving,
 			Build:    build(firstMessage),
-			Fields: with(identity, archivable, metadata, computed("status", "paused_reason"), core.Fields{
+			Fields: fromAPI(KindDeployment, with(named, archivable, metadata, core.Fields{
 				"description": {Clearable: true},
 				// A mixed list: files and repositories are written as the API
 				// takes them and pass through; a memory store may be a path to
 				// its file, optionally with `access` and `instructions` alongside.
-				"resources": {
-					Clearable: true,
-					MatchBy:   []string{"memory_store_id", "url", "type"},
-					Ref:       &core.Ref{To: []core.Kind{KindMemoryStore}, List: true, As: core.EncodeObject("memory_store", "memory_store_id")},
-				},
-				"schedule":                        {Summary: true},
-				"schedule.last_run_at":            {Computed: true},
-				"schedule.upcoming_runs_at":       {Computed: true},
-				"resources[].authorization_token": {WriteOnly: true},
-				"agent": {
-					Summary: true,
-					Ref:     &core.Ref{To: []core.Kind{KindAgent}, As: core.EncodeObject("agent", "id")},
-				},
-				"environment_id": {
-					Summary: true,
-					Ref:     &core.Ref{To: []core.Kind{KindEnvironment}, As: core.EncodeID},
-				},
-			}),
+				"resources":      {Clearable: true, MatchBy: []string{"memory_store_id", "url", "type"}},
+				"vault_ids":      {Clearable: true},
+				"schedule":       {Summary: true},
+				"agent":          {Summary: true},
+				"environment_id": {Summary: true},
+			})),
 		},
 	)
 }

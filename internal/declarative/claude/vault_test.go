@@ -176,13 +176,3 @@ func TestPruneArchivesAVaultLikeAnyOtherKind(t *testing.T) {
 	assert.Equal(t, []string{"destroy vault " + vaultID}, h.client.calls)
 	assert.NotContains(t, h.lock.Keys(), "./vaults/sentry-autofix.yaml")
 }
-
-func TestVaultSchemaFlattensAsExpected(t *testing.T) {
-	spec, ok := Registry().Spec(KindVault)
-	require.True(t, ok)
-	assert.ElementsMatch(t,
-		[]string{"id", "type", "created_at", "updated_at", "archived_at"},
-		spec.Computed())
-	assert.Empty(t, spec.WriteOnly(), "a vault object carries no secret; credentials are a separate resource")
-	assert.Empty(t, spec.RefSlots())
-}

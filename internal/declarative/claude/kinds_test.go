@@ -1,6 +1,8 @@
 package claude
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/anthropics/anthropic-cli/internal/declarative/core"
@@ -8,41 +10,94 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// The per-field schema is flattened into the lists the reconciler consults.
-// This pins the flattening, because a field silently landing in the wrong
-// bucket is invisible until it costs a customer a broken plan: a missed
-// Computed shows up as drift that never clears, and a missed WriteOnly prints
-// a secret.
-func TestAgentSchemaFlattensAsExpected(t *testing.T) {
+func TestAgentClearableFields(t *testing.T) {
 	spec, ok := Registry().Spec(KindAgent)
 	require.True(t, ok)
-
-	assert.ElementsMatch(t,
-		[]string{"id", "type", "created_at", "updated_at", "archived_at", "version"},
-		spec.Computed())
 	assert.ElementsMatch(t,
 		[]string{"description", "system", "skills", "tools", "mcp_servers", "multiagent"},
 		spec.Clearable())
-	assert.Empty(t, spec.WriteOnly())
-
-	paths := map[string]bool{}
-	for _, slot := range spec.RefSlots() {
-		paths[slot.Path] = true
-	}
-	assert.Equal(t, map[string]bool{
-		"skills":                                 true,
-		"multiagent.agents":                      true,
-		"multiagent.subagents.predefined_agents": true,
-		"multiagent.workflows.predefined_agents": true,
-	}, paths)
 }
 
-func TestDeploymentTokenIsWriteOnly(t *testing.T) {
-	// The one secret left in the schema. If this stops being write-only the
-	// plan renders a GitHub token in cleartext.
-	spec, ok := Registry().Spec(KindDeployment)
+func TestAPlanWithholdsADeploymentsToken(t *testing.T) {
+	h := newHarness(t, map[string]string{
+		"agents/a.md":        "---\nmodel: m\n---\na\n",
+		"environments/e.yml": "name: e\n",
+		"deployments/d.yml": `agent: ../agents/a.md
+environment_id: ../environments/e.yml
+resources:
+  - {type: github_repository, url: https://github.com/o/r, authorization_token: t}
+`,
+	})
+
+	change, ok := h.plan().Change("./deployments/d.yml")
+
 	require.True(t, ok)
-	assert.Equal(t, []string{"resources[].authorization_token"}, spec.WriteOnly())
+	assert.True(t, change.IsSensitive("resources"))
+}
+
+func TestAChangedTimestampIsNotDrift(t *testing.T) {
+	h := newHarness(t, map[string]string{
+		"environments/e.yml":  "name: e\n",
+		"memory_stores/m.yml": "name: m\n",
+		"vaults/v.yml":        "display_name: v\n",
+		"agents/a.md":         "---\nmodel: m\n---\na\n",
+		"deployments/d.yml":   "agent: ../agents/a.md\nenvironment_id: ../environments/e.yml\n",
+	})
+	h.apply()
+	for _, obj := range h.client.objects {
+		obj["updated_at"] = "2026-01-01T00:00:00Z"
+	}
+
+	plan := h.plan()
+
+	assert.False(t, plan.HasWork())
+}
+
+func TestAChangedDescriptionIsDrift(t *testing.T) {
+	h := newHarness(t, map[string]string{"environments/e.yml": "name: e\n"})
+	h.apply()
+	id := h.lock.Resources["./environments/e.yml"].ID
+	h.client.objects[id]["description"] = "edited elsewhere"
+
+	plan := h.plan()
+
+	assert.Len(t, plan.Blocked(), 1)
+}
+
+func TestDeploymentVaultIDsResolvePathsAndKeepLiteralIDs(t *testing.T) {
+	h := newHarness(t, map[string]string{
+		"agents/a.md":        "---\nmodel: m\n---\na\n",
+		"environments/e.yml": "name: e\n",
+		"vaults/keys.yml":    "display_name: vendor keys\n",
+		"deployments/d.yml": `agent: ../agents/a.md
+environment_id: ../environments/e.yml
+vault_ids:
+  - ../vaults/keys.yml
+  - vlt_011CZkYpogX7uDKUyvBTophP
+`,
+	})
+
+	h.apply()
+
+	deployment := h.client.objects[h.lock.Resources["./deployments/d.yml"].ID]
+	keys := h.lock.Resources["./vaults/keys.yml"].ID
+	assert.Equal(t, []any{keys, "vlt_011CZkYpogX7uDKUyvBTophP"}, deployment["vault_ids"])
+}
+
+func TestDeletingTheVaultIDsLineDetachesTheVaults(t *testing.T) {
+	const required = "agent: ../agents/a.md\nenvironment_id: ../environments/e.yml\n"
+	h := newHarness(t, map[string]string{
+		"agents/a.md":        "---\nmodel: m\n---\na\n",
+		"environments/e.yml": "name: e\n",
+		"deployments/d.yml":  required + "vault_ids: [vlt_011CZkYpogX7uDKUyvBTophP]\n",
+	})
+	h.apply()
+	require.NoError(t, os.WriteFile(filepath.Join(h.root, "deployments/d.yml"), []byte(required), 0o644))
+
+	h.apply()
+
+	deployment := h.client.objects[h.lock.Resources["./deployments/d.yml"].ID]
+	assert.NotContains(t, deployment, "vault_ids")
 }
 
 func TestKindOrderIsTopological(t *testing.T) {

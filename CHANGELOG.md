@@ -6,12 +6,14 @@
 
 * **api:** add execution_identity to Managed Agents agents
 * **api:** add organization_type_not_supported error to spend limit lists
+* **apply:** resolve file paths in a deployment's vault_ids
 * **client:** export OpenTelemetry spans for API calls and for the work items of `beta:worker poll` when an OTLP endpoint is configured (`OTEL_EXPORTER_OTLP_ENDPOINT`), send `traceparent` with each request and continue the trace in `TRACEPARENT`; `ANTHROPIC_OPEN_TELEMETRY=false` turns the spans off and `ANTHROPIC_OPEN_TELEMETRY_PROPAGATION=false` the header
 
 
 ### Bug Fixes
 
 * **apply:** accept null for a field that takes references
+* **apply:** clear a deployment's vault_ids when its line is deleted
 * **client:** treat proxy-authorization as a sensitive header
 
 
