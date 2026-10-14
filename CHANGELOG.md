@@ -13,6 +13,7 @@
 ### Bug Fixes
 
 * **apply:** accept null for a field that takes references
+* **apply:** clear a deployment's resources when its line is deleted
 * **apply:** clear a deployment's vault_ids when its line is deleted
 * **client:** treat proxy-authorization as a sensitive header
 
