@@ -24,6 +24,7 @@ func TestMessagesCreate(t *testing.T) {
 			"--metadata", "{user_id: 13803d75-b4b5-4c3e-b2a2-6f21399b021b}",
 			"--output-config", "{effort: low, format: {schema: {foo: bar}, type: json_schema}}",
 			"--service-tier", "auto",
+			"--speed", "standard",
 			"--stop-sequence", "string",
 			"--stream=false",
 			"--system", "[{text: Today's date is 2024-06-01., type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}]",
@@ -61,6 +62,7 @@ func TestMessagesCreate(t *testing.T) {
 			"--output-config.effort", "low",
 			"--output-config.format", "{schema: {foo: bar}, type: json_schema}",
 			"--service-tier", "auto",
+			"--speed", "standard",
 			"--stop-sequence", "string",
 			"--stream=false",
 			"--system", "[{text: Today's date is 2024-06-01., type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}]",
@@ -116,6 +118,7 @@ func TestMessagesCreate(t *testing.T) {
 			"      foo: bar\n" +
 			"    type: json_schema\n" +
 			"service_tier: auto\n" +
+			"speed: standard\n" +
 			"stop_sequences:\n" +
 			"  - string\n" +
 			"stream: false\n" +
@@ -183,6 +186,7 @@ func TestMessagesCountTokens(t *testing.T) {
 			"--model", "claude-opus-5-5",
 			"--cache-control", "{type: ephemeral, ttl: 5m}",
 			"--output-config", "{effort: low, format: {schema: {foo: bar}, type: json_schema}}",
+			"--speed", "standard",
 			"--system", "[{text: Today's date is 2024-06-01., type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}]",
 			"--thinking", "{type: adaptive, display: summarized}",
 			"--tool-choice", "{type: auto, disable_parallel_tool_use: true}",
@@ -208,6 +212,7 @@ func TestMessagesCountTokens(t *testing.T) {
 			"--cache-control.ttl", "5m",
 			"--output-config.effort", "low",
 			"--output-config.format", "{schema: {foo: bar}, type: json_schema}",
+			"--speed", "standard",
 			"--system", "[{text: Today's date is 2024-06-01., type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}]",
 			"--thinking", "{type: adaptive, display: summarized}",
 			"--tool-choice", "{type: auto, disable_parallel_tool_use: true}",
@@ -245,6 +250,7 @@ func TestMessagesCountTokens(t *testing.T) {
 			"    schema:\n" +
 			"      foo: bar\n" +
 			"    type: json_schema\n" +
+			"speed: standard\n" +
 			"system:\n" +
 			"  - text: Today's date is 2024-06-01.\n" +
 			"    type: text\n" +
