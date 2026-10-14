@@ -929,9 +929,12 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 	credsWsName := creds.WorkspaceName
 	wsFromFlag := root.IsSet("workspace-id") && root.String("workspace-id") != ""
 	if wsFromFlag {
-		writeRow(out, true, "--workspace-id / ANTHROPIC_WORKSPACE_ID", root.String("workspace-id"))
+		writeRow(out, credWinner != 6, "--workspace-id / ANTHROPIC_WORKSPACE_ID", root.String("workspace-id"))
 	}
 	switch {
+	case credWinner == 6:
+		// The AWS tier sends only its own workspace header.
+		writeRow(out, true, "AWS workspace", cmp.Or(aw.WorkspaceID, "(not set)"))
 	case wsFromFlag:
 		if credsWs != "" {
 			credsLabel := credsWs

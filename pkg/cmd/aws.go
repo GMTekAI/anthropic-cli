@@ -51,12 +51,12 @@ func awsFromRoot(root *cli.Command) awsPlatform {
 	}
 }
 
-// AnySet reports whether the user addressed AWS at all: a region or a
-// workspace selects the tier. AWS_REGION and AWS_PROFILE on their own do not
-// count; they are set on most AWS machines for unrelated reasons. Nor do the
-// API key and base URL, for the same reasons as the Google Cloud tier.
+// AnySet reports whether the user addressed AWS at all: a region, a workspace
+// or an AWS API key selects the tier. AWS_REGION and AWS_PROFILE on their own
+// do not count; they are set on most AWS machines for unrelated reasons. Nor
+// does the base URL, for the same reason as the Google Cloud tier.
 func (a awsPlatform) AnySet() bool {
-	return a.Region != "" || a.WorkspaceID != ""
+	return a.Region != "" || a.WorkspaceID != "" || a.APIKey != ""
 }
 
 // apiKeySource names where the API key came from, without printing it.

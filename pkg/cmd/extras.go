@@ -134,7 +134,7 @@ func init() {
 		},
 		&cli.StringFlag{
 			Name:  "aws-region",
-			Usage: "AWS region for Claude Platform on AWS. Setting this or --aws-workspace-id sends requests to Claude Platform on AWS, signed with AWS credentials from the default credential chain. Defaults to AWS_REGION, then AWS_DEFAULT_REGION.",
+			Usage: "AWS region for Claude Platform on AWS. Setting this, --aws-workspace-id or an AWS API key sends requests to Claude Platform on AWS. Without an API key they are signed with AWS credentials from the default credential chain. Defaults to AWS_REGION, then AWS_DEFAULT_REGION.",
 		},
 		&cli.StringFlag{
 			Name:    "aws-workspace-id",
@@ -147,7 +147,7 @@ func init() {
 		},
 		&cli.StringFlag{
 			Name:    "aws-base-url",
-			Usage:   "Override the gateway URL for Claude Platform on AWS, once --aws-region or --aws-workspace-id has selected it. AWS credentials are sent only here or to the gateway, never to --base-url.",
+			Usage:   "Override the gateway URL for Claude Platform on AWS, once --aws-region, --aws-workspace-id or an AWS API key has selected it. AWS credentials are sent only here or to the gateway, never to --base-url.",
 			Sources: cli.EnvVars("ANTHROPIC_AWS_BASE_URL"),
 		},
 	)

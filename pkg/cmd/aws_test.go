@@ -236,21 +236,23 @@ func TestAWSTier(t *testing.T) {
 	})
 }
 
-// TestAWSSelection pins what selects the AWS tier: an AWS region or workspace
-// the user set for this CLI, not AWS settings already on the machine.
+// TestAWSSelection pins what selects the AWS tier: an AWS region, workspace or
+// API key the user set for this CLI, not AWS settings already on the machine.
 func TestAWSSelection(t *testing.T) {
 	for _, tc := range []struct {
-		name string
-		env  map[string]string
-		argv []string
-		want bool
+		name  string
+		env   map[string]string
+		argv  []string
+		stdin string
+		want  bool
 	}{
 		{name: "--aws-region", argv: []string{"--aws-region", "us-east-1"}, want: true},
 		{name: "--aws-workspace-id", argv: []string{"--aws-workspace-id", "wrkspc_01"}, want: true},
 		{name: "ANTHROPIC_AWS_WORKSPACE_ID", env: map[string]string{"ANTHROPIC_AWS_WORKSPACE_ID": "wrkspc_01"}, want: true},
+		{name: "ANTHROPIC_AWS_API_KEY", env: map[string]string{"ANTHROPIC_AWS_API_KEY": fakeAWSAPIKey}, want: true},
+		{name: "--aws-api-key-stdin", argv: []string{"--aws-api-key-stdin"}, stdin: fakeAWSAPIKey + "\n", want: true},
 		{name: "AWS_REGION", env: map[string]string{"AWS_REGION": "us-east-1"}},
 		{name: "AWS_PROFILE", env: map[string]string{"AWS_PROFILE": "default"}},
-		{name: "ANTHROPIC_AWS_API_KEY", env: map[string]string{"ANTHROPIC_AWS_API_KEY": fakeAWSAPIKey}},
 		{name: "--aws-base-url", argv: []string{"--aws-base-url", "https://gateway.invalid"}},
 		{name: "--workspace-id", argv: []string{"--workspace-id", "wrkspc_01"}},
 	} {
@@ -259,8 +261,12 @@ func TestAWSSelection(t *testing.T) {
 			for k, v := range tc.env {
 				t.Setenv(k, v)
 			}
+			if tc.stdin != "" {
+				withStdinCredential(t, tc.stdin)
+			}
 			var got bool
 			root := awsTestRoot(func(ctx context.Context, c *cli.Command) error {
+				require.NoError(t, applyStdinCredential(c.Root()))
 				got = awsFromRoot(c.Root()).AnySet()
 				return nil
 			})
@@ -374,6 +380,22 @@ func TestAuthStatusAWS(t *testing.T) {
 		require.NoError(t, err)
 		assert.Regexp(t, `\(active\) \* AWS \(API key, ANTHROPIC_AWS_API_KEY\)`, out)
 		assert.NotContains(t, out, "0123456789abcdef")
+	})
+
+	t.Run("an AWS API key selects the tier", func(t *testing.T) {
+		t.Setenv("ANTHROPIC_AWS_API_KEY", fakeAWSAPIKey)
+		t.Setenv("AWS_REGION", "us-east-1")
+		out, err := runStatus(t)
+		require.NoError(t, err)
+		assert.Regexp(t, `\(active\) \* AWS \(API key, ANTHROPIC_AWS_API_KEY\)`, out)
+		assert.Regexp(t, `\(active\) \* AWS gateway\s+https://aws-external-anthropic\.us-east-1\.api\.aws`, out)
+	})
+
+	t.Run("the AWS workspace is the active one", func(t *testing.T) {
+		out, err := runStatus(t, "--aws-region", "us-east-1", "--aws-workspace-id", "wrkspc_aws", "--workspace-id", "wrkspc_global")
+		require.NoError(t, err)
+		assert.Regexp(t, `\(active\) \* AWS workspace\s+wrkspc_aws`, out)
+		assert.Regexp(t, `\n\s+\* --workspace-id / ANTHROPIC_WORKSPACE_ID\s+wrkspc_global`, out)
 	})
 
 	t.Run("an API key wins over AWS", func(t *testing.T) {
