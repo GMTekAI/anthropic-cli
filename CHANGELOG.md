@@ -6,6 +6,7 @@
 
 * **api:** add execution_identity to Managed Agents agents
 * **api:** add organization_type_not_supported error to spend limit lists
+* **api:** add telemetry destination test endpoint
 * **api:** add telemetry destinations to the Admin API
 * **apply:** resolve file paths in a deployment's vault_ids
 * **client:** export OpenTelemetry spans for API calls and for the work items of `beta:worker poll` when an OTLP endpoint is configured (`OTEL_EXPORTER_OTLP_ENDPOINT`), send `traceparent` with each request and continue the trace in `TRACEPARENT`; `ANTHROPIC_OPEN_TELEMETRY=false` turns the spans off and `ANTHROPIC_OPEN_TELEMETRY_PROPAGATION=false` the header

@@ -257,6 +257,27 @@ var betaOrganizationTelemetryDestinationsDelete = cli.Command{
 	HideHelpCommand: true,
 }
 
+var betaOrganizationTelemetryDestinationsTest = cli.Command{
+	Name:    "test",
+	Usage:   "Send one test span, named `anthropic.test`, to the destination with its\nregistered headers, once and without retries, and report the destination's\nanswer. The response is 200 whether or not the destination answered with a 2xx\nstatus: its `result` has the type `success`, or the type `failure` and the\nreason in `error`. The destination's configuration, `state` and\n`delivery_health` do not change. A disabled destination can be tested too. Wait\n10 seconds between tests of one destination; a request that comes sooner may be\nanswered with status 429.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "destination-id",
+			Usage:     "ID of the destination to test (starts with `tdst_`).",
+			Required:  true,
+			PathParam: "destination_id",
+		},
+		&requestflag.Flag[[]string]{
+			Name:       "beta",
+			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			HeaderPath: "anthropic-beta",
+		},
+	},
+	Action:          handleBetaOrganizationTelemetryDestinationsTest,
+	HideHelpCommand: true,
+}
+
 func handleBetaOrganizationTelemetryDestinationsCreate(ctx context.Context, cmd *cli.Command) error {
 	client := anthropic.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
@@ -502,6 +523,55 @@ func handleBetaOrganizationTelemetryDestinationsDelete(ctx context.Context, cmd 
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "beta:organization:telemetry-destinations delete",
+		Transform:      transform,
+	})
+}
+
+func handleBetaOrganizationTelemetryDestinationsTest(ctx context.Context, cmd *cli.Command) error {
+	client := anthropic.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("destination-id") && len(unusedArgs) > 0 {
+		cmd.Set("destination-id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatBrackets,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := anthropic.BetaOrganizationTelemetryDestinationTestParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Beta.Organization.TelemetryDestinations.Test(
+		ctx,
+		cmd.Value("destination-id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "beta:organization:telemetry-destinations test",
 		Transform:      transform,
 	})
 }

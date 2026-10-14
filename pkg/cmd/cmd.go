@@ -1026,6 +1026,7 @@ func init() {
 					&betaOrganizationTelemetryDestinationsUpdate,
 					&betaOrganizationTelemetryDestinationsList,
 					&betaOrganizationTelemetryDestinationsDelete,
+					&betaOrganizationTelemetryDestinationsTest,
 				},
 			},
 			{

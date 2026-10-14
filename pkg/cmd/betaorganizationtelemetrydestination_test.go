@@ -170,3 +170,15 @@ func TestBetaOrganizationTelemetryDestinationsDelete(t *testing.T) {
 		)
 	})
 }
+
+func TestBetaOrganizationTelemetryDestinationsTest(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"beta:organization:telemetry-destinations", "test",
+			"--destination-id", "destination_id",
+			"--beta", "message-batches-2024-09-24",
+		)
+	})
+}
