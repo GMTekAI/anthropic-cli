@@ -1017,6 +1017,28 @@ func init() {
 				},
 			},
 			{
+				Name:     "beta:organization:telemetry-destinations",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&betaOrganizationTelemetryDestinationsCreate,
+					&betaOrganizationTelemetryDestinationsRetrieve,
+					&betaOrganizationTelemetryDestinationsUpdate,
+					&betaOrganizationTelemetryDestinationsList,
+					&betaOrganizationTelemetryDestinationsDelete,
+				},
+			},
+			{
+				Name:     "beta:organization:telemetry-destinations:workspaces",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&betaOrganizationTelemetryDestinationsWorkspacesList,
+					&betaOrganizationTelemetryDestinationsWorkspacesAdd,
+					&betaOrganizationTelemetryDestinationsWorkspacesRemove,
+				},
+			},
+			{
 				Name:            "@manpages",
 				Usage:           "Generate documentation for 'man'",
 				UsageText:       "ant @manpages [-o ant.1] [--gzip]",
