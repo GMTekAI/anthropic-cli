@@ -22,6 +22,7 @@
 
 ### Chores
 
+* bump go sdk to v1.81.0
 * **docs:** correct prefill, thinking, fallback and model descriptions
 * **docs:** document the scope required to assign the managed role
 * **docs:** update model examples
