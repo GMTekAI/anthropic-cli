@@ -164,12 +164,6 @@ func (f Fields) refSlots() []RefSlot {
 	return out
 }
 
-// Computed lists the fields the server owns.
-func (s KindSpec) Computed() []string { return s.computed }
-
-// WriteOnly lists the fields the server never returns.
-func (s KindSpec) WriteOnly() []string { return s.writeOnly }
-
 // Clearable lists the fields that deleting from a file actually removes.
 func (s KindSpec) Clearable() []string { return s.clearable }
 

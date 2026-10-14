@@ -46,7 +46,7 @@ var betaOrganizationSpendLimitsList = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:      "scope-type",
-			Usage:     "Return only limits with these scope types. A Claude Console organization has `organization` and `workspace` limits; a Claude Enterprise organization has `organization`, `seat_tier`, `rbac_group`, `organization_service` and `user` limits. Omit for all.",
+			Usage:     "Return only limits with these scope types. Omit for all.",
 			QueryPath: "scope_type",
 		},
 		&requestflag.Flag[[]string]{

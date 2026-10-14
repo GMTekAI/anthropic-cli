@@ -54,6 +54,10 @@ func (o extraClientFlags) requestOptions() []option.RequestOption {
 func init() {
 	Command.Commands = append(Command.Commands, &applyCommand)
 
+	// cmd.go leaves both hooks unset, so nothing generated is replaced here.
+	Command.Before = otelBefore
+	Command.After = otelAfter
+
 	// cmd.go declares --base-url without an env source and the SDK's own
 	// env handling is disabled (WithoutEnvironmentDefaults), so attach
 	// ANTHROPIC_BASE_URL here. TestBaseURLEnvRealTree fails if a regen

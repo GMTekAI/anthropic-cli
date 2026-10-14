@@ -19,7 +19,7 @@ var betaAgentsCreate = requestflag.WithInnerFlags(cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[any]{
 			Name:     "model",
-			Usage:    "Model identifier. Accepts the [model string](https://platform.claude.com/docs/en/about-claude/models/overview#latest-models-comparison), e.g. `claude-opus-5`, or a `model_config` object for additional configuration control",
+			Usage:    "Model identifier. Accepts the [model string](https://platform.claude.com/docs/en/about-claude/models/overview#latest-models-comparison), e.g. `claude-opus-5-5`, or a `model_config` object for additional configuration control",
 			Required: true,
 			BodyPath: "model",
 		},
@@ -33,6 +33,11 @@ var betaAgentsCreate = requestflag.WithInnerFlags(cli.Command{
 			Name:     "description",
 			Usage:    "Description of what the agent does.",
 			BodyPath: "description",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "execution-identity",
+			Usage:    "Execution principal for runs of this agent: `service_account` (the default) or `aws_role`.",
+			BodyPath: "execution_identity",
 		},
 		&requestflag.Flag[[]map[string]any]{
 			Name:     "mcp-server",
@@ -98,6 +103,18 @@ var betaAgentsCreate = requestflag.WithInnerFlags(cli.Command{
 			Name:       "model.speed",
 			Usage:      "Inference speed mode. Defaults to `standard`.",
 			InnerField: "speed",
+		},
+	},
+	"execution-identity": {
+		&requestflag.InnerFlag[string]{
+			Name:       "execution-identity.type",
+			Usage:      `Allowed values: "aws_role", "service_account".`,
+			InnerField: "type",
+		},
+		&requestflag.InnerFlag[string]{
+			Name:       "execution-identity.role-arn",
+			Usage:      `The IAM role's ARN, e.g. "arn:aws:iam::123456789012:role/my-agent-runner". Maximum 2048 characters.`,
+			InnerField: "role_arn",
 		},
 	},
 	"mcp-server": {
@@ -246,6 +263,11 @@ var betaAgentsUpdate = requestflag.WithInnerFlags(cli.Command{
 			Usage:    "Description. Omit to preserve; send empty string or null to clear.",
 			BodyPath: "description",
 		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "execution-identity",
+			Usage:    "Execution principal for runs of this agent: `service_account` (the default) or `aws_role`.",
+			BodyPath: "execution_identity",
+		},
 		&requestflag.Flag[any]{
 			Name:     "mcp-server",
 			Usage:    "MCP servers. Full replacement. Omit to preserve; send empty array or `null` to clear. Names must be unique. Maximum 20. Every server must be referenced by an `mcp_toolset` in the agent's resulting `tools`; unreferenced servers are rejected. See the [MCP connector guide](https://platform.claude.com/docs/en/managed-agents/mcp-connector).",
@@ -258,7 +280,7 @@ var betaAgentsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[any]{
 			Name:     "model",
-			Usage:    "Model identifier. Accepts the [model string](https://platform.claude.com/docs/en/about-claude/models/overview#latest-models-comparison), e.g. `claude-opus-5`, or a `model_config` object for additional configuration control. Omit to preserve. Cannot be cleared.",
+			Usage:    "Model identifier. Accepts the [model string](https://platform.claude.com/docs/en/about-claude/models/overview#latest-models-comparison), e.g. `claude-opus-5-5`, or a `model_config` object for additional configuration control. Omit to preserve. Cannot be cleared.",
 			BodyPath: "model",
 		},
 		&requestflag.Flag[map[string]any]{
@@ -305,6 +327,18 @@ var betaAgentsUpdate = requestflag.WithInnerFlags(cli.Command{
 	Action:          handleBetaAgentsUpdate,
 	HideHelpCommand: true,
 }, map[string][]requestflag.HasOuterFlag{
+	"execution-identity": {
+		&requestflag.InnerFlag[string]{
+			Name:       "execution-identity.type",
+			Usage:      `Allowed values: "aws_role", "service_account".`,
+			InnerField: "type",
+		},
+		&requestflag.InnerFlag[string]{
+			Name:       "execution-identity.role-arn",
+			Usage:      `The IAM role's ARN, e.g. "arn:aws:iam::123456789012:role/my-agent-runner". Maximum 2048 characters.`,
+			InnerField: "role_arn",
+		},
+	},
 	"mcp-server": {
 		&requestflag.InnerFlag[string]{
 			Name:                  "mcp-server.name",
