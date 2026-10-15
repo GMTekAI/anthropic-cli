@@ -9,6 +9,7 @@
 
 ### Chores
 
+* bump go sdk to v1.82.0
 * **docs:** describe headers on Managed Agents and telemetry endpoints
 
 
