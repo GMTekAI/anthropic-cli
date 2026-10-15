@@ -67,6 +67,11 @@ var messagesCreate = requestflag.WithInnerFlags(cli.Command{
 			Usage:    "Determines whether to use priority capacity (if available) or standard capacity for this request.\n\nAnthropic offers different levels of service for your API requests. See [service-tiers](https://platform.claude.com/docs/en/api/service-tiers) for details.",
 			BodyPath: "service_tier",
 		},
+		&requestflag.Flag[*string]{
+			Name:     "speed",
+			Usage:    "The inference speed mode for this request. `\"fast\"` enables high output-tokens-per-second inference.\n\nSome models require the `fast-mode-2026-02-01` beta header for any `speed` value. See [fast mode](https://platform.claude.com/docs/en/build-with-claude/fast-mode) for which models.",
+			BodyPath: "speed",
+		},
 		&requestflag.Flag[[]string]{
 			Name:     "stop-sequence",
 			Usage:    "Custom text sequences that will cause the model to stop generating.\n\nOur models will normally stop when they have naturally completed their turn, which will result in a response `stop_reason` of `\"end_turn\"`.\n\nIf you want the model to stop generating when it encounters custom strings of text, you can use the `stop_sequences` parameter. If the model encounters one of the custom sequences, the response `stop_reason` value will be `\"stop_sequence\"` and the response `stop_sequence` value will contain the matched stop sequence.",
@@ -349,6 +354,11 @@ var messagesCountTokens = requestflag.WithInnerFlags(cli.Command{
 		&requestflag.Flag[map[string]any]{
 			Name:     "output-config",
 			BodyPath: "output_config",
+		},
+		&requestflag.Flag[*string]{
+			Name:     "speed",
+			Usage:    "The inference speed mode for this request. `\"fast\"` enables high output-tokens-per-second inference.\n\nSome models require the `fast-mode-2026-02-01` beta header for any `speed` value. See [fast mode](https://platform.claude.com/docs/en/build-with-claude/fast-mode) for which models.",
+			BodyPath: "speed",
 		},
 		&requestflag.Flag[any]{
 			Name:     "system",

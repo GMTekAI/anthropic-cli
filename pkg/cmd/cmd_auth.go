@@ -689,6 +689,7 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 	fedMissing := fed.Missing()
 	gc := googleCloudFromRoot(root)
 	gcSet := gc.AnySet()
+	aw := awsFromRoot(root)
 
 	// Credential tier mirrors getDefaultRequestOptions exactly. Note that
 	// partial federation config (fed.AnySet() but not fedReady) does NOT
@@ -707,13 +708,15 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 		credWinner = 4
 	case gcSet:
 		credWinner = 5
-	case profileTokenPresent:
+	case aw.AnySet():
 		credWinner = 6
+	case profileTokenPresent:
+		credWinner = 7
 	}
 
 	fmt.Fprintln(out)
 	fmt.Fprintln(out, "Credentials")
-	if credWinner == 3 || credWinner == 6 {
+	if credWinner == 3 || credWinner == 7 {
 		if who := loggedInSummary(creds.OrganizationName, creds.AccountEmail); who != "" {
 			fmt.Fprintf(out, "  Logged in %s\n", who)
 		}
@@ -747,7 +750,7 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 		} else {
 			profileLabel += " [via active_config]"
 		}
-		writeRow(out, credWinner == 3 || credWinner == 6, profileLabel, formatSecret(creds.AccessToken, true))
+		writeRow(out, credWinner == 3 || credWinner == 7, profileLabel, formatSecret(creds.AccessToken, true))
 		exp := time.Unix(creds.ExpiresAt, 0)
 		writeDetail(out, "expires", fmt.Sprintf("%s (%s)", exp.Format(time.RFC3339), formatRemaining(time.Until(exp))))
 		// Prefer the credentials file's scope (what the live token was granted)
@@ -790,6 +793,15 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 		writeDetail(out, "project", cmp.Or(gc.Project, "(from GOOGLE_CLOUD_PROJECT or the credentials)"))
 		writeDetail(out, "location", cmp.Or(gc.Location, "global"))
 		writeDetail(out, "workspace_id", cmp.Or(gc.WorkspaceID, "(not set)"))
+	}
+	if aw.AnySet() {
+		if aw.APIKey != "" {
+			writeRow(out, credWinner == 6, "AWS (API key, "+aw.apiKeySource(root)+")", formatSecret(aw.APIKey, true))
+		} else {
+			writeRow(out, credWinner == 6, "AWS", "AWS credential chain (request signing)")
+		}
+		writeDetail(out, "region", cmp.Or(aw.Region, "(from AWS_REGION or AWS_DEFAULT_REGION)"))
+		writeDetail(out, "workspace_id", cmp.Or(aw.WorkspaceID, "(not set)"))
 	}
 
 	// Surface the surprising-override case: the user ran `ant auth login` but
@@ -836,6 +848,9 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 		// The Google Cloud tier takes only its own base URL: the rows below
 		// name hosts for Anthropic credentials and are not in play.
 		baseWinner = 5
+	case credWinner == 6:
+		// Likewise for AWS.
+		baseWinner = 6
 	case flagBaseURL != "":
 		baseWinner = 1
 	case envBaseURL != "":
@@ -861,6 +876,13 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 			label = "--google-cloud-base-url / ANTHROPIC_GOOGLE_CLOUD_BASE_URL"
 		}
 		writeRow(out, true, label, gc.host())
+	}
+	if baseWinner == 6 {
+		label := "AWS gateway"
+		if aw.BaseURL != "" {
+			label = "--aws-base-url / ANTHROPIC_AWS_BASE_URL"
+		}
+		writeRow(out, true, label, cmp.Or(aw.host(), "(set --aws-region)"))
 	}
 
 	fmt.Fprintln(out)
@@ -907,9 +929,12 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 	credsWsName := creds.WorkspaceName
 	wsFromFlag := root.IsSet("workspace-id") && root.String("workspace-id") != ""
 	if wsFromFlag {
-		writeRow(out, true, "--workspace-id / ANTHROPIC_WORKSPACE_ID", root.String("workspace-id"))
+		writeRow(out, credWinner != 6, "--workspace-id / ANTHROPIC_WORKSPACE_ID", root.String("workspace-id"))
 	}
 	switch {
+	case credWinner == 6:
+		// The AWS tier sends only its own workspace header.
+		writeRow(out, true, "AWS workspace", cmp.Or(aw.WorkspaceID, "(not set)"))
 	case wsFromFlag:
 		if credsWs != "" {
 			credsLabel := credsWs

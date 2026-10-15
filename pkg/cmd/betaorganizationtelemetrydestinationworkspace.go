@@ -35,7 +35,7 @@ var betaOrganizationTelemetryDestinationsWorkspacesList = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `telemetry-destinations-2026-08-11` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[int64]{
@@ -66,7 +66,7 @@ var betaOrganizationTelemetryDestinationsWorkspacesAdd = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `telemetry-destinations-2026-08-11` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 	},
@@ -93,7 +93,7 @@ var betaOrganizationTelemetryDestinationsWorkspacesRemove = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `telemetry-destinations-2026-08-11` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 	},

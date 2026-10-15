@@ -17,7 +17,7 @@ import (
 type extraClientFlags struct {
 	BaseURL string
 	// Sent as the anthropic-workspace-id header. Picks the workspace for API keys
-	// that have access to multiple workspaces; required on Claude Platform on AWS.
+	// that have access to multiple workspaces.
 	WorkspaceID string
 }
 
@@ -113,7 +113,7 @@ func init() {
 		},
 		&cli.StringFlag{
 			Name:    "workspace-id",
-			Usage:   "Workspace ID (wrkspc_...) to send as the anthropic-workspace-id header. Only needed for API keys that aren't scoped to a single workspace or on Claude Platform on AWS.",
+			Usage:   "Workspace ID (wrkspc_...) to send as the anthropic-workspace-id header. Only needed for API keys that aren't scoped to a single workspace. On Claude Platform on AWS, use --aws-workspace-id.",
 			Sources: cli.EnvVars("ANTHROPIC_WORKSPACE_ID"),
 		},
 		&cli.StringFlag{
@@ -135,6 +135,24 @@ func init() {
 			Name:    "google-cloud-base-url",
 			Usage:   "Override the gateway URL for Claude Platform on Google Cloud, once another --google-cloud-* flag has selected it. Google credentials are sent only here or to the gateway, never to --base-url.",
 			Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_BASE_URL"),
+		},
+		&cli.StringFlag{
+			Name:  "aws-region",
+			Usage: "AWS region for Claude Platform on AWS. Setting this, --aws-workspace-id or an AWS API key sends requests to Claude Platform on AWS. Without an API key they are signed with AWS credentials from the default credential chain. Defaults to AWS_REGION, then AWS_DEFAULT_REGION.",
+		},
+		&cli.StringFlag{
+			Name:    "aws-workspace-id",
+			Usage:   "Workspace ID (wrkspc_...) to address on Claude Platform on AWS. It is sent as the anthropic-workspace-id header there, so --workspace-id is not needed.",
+			Sources: cli.EnvVars("ANTHROPIC_AWS_WORKSPACE_ID"),
+		},
+		&cli.BoolFlag{
+			Name:  "aws-api-key-stdin",
+			Usage: "Read an API key for Claude Platform on AWS from standard input, instead of signing with AWS credentials (or set ANTHROPIC_AWS_API_KEY). Consumes stdin, so the request body must come from flags.",
+		},
+		&cli.StringFlag{
+			Name:    "aws-base-url",
+			Usage:   "Override the gateway URL for Claude Platform on AWS, once --aws-region, --aws-workspace-id or an AWS API key has selected it. AWS credentials are sent only here or to the gateway, never to --base-url.",
+			Sources: cli.EnvVars("ANTHROPIC_AWS_BASE_URL"),
 		},
 	)
 }

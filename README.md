@@ -81,6 +81,18 @@ ant models list
 
 The same settings are available as `--google-cloud-project`, `--google-cloud-workspace-id` and `--google-cloud-location` (default `global`). The project defaults to the one your Google credentials carry. Any credentials Google's Application Default Credentials find are used, including a service account key named by `GOOGLE_APPLICATION_CREDENTIALS`. An API key, an auth token or a profile named with `--profile` takes precedence; `ant auth status` shows which is in use. Google credentials are sent only to the gateway: `--base-url` and `ANTHROPIC_BASE_URL` are not used, and `--google-cloud-base-url` (`ANTHROPIC_GOOGLE_CLOUD_BASE_URL`) overrides the gateway URL. `ant beta:worker` is not supported on Google Cloud.
 
+### Claude Platform on AWS
+
+Name your region and workspace; the CLI then sends requests through the Claude Platform on AWS gateway, signed with your AWS credentials:
+
+```sh
+export AWS_REGION=us-east-1
+export ANTHROPIC_AWS_WORKSPACE_ID=wrkspc_...
+ant models list
+```
+
+The same settings are available as `--aws-region` and `--aws-workspace-id`. Either flag, `ANTHROPIC_AWS_WORKSPACE_ID` or an AWS API key selects AWS; `AWS_REGION` and `AWS_PROFILE` on their own don't, since most AWS machines set them for other reasons. The region defaults to `AWS_REGION`, then `AWS_DEFAULT_REGION`. Any credentials the AWS default credential chain finds are used, including `AWS_PROFILE`, environment keys and an IAM role. To use an API key generated in the AWS Console instead, set `ANTHROPIC_AWS_API_KEY` or pipe it to `--aws-api-key-stdin`. The key works only in the region it was generated in, so set the region to match. `ANTHROPIC_API_KEY`, an auth token, a profile named with `--profile` or Google Cloud settings take precedence; `ant auth status` shows which is in use. AWS credentials are sent only to the gateway: `--base-url` and `ANTHROPIC_BASE_URL` are not used, and `--aws-base-url` (`ANTHROPIC_AWS_BASE_URL`) overrides the gateway URL. `ant beta:worker` is not supported on AWS.
+
 ## Usage
 
 The CLI follows a resource-based command structure, with nested resources separated by colons:

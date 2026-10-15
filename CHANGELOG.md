@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.42.0](https://github.com/anthropics/anthropic-cli/compare/v1.41.0...v1.42.0) (2026-10-15)
+
+### Features
+
+* **api:** add the speed parameter and usage.speed to Messages
+
+
+### Chores
+
+* bump go sdk to v1.82.0
+* **docs:** describe headers on Managed Agents and telemetry endpoints
+
+
+### Documentation
+
+* **api:** note that some models need a beta header to use speed
+
 ## [1.41.0](https://github.com/anthropics/anthropic-cli/compare/v1.40.0...v1.41.0) (2026-10-14)
 
 ### Features
@@ -9,7 +26,9 @@
 * **api:** add telemetry destination test endpoint
 * **api:** add telemetry destinations to the Admin API
 * **apply:** resolve file paths in a deployment's vault_ids
-* **client:** export OpenTelemetry spans for API calls and for the work items of `beta:worker poll` when an OTLP endpoint is configured (`OTEL_EXPORTER_OTLP_ENDPOINT`), send `traceparent` with each request and continue the trace in `TRACEPARENT`; `ANTHROPIC_OPEN_TELEMETRY=false` turns the spans off and `ANTHROPIC_OPEN_TELEMETRY_PROPAGATION=false` the header
+* **client:** add native support for OpenTelemetry tracing
+
+  Spans are exported when the `OTEL_EXPORTER_OTLP_ENDPOINT` or `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` environment variable is set, otherwise tracing is off. Learn more in the [documentation](https://platform.claude.com/docs/en/manage-claude/opentelemetry/sdk).
 
 
 ### Bug Fixes

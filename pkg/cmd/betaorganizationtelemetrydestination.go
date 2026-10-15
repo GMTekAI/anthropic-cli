@@ -46,7 +46,7 @@ var betaOrganizationTelemetryDestinationsCreate = requestflag.WithInnerFlags(cli
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `telemetry-destinations-2026-08-11` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 	},
@@ -101,7 +101,7 @@ var betaOrganizationTelemetryDestinationsRetrieve = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `telemetry-destinations-2026-08-11` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 	},
@@ -153,7 +153,7 @@ var betaOrganizationTelemetryDestinationsUpdate = requestflag.WithInnerFlags(cli
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `telemetry-destinations-2026-08-11` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 	},
@@ -224,7 +224,7 @@ var betaOrganizationTelemetryDestinationsList = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `telemetry-destinations-2026-08-11` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[int64]{
@@ -249,7 +249,7 @@ var betaOrganizationTelemetryDestinationsDelete = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `telemetry-destinations-2026-08-11` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 	},
@@ -270,7 +270,7 @@ var betaOrganizationTelemetryDestinationsTest = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `telemetry-destinations-2026-08-11` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 	},
