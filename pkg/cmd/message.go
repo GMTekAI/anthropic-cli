@@ -69,7 +69,7 @@ var messagesCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[*string]{
 			Name:     "speed",
-			Usage:    "The inference speed mode for this request. `\"fast\"` enables high output-tokens-per-second inference.",
+			Usage:    "The inference speed mode for this request. `\"fast\"` enables high output-tokens-per-second inference.\n\nSome models require the `fast-mode-2026-02-01` beta header for any `speed` value. See [fast mode](https://platform.claude.com/docs/en/build-with-claude/fast-mode) for which models.",
 			BodyPath: "speed",
 		},
 		&requestflag.Flag[[]string]{
@@ -357,7 +357,7 @@ var messagesCountTokens = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[*string]{
 			Name:     "speed",
-			Usage:    "The inference speed mode for this request. `\"fast\"` enables high output-tokens-per-second inference.",
+			Usage:    "The inference speed mode for this request. `\"fast\"` enables high output-tokens-per-second inference.\n\nSome models require the `fast-mode-2026-02-01` beta header for any `speed` value. See [fast mode](https://platform.claude.com/docs/en/build-with-claude/fast-mode) for which models.",
 			BodyPath: "speed",
 		},
 		&requestflag.Flag[any]{

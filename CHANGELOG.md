@@ -1,10 +1,15 @@
 # Changelog
 
-## [1.42.0](https://github.com/anthropics/anthropic-cli/compare/v1.41.0...v1.42.0) (2026-10-14)
+## [1.42.0](https://github.com/anthropics/anthropic-cli/compare/v1.41.0...v1.42.0) (2026-10-15)
 
 ### Features
 
 * **api:** add the speed parameter and usage.speed to Messages
+
+
+### Documentation
+
+* **api:** note that some models need a beta header to use speed
 
 ## [1.41.0](https://github.com/anthropics/anthropic-cli/compare/v1.40.0...v1.41.0) (2026-10-14)
 
