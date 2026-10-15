@@ -48,7 +48,7 @@ var betaUserProfilesCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `user-profiles-2026-03-24`, `user-profiles-2026-08-18`, or `user-profiles-2026-09-04` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -112,7 +112,7 @@ var betaUserProfilesRetrieve = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `user-profiles-2026-03-24`, `user-profiles-2026-08-18`, or `user-profiles-2026-09-04` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -167,7 +167,7 @@ var betaUserProfilesUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `user-profiles-2026-03-24`, `user-profiles-2026-08-18`, or `user-profiles-2026-09-04` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -245,7 +245,7 @@ var betaUserProfilesList = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `user-profiles-2026-03-24`, `user-profiles-2026-08-18`, or `user-profiles-2026-09-04` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -275,7 +275,7 @@ var betaUserProfilesCreateEnrollmentURL = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `user-profiles-2026-03-24`, `user-profiles-2026-08-18`, or `user-profiles-2026-09-04` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{

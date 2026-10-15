@@ -61,7 +61,7 @@ var betaSessionsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `managed-agents-2026-04-01` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -215,7 +215,7 @@ var betaSessionsRetrieve = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `managed-agents-2026-04-01` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -266,7 +266,7 @@ var betaSessionsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `managed-agents-2026-04-01` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -376,7 +376,7 @@ var betaSessionsList = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `managed-agents-2026-04-01` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -405,7 +405,7 @@ var betaSessionsDelete = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `managed-agents-2026-04-01` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -430,7 +430,7 @@ var betaSessionsArchive = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `managed-agents-2026-04-01` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{

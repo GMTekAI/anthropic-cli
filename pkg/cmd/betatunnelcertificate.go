@@ -31,7 +31,7 @@ var betaTunnelsCertificatesCreate = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `mcp-tunnels-2026-06-22` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -63,7 +63,7 @@ var betaTunnelsCertificatesRetrieve = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `mcp-tunnels-2026-06-22` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -104,7 +104,7 @@ var betaTunnelsCertificatesList = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `mcp-tunnels-2026-06-22` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -140,7 +140,7 @@ var betaTunnelsCertificatesArchive = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `mcp-tunnels-2026-06-22` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{

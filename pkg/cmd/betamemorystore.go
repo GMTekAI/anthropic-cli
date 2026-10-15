@@ -35,7 +35,7 @@ var betaMemoryStoresCreate = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `agent-memory-2026-07-22` or `managed-agents-2026-04-01` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -61,7 +61,7 @@ var betaMemoryStoresRetrieve = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `agent-memory-2026-07-22` or `managed-agents-2026-04-01` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -103,7 +103,7 @@ var betaMemoryStoresUpdate = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `agent-memory-2026-07-22` or `managed-agents-2026-04-01` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -148,7 +148,7 @@ var betaMemoryStoresList = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `agent-memory-2026-07-22` or `managed-agents-2026-04-01` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -178,7 +178,7 @@ var betaMemoryStoresDelete = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `agent-memory-2026-07-22` or `managed-agents-2026-04-01` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -204,7 +204,7 @@ var betaMemoryStoresArchive = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `agent-memory-2026-07-22` or `managed-agents-2026-04-01` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{

@@ -41,7 +41,7 @@ var betaDreamsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `dreaming-2026-04-21` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -110,7 +110,7 @@ var betaDreamsRetrieve = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `dreaming-2026-04-21` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -160,7 +160,7 @@ var betaDreamsList = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `dreaming-2026-04-21` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -191,7 +191,7 @@ var betaDreamsArchive = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `dreaming-2026-04-21` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -218,7 +218,7 @@ var betaDreamsCancel = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			Usage:      "This endpoint is in beta: requests must send `dreaming-2026-04-21` in this header.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{

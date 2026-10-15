@@ -7,6 +7,11 @@
 * **api:** add the speed parameter and usage.speed to Messages
 
 
+### Chores
+
+* **docs:** describe headers on Managed Agents and telemetry endpoints
+
+
 ### Documentation
 
 * **api:** note that some models need a beta header to use speed
