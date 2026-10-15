@@ -25,6 +25,9 @@ type Diff struct {
 	// Before is the server's value and After the desired one, for the leaf
 	// kinds that carry them.
 	Before, After any
+	// removed marks a DiffSensitive that stands in for a DiffRemoved, so that
+	// apply still clears the field.
+	removed bool
 }
 
 // DiffKind says what sort of node a Diff is.
@@ -292,7 +295,7 @@ func (d *Diff) clears() []string {
 	}
 	var out []string
 	for k, f := range d.Fields {
-		if f.Kind == DiffRemoved {
+		if f.Kind == DiffRemoved || f.removed {
 			out = append(out, k)
 		}
 	}
@@ -336,7 +339,7 @@ func (c *Change) checkImmutable() error {
 // itself. A leaf prints its whole value, so a secret anywhere inside leaks.
 func (c *Change) redact(path string, d *Diff) *Diff {
 	if c.IsSensitive(path) {
-		return &Diff{Kind: DiffSensitive}
+		return &Diff{Kind: DiffSensitive, removed: d.Kind == DiffRemoved}
 	}
 	return d
 }

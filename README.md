@@ -181,9 +181,11 @@ your-repo/
 │   └── nightly-review.md
 ├── environments/
 │   └── cloud.yml
-└── skills/
-    └── pr-writer/
-        └── SKILL.md
+├── skills/
+│   └── pr-writer/
+│       └── SKILL.md
+└── vaults/
+    └── github.yml
 ```
 
 The directory a file is in decides what kind of resource it is, and a skill is
@@ -215,6 +217,7 @@ Review the pull request. Delegate verification to the code-verifier agent.
 # deployments/nightly-review.md
 agent: ../agents/code-reviewer.md
 environment_id: ../environments/cloud.yml
+vault_ids: [../vaults/github.yml]    # or a vlt_ ID for a vault these files do not manage
 schedule: {type: cron, expression: "0 3 * * *", timezone: America/Los_Angeles}
 ---
 Review any open pull requests. Start with the oldest.
@@ -225,7 +228,7 @@ prompt to see each change field by field, or run with `--dry-run` to print the
 plan without applying it.
 
 ```console
-$ ant apply ./agents ./deployments ./environments ./skills
+$ ant apply ./agents ./deployments ./environments ./skills ./vaults
 Preview  ./claude-lock.json
 
 ± Name                       Plan
@@ -233,7 +236,7 @@ Preview  ./claude-lock.json
 ~ ./agents/code-verifier.md  update     [~system]
 ~ ./agents/code-reviewer.md  update     [~multiagent]
 
-Resources  + 1 to create · ~ 2 to update · 2 unchanged
+Resources  + 1 to create · ~ 2 to update · 3 unchanged
 
 Apply these changes? (y)es / (n)o / (d)etails
 ```

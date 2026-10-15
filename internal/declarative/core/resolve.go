@@ -48,10 +48,11 @@ func (l *Loader) resolveSlots(ctx context.Context, src *Source) error {
 }
 
 // resolveSlot resolves every reference written in one slot of a source. It
-// returns nil when the source does not set the slot at all.
+// returns nil when the source leaves the slot out or sets it to null, which
+// stays in the body as written.
 func (l *Loader) resolveSlot(ctx context.Context, src *Source, slot RefSlot) (*resolvedSlot, error) {
 	raw, present := getPath(src.Body, slot.Path)
-	if !present {
+	if !present || raw == nil {
 		return nil, nil
 	}
 

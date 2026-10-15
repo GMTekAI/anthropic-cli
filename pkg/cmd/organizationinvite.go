@@ -25,7 +25,7 @@ var organizationInvitesCreate = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:     "role",
-			Usage:    "Role for the invited User.\n\nThe accepted values depend on the organization type. Console and API organizations accept `user`, `developer`, `billing`, and `claude_code_user`; `admin` cannot be assigned through the API. Claude Enterprise organizations accept `user` and `managed`.",
+			Usage:    "Role for the invited User.\n\nThe accepted values depend on the organization type. Console and API organizations accept `user`, `developer`, `billing`, and `claude_code_user`; `admin` cannot be assigned through the API. Claude Enterprise organizations accept `user` and `managed`; inviting with the `managed` role requires the `write:rbac_groups` scope in addition to `write:members`.",
 			Required: true,
 			BodyPath: "role",
 		},

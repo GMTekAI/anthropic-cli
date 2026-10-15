@@ -13,9 +13,10 @@ func TestBetaAgentsCreate(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"beta:agents", "create",
-			"--model", "claude-opus-5",
+			"--model", "claude-opus-5-5",
 			"--name", "My First Agent",
 			"--description", "A general-purpose starter agent.",
+			"--execution-identity", "{role_arn: role_arn, type: aws_role}",
 			"--mcp-server", "{name: example-mcp, type: url, url: https://example-server.modelcontextprotocol.io/sse}",
 			"--metadata", "{foo: bar}",
 			"--multiagent", "{agents: [agent_011CZkYqphY8vELVzwCUpqiQ, {type: self}], type: coordinator}",
@@ -36,9 +37,10 @@ func TestBetaAgentsCreate(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"beta:agents", "create",
-			"--model", "claude-opus-5",
+			"--model", "claude-opus-5-5",
 			"--name", "My First Agent",
 			"--description", "A general-purpose starter agent.",
+			"--execution-identity", "{role_arn: role_arn, type: aws_role}",
 			"--mcp-server.name", "example-mcp",
 			"--mcp-server.type", "url",
 			"--mcp-server.url", "https://example-server.modelcontextprotocol.io/sse",
@@ -55,9 +57,12 @@ func TestBetaAgentsCreate(t *testing.T) {
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"model: claude-opus-5\n" +
+			"model: claude-opus-5-5\n" +
 			"name: My First Agent\n" +
 			"description: A general-purpose starter agent.\n" +
+			"execution_identity:\n" +
+			"  role_arn: role_arn\n" +
+			"  type: aws_role\n" +
 			"mcp_servers:\n" +
 			"  - name: example-mcp\n" +
 			"    type: url\n" +
@@ -120,9 +125,10 @@ func TestBetaAgentsUpdate(t *testing.T) {
 			"beta:agents", "update",
 			"--agent-id", "agent_011CZkYpogX7uDKUyvBTophP",
 			"--description", "updated",
+			"--execution-identity", "{role_arn: role_arn, type: aws_role}",
 			"--mcp-server", "[{name: example-mcp, type: url, url: https://example-server.modelcontextprotocol.io/sse}]",
 			"--metadata", "{foo: string}",
-			"--model", "{id: claude-opus-5, effort: low, inference_geo: inference_geo, speed: standard}",
+			"--model", "{id: claude-opus-5-5, effort: low, inference_geo: inference_geo, speed: standard}",
 			"--multiagent", "{agents: [agent_011CZkYqphY8vELVzwCUpqiQ, {type: self}], type: coordinator}",
 			"--name", "name",
 			"--skill", "[{skill_id: xlsx, type: anthropic, version: '1'}]",
@@ -145,11 +151,12 @@ func TestBetaAgentsUpdate(t *testing.T) {
 			"beta:agents", "update",
 			"--agent-id", "agent_011CZkYpogX7uDKUyvBTophP",
 			"--description", "updated",
+			"--execution-identity", "{role_arn: role_arn, type: aws_role}",
 			"--mcp-server.name", "example-mcp",
 			"--mcp-server.type", "url",
 			"--mcp-server.url", "https://example-server.modelcontextprotocol.io/sse",
 			"--metadata", "{foo: string}",
-			"--model", "{id: claude-opus-5, effort: low, inference_geo: inference_geo, speed: standard}",
+			"--model", "{id: claude-opus-5-5, effort: low, inference_geo: inference_geo, speed: standard}",
 			"--multiagent", "{agents: [agent_011CZkYqphY8vELVzwCUpqiQ, {type: self}], type: coordinator}",
 			"--name", "name",
 			"--skill", "[{skill_id: xlsx, type: anthropic, version: '1'}]",
@@ -165,6 +172,9 @@ func TestBetaAgentsUpdate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"description: updated\n" +
+			"execution_identity:\n" +
+			"  role_arn: role_arn\n" +
+			"  type: aws_role\n" +
 			"mcp_servers:\n" +
 			"  - name: example-mcp\n" +
 			"    type: url\n" +
@@ -172,7 +182,7 @@ func TestBetaAgentsUpdate(t *testing.T) {
 			"metadata:\n" +
 			"  foo: string\n" +
 			"model:\n" +
-			"  id: claude-opus-5\n" +
+			"  id: claude-opus-5-5\n" +
 			"  effort: low\n" +
 			"  inference_geo: inference_geo\n" +
 			"  speed: standard\n" +

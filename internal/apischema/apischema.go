@@ -1,0 +1,35 @@
+// Package apischema lists the fields of some of the API's resources, and the
+// resource that each field refers to, judged by the field's name and shape.
+package apischema
+
+type Resource struct {
+	// Type is the single value of "type" in the retrieve response, if it has one.
+	// Two resources can share a Type.
+	Type string
+	// Fields are the fields of the create and update bodies and of the retrieve
+	// response, sorted by Path. The values of a map have no fields here.
+	Fields []Field
+}
+
+type Field struct {
+	// Path is where the field is in the resource, such as "chapters[].title". "[]"
+	// stands for every element of a list. No two fields of a resource share a Path.
+	Path string
+	// A field with neither InCreate nor InResponse is only in the update body.
+	InCreate, InResponse bool
+	// List is set if the value can be a list.
+	List bool
+	// References are the ways found in the create and update bodies in which the
+	// field, or each element of it, refers to a resource.
+	References []Reference
+}
+
+type Reference struct {
+	// Resource is the name of that resource, written like the keys of Resources.
+	// That resource need not be in Resources.
+	Resource string
+	// Type and IDField are set if the value is an object: Type is the value of its
+	// "type" property, and IDField the property that holds the ID. Otherwise the
+	// value is the ID itself.
+	Type, IDField string
+}

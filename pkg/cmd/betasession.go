@@ -91,7 +91,7 @@ var betaSessionsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "agent.model",
-			Usage:      "Replacement model. Accepts the model string, e.g. `claude-opus-5`, or a `model_config` object. Omit to use the agent's model.",
+			Usage:      "Replacement model. Accepts the model string, e.g. `claude-opus-5-5`, or a `model_config` object. Omit to use the agent's model.",
 			InnerField: "model",
 		},
 		&requestflag.InnerFlag[[]map[string]any]{
