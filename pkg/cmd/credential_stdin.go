@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -28,11 +27,13 @@ const argvCredentialDeprecation = "Deprecated: a credential on the command line 
 var stdinCredentialFlags = []struct{ stdinFlag, target string }{
 	{"api-key-stdin", "api-key"},
 	{"auth-token-stdin", "auth-token"},
+	{"aws-api-key-stdin", "aws-api-key"},
 }
 
 var directCredentialEnv = map[string]string{
-	"api-key":    "ANTHROPIC_API_KEY",
-	"auth-token": "ANTHROPIC_AUTH_TOKEN",
+	"api-key":     "ANTHROPIC_API_KEY",
+	"auth-token":  "ANTHROPIC_AUTH_TOKEN",
+	"aws-api-key": "ANTHROPIC_AWS_API_KEY",
 }
 
 // Vars so tests can substitute argv and stdin.
@@ -123,7 +124,7 @@ func readStdinCredential(cmd *cli.Command, in io.Reader, isTTY bool, onCommandLi
 		return "", "", nil
 	case 1:
 	default:
-		return "", "", errors.New("--api-key-stdin and --auth-token-stdin are mutually exclusive: stdin can carry only one credential")
+		return "", "", fmt.Errorf("--%s and --%s are mutually exclusive: stdin can carry only one credential", chosen[0].stdinFlag, chosen[1].stdinFlag)
 	}
 	f := chosen[0]
 	for _, name := range onCommandLine {

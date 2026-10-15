@@ -117,6 +117,22 @@ func TestDebugMiddleware(t *testing.T) {
 		}
 	})
 
+	t.Run("RedactsAWSSessionToken", func(t *testing.T) {
+		t.Parallel()
+
+		middleware, logBuf := setup()
+
+		req := httptest.NewRequest("GET", "https://example.com", nil)
+		req.Header.Set("X-Amz-Security-Token", secretToken)
+
+		middleware.Middleware()(req, func(req *http.Request) (*http.Response, error) {
+			return &http.Response{}, nil
+		})
+
+		require.Contains(t, logBuf.String(), "X-Amz-Security-Token: "+redactedPlaceholder)
+		require.NotContains(t, logBuf.String(), secretToken)
+	})
+
 	const customAPIKeyHeader = "X-My-Api-Key"
 
 	t.Run("RedactsSensitiveHeaders", func(t *testing.T) {
