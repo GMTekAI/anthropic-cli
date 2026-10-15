@@ -83,10 +83,13 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 	//   5. --google-cloud-project / --google-cloud-location /
 	//      --google-cloud-workspace-id or their ANTHROPIC_GOOGLE_CLOUD_* env vars
 	//      (Claude Platform on Google Cloud, Google Application Default Credentials)
-	//   6. profile from active_config → "default" (implicit)
+	//   6. --aws-workspace-id / --aws-region / --aws-api-key-stdin or
+	//      ANTHROPIC_AWS_WORKSPACE_ID / ANTHROPIC_AWS_API_KEY
+	//      (Claude Platform on AWS, AWS credentials or an AWS API key)
+	//   7. profile from active_config → "default" (implicit)
 	// The explicit/implicit profile split means: a profile you named beats
-	// federation env vars and Google Cloud settings (you asked for it), but
-	// those beat a profile that just happened to be lying around in
+	// federation env vars and the Google Cloud and AWS settings (you asked for
+	// it), but those beat a profile that just happened to be lying around in
 	// active_config.
 	apiKey, apiKeySet := directCredential(root, "api-key")
 	authToken, authTokenSet := directCredential(root, "auth-token")
@@ -95,6 +98,7 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 	fedAnySet := fed.AnySet()
 	gc := googleCloudFromRoot(root)
 	gcAnySet := gc.AnySet()
+	aw := awsFromRoot(root)
 	extra := extraClientFlagsFromCmd(cmd)
 	apiKeySrc, authTokenSrc := "", ""
 	if apiKeySet {
@@ -103,7 +107,7 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 	if authTokenSet {
 		authTokenSrc = credentialSourceLabel(root, "auth-token")
 	}
-	warnIfMultipleAuthSources(apiKeySrc, authTokenSrc, cfg != nil && profileExplicit, fedAnySet, gcAnySet, cfg != nil && !profileExplicit)
+	warnIfMultipleAuthSources(apiKeySrc, authTokenSrc, cfg != nil && profileExplicit, fedAnySet, gcAnySet, aw.AnySet(), cfg != nil && !profileExplicit)
 
 	useProfile := func() {
 		opts = append(opts, option.WithConfigQuiet(cfg))
@@ -154,6 +158,18 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 		opts = append(opts, gcOpts...)
 		gc.noteIgnoredBaseURL(os.Stderr, extra.BaseURL)
 		extra.BaseURL = ""
+	case aw.AnySet():
+		awsOpts, err := aw.requestOptions(context.Background())
+		if err != nil {
+			// TODO: same os.Exit wart as the OAuth resolution failure above.
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		opts = append(opts, awsOpts...)
+		aw.noteIgnoredBaseURL(os.Stderr, extra.BaseURL)
+		extra.BaseURL = ""
+		// The AWS options already carry the workspace header.
+		extra.WorkspaceID = ""
 	case cfg != nil:
 		useProfile()
 	}
@@ -168,10 +184,11 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 // warnIfMultipleAuthSources emits a one-shot stderr notice when more than one
 // credential source is configured, naming the sources and the precedence
 // winner. No secret values are printed. Order matches the User Guide's
-// precedence (explicit profile beats federation and Google Cloud; implicit
-// doesn't). apiKeySrc / authTokenSrc are the source labels for those tiers (""
-// when unset) so a stdin-supplied credential isn't reported as --api-key.
-func warnIfMultipleAuthSources(apiKeySrc, authTokenSrc string, profileExplicit, federation, googleCloud, profileImplicit bool) {
+// precedence (explicit profile beats federation, Google Cloud and AWS;
+// implicit doesn't). apiKeySrc / authTokenSrc are the source labels for those
+// tiers ("" when unset) so a stdin-supplied credential isn't reported as
+// --api-key.
+func warnIfMultipleAuthSources(apiKeySrc, authTokenSrc string, profileExplicit, federation, googleCloud, awsTier, profileImplicit bool) {
 	type src struct {
 		on   bool
 		name string
@@ -186,6 +203,7 @@ func warnIfMultipleAuthSources(apiKeySrc, authTokenSrc string, profileExplicit, 
 		{profileExplicit, "profile from --profile / ANTHROPIC_PROFILE"},
 		{federation, "federation env"},
 		{googleCloud, "Google Cloud (--google-cloud-* / ANTHROPIC_GOOGLE_CLOUD_*)"},
+		{awsTier, "AWS (--aws-* / ANTHROPIC_AWS_*)"},
 		{profileImplicit, "active profile (active_config)"},
 	}
 	var on []string

@@ -25,6 +25,7 @@ var sensitiveHeaders = []string{
 	"proxy-authorization",
 	"api-key",
 	"x-api-key",
+	"x-amz-security-token", // AWS session token on SigV4-signed requests
 	"cookie",
 	"set-cookie",
 }
