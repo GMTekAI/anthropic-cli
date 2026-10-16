@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.42.1](https://github.com/anthropics/anthropic-cli/compare/v1.42.0...v1.42.1) (2026-10-16)
+
+### Bug Fixes
+
+* **client:** treat x-amz-security-token as a sensitive header
+
 ## [1.42.0](https://github.com/anthropics/anthropic-cli/compare/v1.41.0...v1.42.0) (2026-10-15)
 
 ### Features
