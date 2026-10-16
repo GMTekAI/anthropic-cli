@@ -6,6 +6,11 @@
 
 * **client:** treat x-amz-security-token as a sensitive header
 
+
+### Chores
+
+* **docs:** correct plugin manifest_version and reach descriptions
+
 ## [1.42.0](https://github.com/anthropics/anthropic-cli/compare/v1.41.0...v1.42.0) (2026-10-15)
 
 ### Features
