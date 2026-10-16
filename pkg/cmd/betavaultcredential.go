@@ -14,7 +14,7 @@ import (
 
 var betaVaultsCredentialsCreate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "create",
-	Usage:   "Create Credential",
+	Usage:   "Create a Credential",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -61,12 +61,12 @@ var betaVaultsCredentialsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[string]{
 			Name:       "auth.token",
-			Usage:      "Static bearer token value.",
+			Usage:      "The static bearer token to send to the MCP server, such as an API key or personal access token.",
 			InnerField: "token",
 		},
 		&requestflag.InnerFlag[string]{
 			Name:       "auth.access-token",
-			Usage:      "OAuth access token.",
+			Usage:      "The OAuth access token to send to the MCP server.",
 			InnerField: "access_token",
 		},
 		&requestflag.InnerFlag[any]{
@@ -100,7 +100,7 @@ var betaVaultsCredentialsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[string]{
 			Name:       "auth.secret-value",
-			Usage:      "Secret value. Write-only; never returned in responses.",
+			Usage:      "The secret to substitute into the agent's outbound requests. It's write-only and never returned in responses.",
 			InnerField: "secret_value",
 		},
 	},
@@ -108,7 +108,7 @@ var betaVaultsCredentialsCreate = requestflag.WithInnerFlags(cli.Command{
 
 var betaVaultsCredentialsRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Get Credential",
+	Usage:   "Retrieve a Credential",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -140,7 +140,7 @@ var betaVaultsCredentialsRetrieve = cli.Command{
 
 var betaVaultsCredentialsUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
-	Usage:   "Update Credential",
+	Usage:   "Update a Credential",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -158,7 +158,7 @@ var betaVaultsCredentialsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "auth",
-			Usage:    "Updated authentication configuration. The `type` is immutable; the variant sent must match the stored credential's type.",
+			Usage:    "New authentication settings for the credential. The `type` must match the credential's current type, which can't be changed.",
 			BodyPath: "auth",
 		},
 		&requestflag.Flag[*string]{
@@ -193,12 +193,12 @@ var betaVaultsCredentialsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[*string]{
 			Name:       "auth.token",
-			Usage:      "Updated static bearer token value.",
+			Usage:      "The new static bearer token to replace the stored one.",
 			InnerField: "token",
 		},
 		&requestflag.InnerFlag[*string]{
 			Name:       "auth.access-token",
-			Usage:      "Updated OAuth access token.",
+			Usage:      "The new OAuth access token to replace the stored one.",
 			InnerField: "access_token",
 		},
 		&requestflag.InnerFlag[any]{
@@ -208,7 +208,7 @@ var betaVaultsCredentialsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[map[string]any]{
 			Name:       "auth.injection-location",
-			Usage:      "Updated injection location.",
+			Usage:      "Changes which parts of an outbound request the secret is substituted into. A location you leave out keeps its current setting.\n\nAfter the change, at least one location must be enabled.\n\nSee [Authenticate with vaults](https://platform.claude.com/docs/en/managed-agents/vaults#add-a-credential) to learn more about injection locations.",
 			InnerField: "injection_location",
 		},
 		&requestflag.InnerFlag[map[string]any]{
@@ -222,7 +222,7 @@ var betaVaultsCredentialsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[*string]{
 			Name:       "auth.secret-value",
-			Usage:      "Updated secret value.",
+			Usage:      "The new secret value to replace the stored one.",
 			InnerField: "secret_value",
 		},
 	},
@@ -241,7 +241,7 @@ var betaVaultsCredentialsList = cli.Command{
 		},
 		&requestflag.Flag[bool]{
 			Name:      "include-archived",
-			Usage:     "Whether to include archived credentials in the results.",
+			Usage:     "Whether to include archived credentials in the results. Defaults to `false`.",
 			QueryPath: "include_archived",
 		},
 		&requestflag.Flag[int64]{
@@ -251,7 +251,7 @@ var betaVaultsCredentialsList = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:      "page",
-			Usage:     "Opaque pagination token from a previous `list_credentials` response.",
+			Usage:     "The `next_page` value from a previous [List Credentials](https://platform.claude.com/docs/en/api/beta/vaults/credentials/list) response, to get the next page. Leave it out to get the first page.",
 			QueryPath: "page",
 		},
 		&requestflag.Flag[[]string]{
@@ -275,7 +275,7 @@ var betaVaultsCredentialsList = cli.Command{
 
 var betaVaultsCredentialsDelete = cli.Command{
 	Name:    "delete",
-	Usage:   "Delete Credential",
+	Usage:   "Delete a Credential",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -307,7 +307,7 @@ var betaVaultsCredentialsDelete = cli.Command{
 
 var betaVaultsCredentialsArchive = cli.Command{
 	Name:    "archive",
-	Usage:   "Archive Credential",
+	Usage:   "Archive a Credential",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -339,7 +339,7 @@ var betaVaultsCredentialsArchive = cli.Command{
 
 var betaVaultsCredentialsMCPOAuthValidate = cli.Command{
 	Name:    "mcp-oauth-validate",
-	Usage:   "Validate Credential",
+	Usage:   "Validate an MCP OAuth Credential",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
