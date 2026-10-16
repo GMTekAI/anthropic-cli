@@ -71,7 +71,7 @@ var betaVaultsCredentialsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "auth.expires-at",
-			Usage:      "A timestamp in RFC 3339 format",
+			Usage:      "When `access_token` expires, in RFC 3339.\n\nMust be in the future.",
 			InnerField: "expires_at",
 		},
 		&requestflag.InnerFlag[map[string]any]{
@@ -203,7 +203,7 @@ var betaVaultsCredentialsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "auth.expires-at",
-			Usage:      "A timestamp in RFC 3339 format",
+			Usage:      "When the credential's access token expires, in RFC 3339. Leave it out to keep the stored expiry.\n\nIf you send a new `access_token`, send its `expires_at` too, or the new token keeps the old expiry.\n\nMust be in the future.",
 			InnerField: "expires_at",
 		},
 		&requestflag.InnerFlag[map[string]any]{
