@@ -24,7 +24,7 @@ var betaUserProfilesCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[*string]{
 			Name:     "external-id",
-			Usage:    "Platform's own identifier for this user. Not enforced unique. Maximum 255 characters. Accepted under the `user-profiles-2026-03-24` and `user-profiles-2026-08-18` beta headers; under `user-profiles-2026-09-04` send `external_user_details.reference_id` instead.",
+			Usage:    "Platform's own identifier for this user. Not enforced unique. Maximum 255 characters. Legacy field, accepted only under the `user-profiles-2026-03-24` and `user-profiles-2026-08-18` beta headers; without one of them, send `external_user_details.reference_id`.",
 			BodyPath: "external_id",
 		},
 		&requestflag.Flag[map[string]any]{
@@ -33,7 +33,7 @@ var betaUserProfilesCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[any]{
 			Name:     "external-user-onboarded-at",
-			Usage:    "When the entity this profile represents opened its account with the platform, in RFC 3339 format: for an `application` profile, when the end-user signed up; for a `passthrough` profile, when the company became the platform's customer. Must be a complete timestamp no more than 1 minute in the future. Optional. Accepted under the `user-profiles-2026-08-18` beta header; under `user-profiles-2026-09-04` send `external_user_details.onboarded_at` instead.",
+			Usage:    "When the entity this profile represents opened its account with the platform, in RFC 3339 format: for an `application` profile, when the end-user signed up; for a `passthrough` profile, when the company became the platform's customer. Must be a complete timestamp no more than 1 minute in the future. Optional. Legacy field, accepted only under the `user-profiles-2026-08-18` beta header; without a legacy header, send `external_user_details.onboarded_at`.",
 			BodyPath: "external_user_onboarded_at",
 		},
 		&requestflag.Flag[map[string]any]{
@@ -48,7 +48,7 @@ var betaUserProfilesCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "This endpoint is in beta: requests must send `user-profiles-2026-03-24`, `user-profiles-2026-08-18`, or `user-profiles-2026-09-04` in this header.",
+			Usage:      "Optional header to specify the beta version(s) you want to use.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -105,14 +105,15 @@ var betaUserProfilesRetrieve = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:      "user-profile-id",
-			Usage:     "The ID of the user profile to get (`uprof_...`).",
-			Required:  true,
-			PathParam: "user_profile_id",
+			Name:        "user-profile-id",
+			Usage:       "The ID of the user profile to get (`uprof_...`).",
+			Required:    true,
+			PathParam:   "user_profile_id",
+			DataAliases: []string{"id"},
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "This endpoint is in beta: requests must send `user-profiles-2026-03-24`, `user-profiles-2026-08-18`, or `user-profiles-2026-09-04` in this header.",
+			Usage:      "Optional header to specify the beta version(s) you want to use.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -131,10 +132,11 @@ var betaUserProfilesUpdate = requestflag.WithInnerFlags(cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:      "user-profile-id",
-			Usage:     "The ID of the user profile to update (`uprof_...`).",
-			Required:  true,
-			PathParam: "user_profile_id",
+			Name:        "user-profile-id",
+			Usage:       "The ID of the user profile to update (`uprof_...`).",
+			Required:    true,
+			PathParam:   "user_profile_id",
+			DataAliases: []string{"id"},
 		},
 		&requestflag.Flag[*string]{
 			Name:     "access-type",
@@ -143,7 +145,7 @@ var betaUserProfilesUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[*string]{
 			Name:     "external-id",
-			Usage:    "If present, replaces the stored external_id. Omit to leave unchanged. Maximum 255 characters. Accepted under the `user-profiles-2026-03-24` and `user-profiles-2026-08-18` beta headers; under `user-profiles-2026-09-04` send `external_user_details.reference_id` instead.",
+			Usage:    "If present, replaces the stored external_id. Omit to leave unchanged. Maximum 255 characters. Legacy field, accepted only under the `user-profiles-2026-03-24` and `user-profiles-2026-08-18` beta headers; without one of them, send `external_user_details.reference_id`.",
 			BodyPath: "external_id",
 		},
 		&requestflag.Flag[map[string]any]{
@@ -152,7 +154,7 @@ var betaUserProfilesUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[any]{
 			Name:     "external-user-onboarded-at",
-			Usage:    "If present, replaces the stored account creation time. Omit to leave unchanged; once set, the value cannot be cleared and `null` is rejected. Must be a complete RFC 3339 timestamp no more than 1 minute in the future. Accepted under the `user-profiles-2026-08-18` beta header; under `user-profiles-2026-09-04` send `external_user_details.onboarded_at` instead.",
+			Usage:    "If present, replaces the stored account creation time. Omit to leave unchanged; once set, the value cannot be cleared and `null` is rejected. Must be a complete RFC 3339 timestamp no more than 1 minute in the future. Legacy field, accepted only under the `user-profiles-2026-08-18` beta header; without a legacy header, send `external_user_details.onboarded_at`.",
 			BodyPath: "external_user_onboarded_at",
 		},
 		&requestflag.Flag[map[string]any]{
@@ -167,7 +169,7 @@ var betaUserProfilesUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "This endpoint is in beta: requests must send `user-profiles-2026-03-24`, `user-profiles-2026-08-18`, or `user-profiles-2026-09-04` in this header.",
+			Usage:      "Optional header to specify the beta version(s) you want to use.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -245,7 +247,7 @@ var betaUserProfilesList = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "This endpoint is in beta: requests must send `user-profiles-2026-03-24`, `user-profiles-2026-08-18`, or `user-profiles-2026-09-04` in this header.",
+			Usage:      "Optional header to specify the beta version(s) you want to use.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -262,20 +264,48 @@ var betaUserProfilesList = cli.Command{
 	HideHelpCommand: true,
 }
 
+var betaUserProfilesDelete = cli.Command{
+	Name:    "delete",
+	Usage:   "Delete User Profile",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:        "user-profile-id",
+			Usage:       "The ID of the user profile to delete (`uprof_...`).",
+			Required:    true,
+			PathParam:   "user_profile_id",
+			DataAliases: []string{"id"},
+		},
+		&requestflag.Flag[[]string]{
+			Name:       "beta",
+			Usage:      "Optional header to specify the beta version(s) you want to use.",
+			HeaderPath: "anthropic-beta",
+		},
+		&requestflag.Flag[string]{
+			Name:       "workspace-id",
+			Usage:      "Optional header to select the Workspace for this request. The value is a Workspace ID (for example, `wrkspc_011CZkZaBF1tNoB5wlCeusgy`).\n\nOnly needed for credentials that can act on more than one Workspace. A credential that belongs to a specific Workspace may omit it; if sent, it must match that Workspace.",
+			HeaderPath: "anthropic-workspace-id",
+		},
+	},
+	Action:          handleBetaUserProfilesDelete,
+	HideHelpCommand: true,
+}
+
 var betaUserProfilesCreateEnrollmentURL = cli.Command{
 	Name:    "create-enrollment-url",
 	Usage:   "Create Enrollment URL",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:      "user-profile-id",
-			Usage:     "The ID of the user profile to create an enrollment URL for (`uprof_...`).",
-			Required:  true,
-			PathParam: "user_profile_id",
+			Name:        "user-profile-id",
+			Usage:       "The ID of the user profile to create an enrollment URL for (`uprof_...`).",
+			Required:    true,
+			PathParam:   "user_profile_id",
+			DataAliases: []string{"id"},
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
-			Usage:      "This endpoint is in beta: requests must send `user-profiles-2026-03-24`, `user-profiles-2026-08-18`, or `user-profiles-2026-09-04` in this header.",
+			Usage:      "Optional header to specify the beta version(s) you want to use.",
 			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
@@ -486,6 +516,55 @@ func handleBetaUserProfilesList(ctx context.Context, cmd *cli.Command) error {
 			Transform:      transform,
 		})
 	}
+}
+
+func handleBetaUserProfilesDelete(ctx context.Context, cmd *cli.Command) error {
+	client := anthropic.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("user-profile-id") && len(unusedArgs) > 0 {
+		cmd.Set("user-profile-id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatBrackets,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := anthropic.BetaUserProfileDeleteParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Beta.UserProfiles.Delete(
+		ctx,
+		cmd.Value("user-profile-id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "beta:user-profiles delete",
+		Transform:      transform,
+	})
 }
 
 func handleBetaUserProfilesCreateEnrollmentURL(ctx context.Context, cmd *cli.Command) error {

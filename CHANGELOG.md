@@ -1,6 +1,11 @@
 # Changelog
 
-## [1.42.1](https://github.com/anthropics/anthropic-cli/compare/v1.42.0...v1.42.1) (2026-10-19)
+## [1.43.0](https://github.com/anthropics/anthropic-cli/compare/v1.42.0...v1.43.0) (2026-10-19)
+
+### Features
+
+* **api:** make User Profiles generally available
+
 
 ### Bug Fixes
 

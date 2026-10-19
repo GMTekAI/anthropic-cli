@@ -164,6 +164,26 @@ func init() {
 				},
 			},
 			{
+				Name:     "user-profiles",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&userProfilesCreate,
+					&userProfilesRetrieve,
+					&userProfilesUpdate,
+					&userProfilesList,
+					&userProfilesDelete,
+				},
+			},
+			{
+				Name:     "user-profiles:action-urls",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&userProfilesActionURLsCreate,
+				},
+			},
+			{
 				Name:     "organization",
 				Category: "API RESOURCE",
 				Suggest:  true,
@@ -596,10 +616,19 @@ func init() {
 					&betaUserProfilesRetrieve,
 					&betaUserProfilesUpdate,
 					&betaUserProfilesList,
+					&betaUserProfilesDelete,
 					&betaUserProfilesCreateEnrollmentURL,
 				},
 			},
 			&workerCommand,
+			{
+				Name:     "beta:user-profiles:action-urls",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&betaUserProfilesActionURLsCreate,
+				},
+			},
 			{
 				Name:     "beta:dreams",
 				Category: "API RESOURCE",
