@@ -14,23 +14,23 @@ import (
 
 var betaMemoryStoresCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Create a memory store",
+	Usage:   "Create a Memory Store",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "name",
-			Usage:    "Human-readable name for the store. Required; 1–255 characters; no control characters. The mount-path slug under `/mnt/memory/` is derived from this name (lowercased, non-alphanumeric runs collapsed to a hyphen). Names need not be unique within a workspace.",
+			Usage:    "The name of the memory store, 1 to 255 characters long, without control characters. Names don't have to be unique in a workspace.\n\nIn a session, the store's directory under `/mnt/memory/` is based on this name. The name is lowercased and every run of characters other than ASCII letters and digits becomes one hyphen. The session's memory store resource gives the exact path in `mount_path`.\n\nSee the [memory guide](https://platform.claude.com/docs/en/managed-agents/memory#how-the-agent-accesses-memory) to learn more about how agents access memory stores.",
 			Required: true,
 			BodyPath: "name",
 		},
 		&requestflag.Flag[string]{
 			Name:     "description",
-			Usage:    "Free-text description of what the store contains, up to 1024 characters. Included in the agent's system prompt when the store is attached, so word it to be useful to the agent.",
+			Usage:    "Free-text description of what the store contains, up to 1,024 characters. Included in the agent's system prompt when the store is attached, so word it to be useful to the agent.",
 			BodyPath: "description",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "metadata",
-			Usage:    "Arbitrary key-value tags for your own bookkeeping (such as the end user a store belongs to). Up to 16 pairs; keys 1–64 characters; values up to 512 characters. Not visible to the agent.",
+			Usage:    "Key-value pairs for your own use, such as the end user that the store belongs to. The agent doesn't see them.\n\nA store has at most 16 pairs. Keys are 1 to 64 characters long and values at most 512 characters.",
 			BodyPath: "metadata",
 		},
 		&requestflag.Flag[[]string]{
@@ -50,12 +50,12 @@ var betaMemoryStoresCreate = cli.Command{
 
 var betaMemoryStoresRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Retrieve a memory store",
+	Usage:   "Retrieve a Memory Store",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "memory-store-id",
-			Usage:     "ID of the memory store to retrieve (a `memstore_...` identifier). Required. Enumerate IDs via `GET /v1/memory_stores`.",
+			Usage:     "The ID of the memory store to retrieve (`memstore_...`).",
 			Required:  true,
 			PathParam: "memory_store_id",
 		},
@@ -76,29 +76,29 @@ var betaMemoryStoresRetrieve = cli.Command{
 
 var betaMemoryStoresUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Update a memory store",
+	Usage:   "Update a Memory Store",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:        "memory-store-id",
-			Usage:       "ID of the memory store to update (a `memstore_...` identifier). Required. Enumerate IDs via `GET /v1/memory_stores`. Updating an archived store returns 400.",
+			Usage:       "The ID of the memory store to update (`memstore_...`).\n\nThe request fails with HTTP status 400 if the store is archived.",
 			Required:    true,
 			PathParam:   "memory_store_id",
 			DataAliases: []string{"id"},
 		},
 		&requestflag.Flag[*string]{
 			Name:     "description",
-			Usage:    "New description for the store, up to 1024 characters. Pass an empty string to clear it.",
+			Usage:    "New description for the store, up to 1,024 characters. Pass an empty string to clear it.",
 			BodyPath: "description",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "metadata",
-			Usage:    "Metadata patch. Set a key to a string to upsert it, or to null to delete it. Omit the field to preserve. The stored bag is limited to 16 keys (up to 64 chars each) with values up to 512 chars.",
+			Usage:    "Changes to apply to the memory store's metadata. Keys you leave out keep their values.\n\nSet a key to a string to add or replace it, or to `null` to remove it. After the change, the metadata can hold at most 16 key-value pairs. Keys are 1 to 64 characters long and values at most 512 characters.",
 			BodyPath: "metadata",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "name",
-			Usage:    "New human-readable name for the store. 1–255 characters; no control characters. Renaming changes the slug used for the store's `mount_path` in sessions created after the update.",
+			Usage:    "The new name of the memory store, 1 to 255 characters long, without control characters.\n\nSessions created after the change use the new name for the store's directory under `/mnt/memory/`.",
 			BodyPath: "name",
 		},
 		&requestflag.Flag[[]string]{
@@ -118,17 +118,17 @@ var betaMemoryStoresUpdate = cli.Command{
 
 var betaMemoryStoresList = cli.Command{
 	Name:    "list",
-	Usage:   "List memory stores",
+	Usage:   "List Memory Stores",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[any]{
 			Name:      "created-at-gte",
-			Usage:     "Return only stores whose `created_at` is at or after this time (inclusive). Sent on the wire as `created_at[gte]`.",
+			Usage:     "Return only memory stores created at or after this time (inclusive).",
 			QueryPath: "created_at[gte]",
 		},
 		&requestflag.Flag[any]{
 			Name:      "created-at-lte",
-			Usage:     "Return only stores whose `created_at` is at or before this time (inclusive). Sent on the wire as `created_at[lte]`.",
+			Usage:     "Return only memory stores created at or before this time (inclusive).",
 			QueryPath: "created_at[lte]",
 		},
 		&requestflag.Flag[bool]{
@@ -143,7 +143,7 @@ var betaMemoryStoresList = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:      "page",
-			Usage:     "Opaque pagination cursor (a `page_...` value). Pass the `next_page` value from a previous response to fetch the next page; omit for the first page.",
+			Usage:     "The `next_page` value from a previous response, to get the next page. Omit it to get the first page.",
 			QueryPath: "page",
 		},
 		&requestflag.Flag[[]string]{
@@ -167,12 +167,12 @@ var betaMemoryStoresList = cli.Command{
 
 var betaMemoryStoresDelete = cli.Command{
 	Name:    "delete",
-	Usage:   "Delete a memory store",
+	Usage:   "Delete a Memory Store",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "memory-store-id",
-			Usage:     "ID of the memory store to permanently delete (a `memstore_...` identifier). Required. Deletion cascades to all memories and memory versions in the store and cannot be undone.",
+			Usage:     "The ID of the memory store to delete (`memstore_...`).\n\nDeleting a store also deletes all its memories and memory versions. It can't be undone.",
 			Required:  true,
 			PathParam: "memory_store_id",
 		},
@@ -193,12 +193,12 @@ var betaMemoryStoresDelete = cli.Command{
 
 var betaMemoryStoresArchive = cli.Command{
 	Name:    "archive",
-	Usage:   "Archive a memory store",
+	Usage:   "Archive a Memory Store",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "memory-store-id",
-			Usage:     "ID of the memory store to archive (a `memstore_...` identifier). Required. Archiving is one-way and idempotent; archived stores cannot be unarchived. Enumerate IDs via `GET /v1/memory_stores`.",
+			Usage:     "The ID of the memory store to archive (`memstore_...`).\n\nArchiving can't be undone. Archiving a store that is already archived returns it unchanged.",
 			Required:  true,
 			PathParam: "memory_store_id",
 		},
