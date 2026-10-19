@@ -4,6 +4,7 @@
 
 ### Features
 
+* **api:** add workspace rate-limit updates to the Admin API
 * **api:** make User Profiles generally available
 
 

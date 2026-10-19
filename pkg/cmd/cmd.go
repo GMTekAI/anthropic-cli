@@ -309,6 +309,7 @@ func init() {
 				Category: "API RESOURCE",
 				Suggest:  true,
 				Commands: []*cli.Command{
+					&organizationWorkspacesRateLimitsUpdate,
 					&organizationWorkspacesRateLimitsList,
 				},
 			},
@@ -791,6 +792,7 @@ func init() {
 				Category: "API RESOURCE",
 				Suggest:  true,
 				Commands: []*cli.Command{
+					&betaOrganizationWorkspacesRateLimitsUpdate,
 					&betaOrganizationWorkspacesRateLimitsList,
 				},
 			},
