@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.44.1](https://github.com/anthropics/anthropic-cli/compare/v1.44.0...v1.44.1) (2026-10-20)
+
+### Documentation
+
+* **api:** remove outdated system role note from messages description
+
 ## [1.44.0](https://github.com/anthropics/anthropic-cli/compare/v1.43.0...v1.44.0) (2026-10-20)
 
 ### Features
