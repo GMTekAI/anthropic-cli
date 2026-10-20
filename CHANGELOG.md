@@ -17,6 +17,7 @@
 
 ### Chores
 
+* bump go sdk to v1.83.0
 * **ci:** skip the changelog check on draft pull requests
 * **ci:** update publish workflow
 * **docs:** add credential expiry descriptions to the Managed Agents API reference
