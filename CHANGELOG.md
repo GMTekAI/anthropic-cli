@@ -1,6 +1,11 @@
 # Changelog
 
-## [1.43.1](https://github.com/anthropics/anthropic-cli/compare/v1.43.0...v1.43.1) (2026-10-20)
+## [1.44.0](https://github.com/anthropics/anthropic-cli/compare/v1.43.0...v1.44.0) (2026-10-20)
+
+### Features
+
+* **api:** add org webhook endpoints and user profile enforcement events
+
 
 ### Chores
 

@@ -1,0 +1,125 @@
+package cmd
+
+import (
+	"testing"
+
+	"github.com/anthropics/anthropic-cli/internal/mocktest"
+)
+
+func TestBetaOrganizationWebhooksCreate(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"beta:organization:webhooks", "create",
+			"--enabled-event", "user_profile.enforcement_action_opened",
+			"--url", "x",
+			"--description", "description",
+			"--name", "name",
+			"--beta", "message-batches-2024-09-24",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("" +
+			"enabled_events:\n" +
+			"  - user_profile.enforcement_action_opened\n" +
+			"url: x\n" +
+			"description: description\n" +
+			"name: name\n")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"beta:organization:webhooks", "create",
+			"--beta", "message-batches-2024-09-24",
+		)
+	})
+}
+
+func TestBetaOrganizationWebhooksRetrieve(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"beta:organization:webhooks", "retrieve",
+			"--webhook-endpoint-id", "webhook_endpoint_id",
+			"--beta", "message-batches-2024-09-24",
+		)
+	})
+}
+
+func TestBetaOrganizationWebhooksUpdate(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"beta:organization:webhooks", "update",
+			"--webhook-endpoint-id", "webhook_endpoint_id",
+			"--description", "description",
+			"--enabled-event", "user_profile.enforcement_action_opened",
+			"--name", "name",
+			"--state", "disabled",
+			"--url", "x",
+			"--beta", "message-batches-2024-09-24",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("" +
+			"description: description\n" +
+			"enabled_events:\n" +
+			"  - user_profile.enforcement_action_opened\n" +
+			"name: name\n" +
+			"state: disabled\n" +
+			"url: x\n")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"beta:organization:webhooks", "update",
+			"--webhook-endpoint-id", "webhook_endpoint_id",
+			"--beta", "message-batches-2024-09-24",
+		)
+	})
+}
+
+func TestBetaOrganizationWebhooksList(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"beta:organization:webhooks", "list",
+			"--max-items", "10",
+			"--after-id", "after_id",
+			"--before-id", "before_id",
+			"--limit", "0",
+			"--order", "asc",
+			"--beta", "message-batches-2024-09-24",
+		)
+	})
+}
+
+func TestBetaOrganizationWebhooksDelete(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"beta:organization:webhooks", "delete",
+			"--webhook-endpoint-id", "webhook_endpoint_id",
+			"--beta", "message-batches-2024-09-24",
+		)
+	})
+}
+
+func TestBetaOrganizationWebhooksRegenerateSigningSecret(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"beta:organization:webhooks", "regenerate-signing-secret",
+			"--webhook-endpoint-id", "webhook_endpoint_id",
+			"--beta", "message-batches-2024-09-24",
+		)
+	})
+}
