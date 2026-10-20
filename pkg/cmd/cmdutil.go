@@ -100,14 +100,17 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 	gcAnySet := gc.AnySet()
 	aw := awsFromRoot(root)
 	extra := extraClientFlagsFromCmd(cmd)
-	apiKeySrc, authTokenSrc := "", ""
+	apiKeySrc, authTokenSrc, envVar := "", "", ""
 	if apiKeySet {
 		apiKeySrc = credentialSourceLabel(root, "api-key")
+		envVar = credentialEnvVar(root, "api-key")
 	}
 	if authTokenSet {
 		authTokenSrc = credentialSourceLabel(root, "auth-token")
+		envVar = credentialEnvVar(root, "auth-token")
 	}
-	warnIfMultipleAuthSources(apiKeySrc, authTokenSrc, cfg != nil && profileExplicit, fedAnySet, gcAnySet, aw.AnySet(), cfg != nil && !profileExplicit)
+	profile, _ := activeProfile(root)
+	warnIfMultipleAuthSources(apiKeySrc, authTokenSrc, cfg != nil && profileExplicit, fedAnySet, gcAnySet, aw.AnySet(), cfg != nil && !profileExplicit, envVar, profile)
 
 	useProfile := func() {
 		opts = append(opts, option.WithConfigQuiet(cfg))
@@ -188,7 +191,7 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 // implicit doesn't). apiKeySrc / authTokenSrc are the source labels for those
 // tiers ("" when unset) so a stdin-supplied credential isn't reported as
 // --api-key.
-func warnIfMultipleAuthSources(apiKeySrc, authTokenSrc string, profileExplicit, federation, googleCloud, awsTier, profileImplicit bool) {
+func warnIfMultipleAuthSources(apiKeySrc, authTokenSrc string, profileExplicit, federation, googleCloud, awsTier, profileImplicit bool, envVar, profile string) {
 	type src struct {
 		on   bool
 		name string
@@ -216,6 +219,18 @@ func warnIfMultipleAuthSources(apiKeySrc, authTokenSrc string, profileExplicit, 
 		return
 	}
 	multiAuthWarnOnce.Do(func() {
+		// envVar is "" unless the credential came from it. With nothing else
+		// configured, unsetting it is all it takes to get the profile back.
+		if len(on) == 2 && envVar != "" && (profileExplicit || profileImplicit) {
+			state := "set"
+			if os.Getenv(envVar) == "" {
+				state = "set but empty"
+			}
+			fmt.Fprintf(os.Stderr,
+				"Note: %s is %s in your environment and overrides profile %q. Unset it to use the profile.\n",
+				envVar, state, profile)
+			return
+		}
 		fmt.Fprintf(os.Stderr,
 			"Note: multiple auth sources configured (%s); using %s per precedence. Run `ant auth status` for details.\n",
 			strings.Join(on, ", "), on[0])

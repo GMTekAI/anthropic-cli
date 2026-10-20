@@ -6,10 +6,12 @@
 
 * **api:** add workspace rate-limit updates to the Admin API
 * **api:** make User Profiles generally available
+* **auth:** the stderr note printed when `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN` overrides a profile now names the variable, the profile and the fix
 
 
 ### Bug Fixes
 
+* **auth:** `auth status` no longer reports a credential passed as `--api-key` or `--auth-token` as an environment override
 * **client:** treat x-amz-security-token as a sensitive header
 
 

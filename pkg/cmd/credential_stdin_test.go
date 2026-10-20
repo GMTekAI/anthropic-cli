@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"os/exec"
 	"strings"
 	"sync"
@@ -239,11 +240,48 @@ func TestAuthStatusStdinCredential(t *testing.T) {
 	assert.NotContains(t, out, "FROMSTDIN")
 }
 
+// TestAuthStatusEnvOverrideWarning: with a logged-in profile, the "is set in
+// your environment … unset it" advice is printed for a credential from its env
+// var, and not for one passed as a flag, where it would be false.
+func TestAuthStatusEnvOverrideWarning(t *testing.T) {
+	status := func(t *testing.T, argv ...string) string {
+		t.Helper()
+		activeProfileWork(t, os.Getenv("ANTHROPIC_CONFIG_DIR"))
+		withCommandLine(t, append(argv, "auth", "status")...)
+		withStdinCredential(t, "")
+		out, err := runStatusKeepingCredentialEnv(t, argv...)
+		require.NoError(t, err)
+		return out
+	}
+
+	for _, envVar := range []string{"ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"} {
+		t.Run(envVar+" warns", func(t *testing.T) {
+			clearCredentialEnv(t)
+			t.Setenv(envVar, "secret-env")
+
+			out := status(t)
+
+			assert.Contains(t, out, envVar+" is set in your environment and overrides the logged-in profile.")
+			assert.Contains(t, out, "unset "+envVar)
+		})
+	}
+
+	for _, flag := range []string{"--api-key", "--auth-token"} {
+		t.Run(flag+" does not warn", func(t *testing.T) {
+			clearCredentialEnv(t)
+
+			out := status(t, flag, "secret-argv")
+
+			assert.NotContains(t, out, "is set in your environment")
+		})
+	}
+}
+
 // TestMultiAuthWarningNamesStdin: the multi-source notice names the stdin
 // flag as the winner rather than the deprecated --api-key.
 func TestMultiAuthWarningNamesStdin(t *testing.T) {
 	resetWarnOnce(t)
-	out := captureStderr(t, func() { warnIfMultipleAuthSources("--api-key-stdin", "", false, false, false, false, true) })
+	out := captureStderr(t, func() { warnIfMultipleAuthSources("--api-key-stdin", "", false, false, false, false, true, "", "") })
 	assert.Contains(t, out, "using --api-key-stdin per precedence")
 	assert.NotContains(t, out, "ANTHROPIC_API_KEY")
 }

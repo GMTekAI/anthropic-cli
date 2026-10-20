@@ -806,15 +806,14 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 
 	// Surface the surprising-override case: the user ran `ant auth login` but
 	// has a credential env var set that silently beats the profile on every
-	// request.
-	// A credential piped via --api-key-stdin / --auth-token-stdin is a
+	// request. A credential given on stdin or the command line is a
 	// per-invocation choice, not an ambient override, so it doesn't warn.
 	envOverride := ""
 	switch {
-	case apiKeySet && !credentialFromStdin(root, "api-key"):
-		envOverride = "ANTHROPIC_API_KEY"
-	case !apiKeySet && authTokenSet && !credentialFromStdin(root, "auth-token"):
-		envOverride = "ANTHROPIC_AUTH_TOKEN"
+	case apiKeySet:
+		envOverride = credentialEnvVar(root, "api-key")
+	case authTokenSet:
+		envOverride = credentialEnvVar(root, "auth-token")
 	}
 	if profileTokenPresent && envOverride != "" {
 		fmt.Fprintln(out)
