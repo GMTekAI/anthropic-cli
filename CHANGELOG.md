@@ -9,6 +9,7 @@
 
 ### Chores
 
+* bump go sdk to v1.84.0
 * **ci:** run the changelog check on a standard runner
 
 ## [1.43.0](https://github.com/anthropics/anthropic-cli/compare/v1.42.0...v1.43.0) (2026-10-19)
