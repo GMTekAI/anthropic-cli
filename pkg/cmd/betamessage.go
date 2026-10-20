@@ -152,7 +152,7 @@ var betaMessagesCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "user-profile-id",
-			Usage:      "The user profile ID to attribute this request to. Use when acting on behalf of a party other than your organization. Requires the `user-profiles` beta header.",
+			Usage:      "The user profile ID to attribute this request to. Use when acting on behalf of a party other than your organization.",
 			HeaderPath: "anthropic-user-profile-id",
 		},
 		&requestflag.Flag[string]{
@@ -573,7 +573,7 @@ var betaMessagesCountTokens = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:       "user-profile-id",
-			Usage:      "The user profile ID to attribute this request to. Use when acting on behalf of a party other than your organization. Requires the `user-profiles` beta header.",
+			Usage:      "The user profile ID to attribute this request to. Use when acting on behalf of a party other than your organization.",
 			HeaderPath: "anthropic-user-profile-id",
 		},
 		&requestflag.Flag[string]{

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 	"strings"
 	"sync"
 
@@ -163,4 +164,13 @@ func credentialSourceLabel(cmd *cli.Command, target string) string {
 		return "--" + target + "-stdin"
 	}
 	return fmt.Sprintf("--%s / %s", target, directCredentialEnv[target])
+}
+
+// credentialEnvVar names the env var an api-key / auth-token value came from,
+// or "" when it was piped to --<target>-stdin or passed as --<target>.
+func credentialEnvVar(cmd *cli.Command, target string) string {
+	if credentialFromStdin(cmd, target) || slices.Contains(credentialFlagsOnCommandLine(), target) {
+		return ""
+	}
+	return directCredentialEnv[target]
 }

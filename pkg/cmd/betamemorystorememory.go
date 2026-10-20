@@ -14,7 +14,7 @@ import (
 
 var betaMemoryStoresMemoriesCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Create a memory",
+	Usage:   "Create a Memory",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -25,19 +25,19 @@ var betaMemoryStoresMemoriesCreate = cli.Command{
 		},
 		&requestflag.Flag[*string]{
 			Name:     "content",
-			Usage:    "UTF-8 text content for the new memory. Maximum 100 kB (102,400 bytes). Required; pass `\"\"` explicitly to create an empty memory.",
+			Usage:    "The UTF-8 text content of the new memory. Pass `\"\"` to create an empty memory.\n\nThe maximum size is 100 kB (102,400 bytes).",
 			Required: true,
 			BodyPath: "content",
 		},
 		&requestflag.Flag[string]{
 			Name:     "path",
-			Usage:    "Hierarchical path for the new memory, e.g. `/projects/foo/notes.md`. Must start with `/`, contain at least one non-empty segment, and be at most 1,024 bytes. Must not contain empty segments, `.` or `..` segments, control or format characters, or the Unicode line and paragraph separators (U+2028, U+2029), and must be NFC-normalized. Paths are case-sensitive.",
+			Usage:    "The path of the new memory, such as `/projects/foo/notes.md`. Paths are case-sensitive.\n\nA path starts with `/` and has 1 to 20 segments. A segment can't be empty and can't be `.` or `..`. A path can't contain control characters, format characters, or the line and paragraph separators U+2028 and U+2029. It must be in Unicode Normalization Form C and at most 1,024 bytes long.",
 			Required: true,
 			BodyPath: "path",
 		},
 		&requestflag.Flag[string]{
 			Name:      "view",
-			Usage:     "Selects which projection of a `memory` or `memory_version` the server returns. `basic` returns the object with `content` set to `null`; `full` populates `content`. When omitted, the default is endpoint-specific: retrieve operations default to `full`; list, create, and update operations default to `basic`. Listing with `view=full` caps `limit` at 20.",
+			Usage:     "Whether a `memory` or `memory_version` in the response includes its `content`. Defaults to `full` on retrieve operations and to `basic` on list, create, and update operations.\n\nWith `full`, list operations return at most 20 items per page.",
 			QueryPath: "view",
 		},
 		&requestflag.Flag[[]string]{
@@ -57,7 +57,7 @@ var betaMemoryStoresMemoriesCreate = cli.Command{
 
 var betaMemoryStoresMemoriesRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Retrieve a memory",
+	Usage:   "Retrieve a Memory",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -74,7 +74,7 @@ var betaMemoryStoresMemoriesRetrieve = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:      "view",
-			Usage:     "Selects which projection of a `memory` or `memory_version` the server returns. `basic` returns the object with `content` set to `null`; `full` populates `content`. When omitted, the default is endpoint-specific: retrieve operations default to `full`; list, create, and update operations default to `basic`. Listing with `view=full` caps `limit` at 20.",
+			Usage:     "Whether a `memory` or `memory_version` in the response includes its `content`. Defaults to `full` on retrieve operations and to `basic` on list, create, and update operations.\n\nWith `full`, list operations return at most 20 items per page.",
 			QueryPath: "view",
 		},
 		&requestflag.Flag[[]string]{
@@ -94,7 +94,7 @@ var betaMemoryStoresMemoriesRetrieve = cli.Command{
 
 var betaMemoryStoresMemoriesUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
-	Usage:   "Update a memory",
+	Usage:   "Update a Memory",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -112,7 +112,7 @@ var betaMemoryStoresMemoriesUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:      "view",
-			Usage:     "Selects which projection of a `memory` or `memory_version` the server returns. `basic` returns the object with `content` set to `null`; `full` populates `content`. When omitted, the default is endpoint-specific: retrieve operations default to `full`; list, create, and update operations default to `basic`. Listing with `view=full` caps `limit` at 20.",
+			Usage:     "Whether a `memory` or `memory_version` in the response includes its `content`. Defaults to `full` on retrieve operations and to `basic` on list, create, and update operations.\n\nWith `full`, list operations return at most 20 items per page.",
 			QueryPath: "view",
 		},
 		&requestflag.Flag[*string]{
@@ -122,7 +122,7 @@ var betaMemoryStoresMemoriesUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[*string]{
 			Name:     "path",
-			Usage:    "New path for the memory (a rename). Must start with `/`, contain at least one non-empty segment, and be at most 1,024 bytes. Must not contain empty segments, `.` or `..` segments, control or format characters, or the Unicode line and paragraph separators (U+2028, U+2029), and must be NFC-normalized. Paths are case-sensitive. The memory's `id` is preserved across renames. Omit to leave the path unchanged.",
+			Usage:    "The new path of the memory, which renames it. Omit it to keep the current path.\n\nThe memory keeps its `id`. A path starts with `/` and has 1 to 20 segments. A segment can't be empty and can't be `.` or `..`. A path can't contain control characters, format characters, or the line and paragraph separators U+2028 and U+2029. It must be in Unicode Normalization Form C and at most 1,024 bytes long. Paths are case-sensitive.",
 			BodyPath: "path",
 		},
 		&requestflag.Flag[map[string]any]{
@@ -160,7 +160,7 @@ var betaMemoryStoresMemoriesUpdate = requestflag.WithInnerFlags(cli.Command{
 
 var betaMemoryStoresMemoriesList = cli.Command{
 	Name:    "list",
-	Usage:   "List memories",
+	Usage:   "List Memories",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -171,27 +171,27 @@ var betaMemoryStoresMemoriesList = cli.Command{
 		},
 		&requestflag.Flag[int64]{
 			Name:      "depth",
-			Usage:     "`0` (or omitted) returns all descendants below `path_prefix` (recursive). `1` returns immediate children only; deeper entries roll up as `memory_prefix` items. `depth=1` behaves like `ls`; omitting `depth` behaves like `find`.",
+			Usage:     "How far below `path_prefix` to list. Defaults to `0`, which lists every memory below the prefix.\n\nPass `1` to list only the direct children. Deeper memories are then grouped into `memory_prefix` items.",
 			QueryPath: "depth",
 		},
 		&requestflag.Flag[int64]{
 			Name:      "limit",
-			Usage:     "Maximum number of items to return per page. Must be between 1 and 100. Defaults to 20 when omitted. Capped at 20 when `view=full`. Both `memory` and `memory_prefix` items count toward the limit.",
+			Usage:     "The maximum number of items to return per page, from 1 to 100. Defaults to 20.\n\nWith `view=full`, a page holds at most 20 items. `memory` and `memory_prefix` items both count toward the limit.",
 			QueryPath: "limit",
 		},
 		&requestflag.Flag[string]{
 			Name:      "page",
-			Usage:     "Opaque pagination cursor (a `page_...` value). Pass the `next_page` value from a previous response to fetch the next page; omit for the first page.",
+			Usage:     "The `next_page` value from a previous response, to get the next page. Omit it to get the first page.",
 			QueryPath: "page",
 		},
 		&requestflag.Flag[string]{
 			Name:      "path-prefix",
-			Usage:     "Optional path prefix filter. Must end with `/` (segment-aligned), e.g., `/notes/`. This value appears in request URLs. Do not include secrets or personally identifiable information.",
+			Usage:     "Return only memories whose path starts with this prefix, such as `/notes/`. This value appears in request URLs. Do not include secrets or personally identifiable information.\n\nOmit it to list the whole store. The prefix must end with `/` and matches whole segments, so `/notes/` matches `/notes/todo.md` but not `/notes-archive/todo.md`.",
 			QueryPath: "path_prefix",
 		},
 		&requestflag.Flag[string]{
 			Name:      "view",
-			Usage:     "Selects which projection of a `memory` or `memory_version` the server returns. `basic` returns the object with `content` set to `null`; `full` populates `content`. When omitted, the default is endpoint-specific: retrieve operations default to `full`; list, create, and update operations default to `basic`. Listing with `view=full` caps `limit` at 20.",
+			Usage:     "Whether a `memory` or `memory_version` in the response includes its `content`. Defaults to `full` on retrieve operations and to `basic` on list, create, and update operations.\n\nWith `full`, list operations return at most 20 items per page.",
 			QueryPath: "view",
 		},
 		&requestflag.Flag[[]string]{
@@ -215,7 +215,7 @@ var betaMemoryStoresMemoriesList = cli.Command{
 
 var betaMemoryStoresMemoriesDelete = cli.Command{
 	Name:    "delete",
-	Usage:   "Delete a memory",
+	Usage:   "Delete a Memory",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

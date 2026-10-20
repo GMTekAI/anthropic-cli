@@ -14,7 +14,7 @@ import (
 
 var betaMemoryStoresMemoryVersionsRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Retrieve a memory version",
+	Usage:   "Retrieve a Memory Version",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -31,7 +31,7 @@ var betaMemoryStoresMemoryVersionsRetrieve = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:      "view",
-			Usage:     "Selects which projection of a `memory` or `memory_version` the server returns. `basic` returns the object with `content` set to `null`; `full` populates `content`. When omitted, the default is endpoint-specific: retrieve operations default to `full`; list, create, and update operations default to `basic`. Listing with `view=full` caps `limit` at 20.",
+			Usage:     "Whether a `memory` or `memory_version` in the response includes its `content`. Defaults to `full` on retrieve operations and to `basic` on list, create, and update operations.\n\nWith `full`, list operations return at most 20 items per page.",
 			QueryPath: "view",
 		},
 		&requestflag.Flag[[]string]{
@@ -51,7 +51,7 @@ var betaMemoryStoresMemoryVersionsRetrieve = cli.Command{
 
 var betaMemoryStoresMemoryVersionsList = cli.Command{
 	Name:    "list",
-	Usage:   "List memory versions",
+	Usage:   "List Memory Versions",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -77,17 +77,17 @@ var betaMemoryStoresMemoryVersionsList = cli.Command{
 		},
 		&requestflag.Flag[int64]{
 			Name:      "limit",
-			Usage:     "The maximum number of versions to return per page. Defaults to 20.",
+			Usage:     "The maximum number of versions to return per page, from 1 to 100. Defaults to 20.\n\nWith `view=full`, a page holds at most 20 versions.",
 			QueryPath: "limit",
 		},
 		&requestflag.Flag[string]{
 			Name:      "memory-id",
-			Usage:     "Return only versions of the memory with this ID (`mem_...`).\n\nThe filter still works after the memory is deleted. The results then include the version whose `operation` is `deleted`.",
+			Usage:     "Return only versions of the memory with this ID (`mem_...`).\n\nThe filter still works after the memory is deleted. While that memory's versions are retained, the results include the version whose `operation` is `deleted`.",
 			QueryPath: "memory_id",
 		},
 		&requestflag.Flag[string]{
 			Name:      "operation",
-			Usage:     "The kind of mutation a `memory_version` records. Every non-no-op mutation to a memory appends exactly one version row with one of these values.",
+			Usage:     "The kind of change that a memory version records.\n\nEvery change to a memory adds one version. If you update a memory and nothing changes, the memory doesn't get a new version.",
 			QueryPath: "operation",
 		},
 		&requestflag.Flag[string]{
@@ -107,7 +107,7 @@ var betaMemoryStoresMemoryVersionsList = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:      "view",
-			Usage:     "Selects which projection of a `memory` or `memory_version` the server returns. `basic` returns the object with `content` set to `null`; `full` populates `content`. When omitted, the default is endpoint-specific: retrieve operations default to `full`; list, create, and update operations default to `basic`. Listing with `view=full` caps `limit` at 20.",
+			Usage:     "Whether a `memory` or `memory_version` in the response includes its `content`. Defaults to `full` on retrieve operations and to `basic` on list, create, and update operations.\n\nWith `full`, list operations return at most 20 items per page.",
 			QueryPath: "view",
 		},
 		&requestflag.Flag[[]string]{
@@ -131,7 +131,7 @@ var betaMemoryStoresMemoryVersionsList = cli.Command{
 
 var betaMemoryStoresMemoryVersionsRedact = cli.Command{
 	Name:    "redact",
-	Usage:   "Redact a memory version",
+	Usage:   "Redact a Memory Version",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

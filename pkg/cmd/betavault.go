@@ -14,7 +14,7 @@ import (
 
 var betaVaultsCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Create Vault",
+	Usage:   "Create a Vault",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -45,7 +45,7 @@ var betaVaultsCreate = cli.Command{
 
 var betaVaultsRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Get Vault",
+	Usage:   "Retrieve a Vault",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -71,7 +71,7 @@ var betaVaultsRetrieve = cli.Command{
 
 var betaVaultsUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Update Vault",
+	Usage:   "Update a Vault",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -113,7 +113,7 @@ var betaVaultsList = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[bool]{
 			Name:      "include-archived",
-			Usage:     "Whether to include archived vaults in the results.",
+			Usage:     "Whether to include archived vaults in the results. Defaults to `false`.",
 			QueryPath: "include_archived",
 		},
 		&requestflag.Flag[int64]{
@@ -123,7 +123,7 @@ var betaVaultsList = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:      "page",
-			Usage:     "Opaque pagination token from a previous `list_vaults` response.",
+			Usage:     "The `next_page` value from a previous [List Vaults](https://platform.claude.com/docs/en/api/beta/vaults/list) response, to get the next page. Leave it out to get the first page.",
 			QueryPath: "page",
 		},
 		&requestflag.Flag[[]string]{
@@ -147,7 +147,7 @@ var betaVaultsList = cli.Command{
 
 var betaVaultsDelete = cli.Command{
 	Name:    "delete",
-	Usage:   "Delete Vault",
+	Usage:   "Delete a Vault",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -173,7 +173,7 @@ var betaVaultsDelete = cli.Command{
 
 var betaVaultsArchive = cli.Command{
 	Name:    "archive",
-	Usage:   "Archive Vault",
+	Usage:   "Archive a Vault",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

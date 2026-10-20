@@ -12,6 +12,48 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
+var betaOrganizationWorkspacesRateLimitsUpdate = requestflag.WithInnerFlags(cli.Command{
+	Name:    "update",
+	Usage:   "Set or clear rate-limit overrides for one rate-limit group in a workspace.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "workspace-id",
+			Usage:     "The ID of the workspace.",
+			Required:  true,
+			PathParam: "workspace_id",
+		},
+		&requestflag.Flag[string]{
+			Name:        "rate-limit-id",
+			Usage:       "The `id` of the organization's rate-limit entry to set overrides for.",
+			Required:    true,
+			PathParam:   "rate_limit_id",
+			DataAliases: []string{"id"},
+		},
+		&requestflag.Flag[[]map[string]any]{
+			Name:     "limit",
+			Usage:    "Limits to set or clear. Unspecified limit types are unchanged.",
+			Required: true,
+			BodyPath: "limits",
+		},
+	},
+	Action:          handleBetaOrganizationWorkspacesRateLimitsUpdate,
+	HideHelpCommand: true,
+}, map[string][]requestflag.HasOuterFlag{
+	"limit": {
+		&requestflag.InnerFlag[string]{
+			Name:       "limit.type",
+			Usage:      "Rate limiter type.",
+			InnerField: "type",
+		},
+		&requestflag.InnerFlag[*int64]{
+			Name:       "limit.value",
+			Usage:      "New limit value. Set to null to clear the workspace override and fall back to the organization limit.",
+			InnerField: "value",
+		},
+	},
+})
+
 var betaOrganizationWorkspacesRateLimitsList = cli.Command{
 	Name:    "list",
 	Usage:   "List a workspace's rate limits.",
@@ -51,6 +93,57 @@ var betaOrganizationWorkspacesRateLimitsList = cli.Command{
 	},
 	Action:          handleBetaOrganizationWorkspacesRateLimitsList,
 	HideHelpCommand: true,
+}
+
+func handleBetaOrganizationWorkspacesRateLimitsUpdate(ctx context.Context, cmd *cli.Command) error {
+	client := anthropic.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("rate-limit-id") && len(unusedArgs) > 0 {
+		cmd.Set("rate-limit-id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatBrackets,
+		ApplicationJSON,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := anthropic.BetaOrganizationWorkspaceRateLimitUpdateParams{
+		WorkspaceID: cmd.Value("workspace-id").(string),
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Beta.Organization.Workspaces.RateLimits.Update(
+		ctx,
+		cmd.Value("rate-limit-id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "beta:organization:workspaces:rate-limits update",
+		Transform:      transform,
+	})
 }
 
 func handleBetaOrganizationWorkspacesRateLimitsList(ctx context.Context, cmd *cli.Command) error {

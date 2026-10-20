@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.43.0](https://github.com/anthropics/anthropic-cli/compare/v1.42.0...v1.43.0) (2026-10-19)
+
+### Features
+
+* **api:** add workspace rate-limit updates to the Admin API
+* **api:** make User Profiles generally available
+* **auth:** the stderr note printed when `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN` overrides a profile now names the variable, the profile and the fix
+
+
+### Bug Fixes
+
+* **auth:** `auth status` no longer reports a credential passed as `--api-key` or `--auth-token` as an environment override
+* **client:** treat x-amz-security-token as a sensitive header
+
+
+### Chores
+
+* bump go sdk to v1.83.0
+* **ci:** skip the changelog check on draft pull requests
+* **ci:** update publish workflow
+* **docs:** add credential expiry descriptions to the Managed Agents API reference
+* **docs:** correct plugin manifest_version and reach descriptions
+* **docs:** improve Managed Agents memory store descriptions
+* **docs:** improve Managed Agents vault and credential descriptions
+
 ## [1.42.0](https://github.com/anthropics/anthropic-cli/compare/v1.41.0...v1.42.0) (2026-10-15)
 
 ### Features
