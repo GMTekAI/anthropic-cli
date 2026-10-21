@@ -27,6 +27,7 @@ func TestBetaOrganizationSpendLimitsList(t *testing.T) {
 			"--limit", "1",
 			"--page", "page",
 			"--scope-type", "organization",
+			"--workspace-id", "workspace_id",
 			"--beta", "message-batches-2024-09-24",
 		)
 	})

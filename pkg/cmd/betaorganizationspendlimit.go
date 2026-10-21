@@ -46,8 +46,13 @@ var betaOrganizationSpendLimitsList = cli.Command{
 		},
 		&requestflag.Flag[[]string]{
 			Name:      "scope-type",
-			Usage:     "Return only limits with these scope types. Omit for all.",
+			Usage:     "Return only limits with these scope types. Omit for all. A scope type that doesn't apply to the organization gets a 400 error.",
 			QueryPath: "scope_type",
+		},
+		&requestflag.Flag[string]{
+			Name:      "workspace-id",
+			Usage:     "Return only the limits whose `scope.workspace_id` is this workspace (`wrkspc_...`). Claude Console organizations only; other organizations get a 400 error.",
+			QueryPath: "workspace_id",
 		},
 		&requestflag.Flag[[]string]{
 			Name:       "beta",
