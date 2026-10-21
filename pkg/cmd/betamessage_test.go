@@ -3,19 +3,19 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
-	"github.com/anthropics/anthropic-cli/internal/requestflag"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/requestflag"
 )
 
 func TestBetaMessagesCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:messages", "create",
 			"--max-items", "10",
 			"--max-tokens", "1024",
-			"--message", "{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user, clear_at: next_user_message, output_config: {effort: low}}",
+			"--message", "{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user}",
 			"--model", "claude-opus-5-5",
 			"--cache-control", "{type: ephemeral, ttl: 5m}",
 			"--compaction", "{type: summarize, instructions: instructions}",
@@ -34,12 +34,9 @@ func TestBetaMessagesCreate(t *testing.T) {
 			"--stop-sequence", "string",
 			"--stream=false",
 			"--system", "[{text: Today's date is 2024-06-01., type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}]",
-			"--temperature", "1",
 			"--thinking", "{type: adaptive, block_binding: {prefix_mismatch_behavior: error}, display: summarized}",
 			"--tool-choice", "{type: auto, disable_parallel_tool_use: true}",
 			"--tool", "{input_schema: {type: object, properties: {location: bar, unit: bar}, required: [location]}, name: name, allowed_callers: [direct], cache_control: {type: ephemeral, ttl: 5m}, defer_loading: true, description: Get the current weather in a given location, eager_input_streaming: true, input_examples: [{foo: bar}], strict: true, type: custom}",
-			"--top-k", "5",
-			"--top-p", "0.7",
 			"--beta", "message-batches-2024-09-24",
 			"--user-profile-id", "anthropic-user-profile-id",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -53,14 +50,10 @@ func TestBetaMessagesCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:messages", "create",
 			"--max-items", "10",
 			"--max-tokens", "1024",
-			"--message.content", "[{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}]",
-			"--message.role", "user",
-			"--message.clear-at", "next_user_message",
-			"--message.output-config", "{effort: low}",
+			"--message", "{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user}",
 			"--model", "claude-opus-5-5",
 			"--cache-control.type", "ephemeral",
 			"--cache-control.ttl", "5m",
@@ -88,12 +81,9 @@ func TestBetaMessagesCreate(t *testing.T) {
 			"--stop-sequence", "string",
 			"--stream=false",
 			"--system", "[{text: Today's date is 2024-06-01., type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}]",
-			"--temperature", "1",
 			"--thinking", "{type: adaptive, block_binding: {prefix_mismatch_behavior: error}, display: summarized}",
 			"--tool-choice", "{type: auto, disable_parallel_tool_use: true}",
 			"--tool", "{input_schema: {type: object, properties: {location: bar, unit: bar}, required: [location]}, name: name, allowed_callers: [direct], cache_control: {type: ephemeral, ttl: 5m}, defer_loading: true, description: Get the current weather in a given location, eager_input_streaming: true, input_examples: [{foo: bar}], strict: true, type: custom}",
-			"--top-k", "5",
-			"--top-p", "0.7",
 			"--beta", "message-batches-2024-09-24",
 			"--user-profile-id", "anthropic-user-profile-id",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -119,9 +109,6 @@ func TestBetaMessagesCreate(t *testing.T) {
 			"            start_char_index: 0\n" +
 			"            type: char_location\n" +
 			"    role: user\n" +
-			"    clear_at: next_user_message\n" +
-			"    output_config:\n" +
-			"      effort: low\n" +
 			"model: claude-opus-5-5\n" +
 			"cache_control:\n" +
 			"  type: ephemeral\n" +
@@ -198,7 +185,6 @@ func TestBetaMessagesCreate(t *testing.T) {
 			"        end_char_index: 0\n" +
 			"        start_char_index: 0\n" +
 			"        type: char_location\n" +
-			"temperature: 1\n" +
 			"thinking:\n" +
 			"  type: adaptive\n" +
 			"  block_binding:\n" +
@@ -227,12 +213,9 @@ func TestBetaMessagesCreate(t *testing.T) {
 			"    input_examples:\n" +
 			"      - foo: bar\n" +
 			"    strict: true\n" +
-			"    type: custom\n" +
-			"top_k: 5\n" +
-			"top_p: 0.7\n")
+			"    type: custom\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:messages", "create",
 			"--max-items", "10",
 			"--beta", "message-batches-2024-09-24",
@@ -243,12 +226,12 @@ func TestBetaMessagesCreate(t *testing.T) {
 }
 
 func TestBetaMessagesCountTokens(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:messages", "count-tokens",
-			"--message", "{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user, clear_at: next_user_message, output_config: {effort: low}}",
+			"--message", "{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user}",
 			"--model", "claude-opus-5-5",
 			"--cache-control", "{type: ephemeral, ttl: 5m}",
 			"--compaction", "{type: summarize, instructions: instructions}",
@@ -274,12 +257,8 @@ func TestBetaMessagesCountTokens(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:messages", "count-tokens",
-			"--message.content", "[{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}]",
-			"--message.role", "user",
-			"--message.clear-at", "next_user_message",
-			"--message.output-config", "{effort: low}",
+			"--message", "{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user}",
 			"--model", "claude-opus-5-5",
 			"--cache-control.type", "ephemeral",
 			"--cache-control.ttl", "5m",
@@ -325,9 +304,6 @@ func TestBetaMessagesCountTokens(t *testing.T) {
 			"            start_char_index: 0\n" +
 			"            type: char_location\n" +
 			"    role: user\n" +
-			"    clear_at: next_user_message\n" +
-			"    output_config:\n" +
-			"      effort: low\n" +
 			"model: claude-opus-5-5\n" +
 			"cache_control:\n" +
 			"  type: ephemeral\n" +
@@ -418,7 +394,6 @@ func TestBetaMessagesCountTokens(t *testing.T) {
 			"    type: custom\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:messages", "count-tokens",
 			"--beta", "message-batches-2024-09-24",
 			"--user-profile-id", "anthropic-user-profile-id",

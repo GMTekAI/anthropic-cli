@@ -8,8 +8,8 @@ import (
 	"os"
 	"slices"
 
-	"github.com/anthropics/anthropic-cli/pkg/cmd"
-	"github.com/anthropics/anthropic-sdk-go"
+	"github.com/anthropics/anthropic-cli/v2/pkg/cmd"
+	"github.com/anthropics/anthropic-sdk-go/v2"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
 )

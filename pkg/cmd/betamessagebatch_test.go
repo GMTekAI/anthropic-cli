@@ -3,17 +3,17 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
-	"github.com/anthropics/anthropic-cli/internal/requestflag"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/requestflag"
 )
 
 func TestBetaMessagesBatchesCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:messages:batches", "create",
-			"--request", "{custom_id: my-custom-id-1, params: {max_tokens: 1024, messages: [{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user, clear_at: next_user_message, output_config: {effort: low}}], model: claude-opus-5-5, cache_control: {type: ephemeral, ttl: 5m}, compaction: {type: summarize, instructions: instructions}, container: {id: id, skills: [{skill_id: pdf, type: anthropic, version: latest}]}, context_management: {edits: [{type: clear_tool_uses_20250919, clear_at_least: {type: input_tokens, value: 0}, clear_tool_inputs: true, exclude_tools: [string], keep: {type: tool_uses, value: 0}, trigger: {type: input_tokens, value: 1}}]}, diagnostics: {previous_message_id: previous_message_id}, fallback_credit_token: x, fallbacks: default, inference_geo: inference_geo, mcp_servers: [{name: name, type: url, url: url, authorization_token: authorization_token, tool_configuration: {allowed_tools: [string], enabled: true}}], metadata: {user_id: 13803d75-b4b5-4c3e-b2a2-6f21399b021b}, output_config: {effort: low, format: {schema: {foo: bar}, type: json_schema}, task_budget: {total: 1024, type: tokens, remaining: 0}}, output_format: {schema: {foo: bar}, type: json_schema}, service_tier: auto, speed: standard, stop_sequences: [string], stream: false, system: [{text: Today's date is 2024-06-01., type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], temperature: 1, thinking: {type: adaptive, block_binding: {prefix_mismatch_behavior: error}, display: summarized}, tool_choice: {type: auto, disable_parallel_tool_use: true}, tools: [{input_schema: {type: object, properties: {location: bar, unit: bar}, required: [location]}, name: name, allowed_callers: [direct], cache_control: {type: ephemeral, ttl: 5m}, defer_loading: true, description: Get the current weather in a given location, eager_input_streaming: true, input_examples: [{foo: bar}], strict: true, type: custom}], top_k: 5, top_p: 0.7}}",
+			"--request", "{custom_id: my-custom-id-1, params: {max_tokens: 1024, messages: [{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user}], model: claude-opus-5-5, cache_control: {type: ephemeral, ttl: 5m}, compaction: {type: summarize, instructions: instructions}, container: {id: id, skills: [{skill_id: pdf, type: anthropic, version: latest}]}, context_management: {edits: [{type: clear_tool_uses_20250919, clear_at_least: {type: input_tokens, value: 0}, clear_tool_inputs: true, exclude_tools: [string], keep: {type: tool_uses, value: 0}, trigger: {type: input_tokens, value: 1}}]}, diagnostics: {previous_message_id: previous_message_id}, fallback_credit_token: x, fallbacks: default, inference_geo: inference_geo, mcp_servers: [{name: name, type: url, url: url, authorization_token: authorization_token, tool_configuration: {allowed_tools: [string], enabled: true}}], metadata: {user_id: 13803d75-b4b5-4c3e-b2a2-6f21399b021b}, output_config: {effort: low, format: {schema: {foo: bar}, type: json_schema}, task_budget: {total: 1024, type: tokens, remaining: 0}}, output_format: {schema: {foo: bar}, type: json_schema}, service_tier: auto, speed: standard, stop_sequences: [string], stream: false, system: [{text: Today's date is 2024-06-01., type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], thinking: {type: adaptive, block_binding: {prefix_mismatch_behavior: error}, display: summarized}, tool_choice: {type: auto, disable_parallel_tool_use: true}, tools: [{input_schema: {type: object, properties: {location: bar, unit: bar}, required: [location]}, name: name, allowed_callers: [direct], cache_control: {type: ephemeral, ttl: 5m}, defer_loading: true, description: Get the current weather in a given location, eager_input_streaming: true, input_examples: [{foo: bar}], strict: true, type: custom}]}}",
 			"--beta", "message-batches-2024-09-24",
 			"--user-profile-id", "anthropic-user-profile-id",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -27,10 +27,9 @@ func TestBetaMessagesBatchesCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:messages:batches", "create",
 			"--request.custom-id", "my-custom-id-1",
-			"--request.params", "{max_tokens: 1024, messages: [{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user, clear_at: next_user_message, output_config: {effort: low}}], model: claude-opus-5-5, cache_control: {type: ephemeral, ttl: 5m}, compaction: {type: summarize, instructions: instructions}, container: {id: id, skills: [{skill_id: pdf, type: anthropic, version: latest}]}, context_management: {edits: [{type: clear_tool_uses_20250919, clear_at_least: {type: input_tokens, value: 0}, clear_tool_inputs: true, exclude_tools: [string], keep: {type: tool_uses, value: 0}, trigger: {type: input_tokens, value: 1}}]}, diagnostics: {previous_message_id: previous_message_id}, fallback_credit_token: x, fallbacks: default, inference_geo: inference_geo, mcp_servers: [{name: name, type: url, url: url, authorization_token: authorization_token, tool_configuration: {allowed_tools: [string], enabled: true}}], metadata: {user_id: 13803d75-b4b5-4c3e-b2a2-6f21399b021b}, output_config: {effort: low, format: {schema: {foo: bar}, type: json_schema}, task_budget: {total: 1024, type: tokens, remaining: 0}}, output_format: {schema: {foo: bar}, type: json_schema}, service_tier: auto, speed: standard, stop_sequences: [string], stream: false, system: [{text: Today's date is 2024-06-01., type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], temperature: 1, thinking: {type: adaptive, block_binding: {prefix_mismatch_behavior: error}, display: summarized}, tool_choice: {type: auto, disable_parallel_tool_use: true}, tools: [{input_schema: {type: object, properties: {location: bar, unit: bar}, required: [location]}, name: name, allowed_callers: [direct], cache_control: {type: ephemeral, ttl: 5m}, defer_loading: true, description: Get the current weather in a given location, eager_input_streaming: true, input_examples: [{foo: bar}], strict: true, type: custom}], top_k: 5, top_p: 0.7}",
+			"--request.params", "{max_tokens: 1024, messages: [{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user}], model: claude-opus-5-5, cache_control: {type: ephemeral, ttl: 5m}, compaction: {type: summarize, instructions: instructions}, container: {id: id, skills: [{skill_id: pdf, type: anthropic, version: latest}]}, context_management: {edits: [{type: clear_tool_uses_20250919, clear_at_least: {type: input_tokens, value: 0}, clear_tool_inputs: true, exclude_tools: [string], keep: {type: tool_uses, value: 0}, trigger: {type: input_tokens, value: 1}}]}, diagnostics: {previous_message_id: previous_message_id}, fallback_credit_token: x, fallbacks: default, inference_geo: inference_geo, mcp_servers: [{name: name, type: url, url: url, authorization_token: authorization_token, tool_configuration: {allowed_tools: [string], enabled: true}}], metadata: {user_id: 13803d75-b4b5-4c3e-b2a2-6f21399b021b}, output_config: {effort: low, format: {schema: {foo: bar}, type: json_schema}, task_budget: {total: 1024, type: tokens, remaining: 0}}, output_format: {schema: {foo: bar}, type: json_schema}, service_tier: auto, speed: standard, stop_sequences: [string], stream: false, system: [{text: Today's date is 2024-06-01., type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], thinking: {type: adaptive, block_binding: {prefix_mismatch_behavior: error}, display: summarized}, tool_choice: {type: auto, disable_parallel_tool_use: true}, tools: [{input_schema: {type: object, properties: {location: bar, unit: bar}, required: [location]}, name: name, allowed_callers: [direct], cache_control: {type: ephemeral, ttl: 5m}, defer_loading: true, description: Get the current weather in a given location, eager_input_streaming: true, input_examples: [{foo: bar}], strict: true, type: custom}]}",
 			"--beta", "message-batches-2024-09-24",
 			"--user-profile-id", "anthropic-user-profile-id",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -59,9 +58,6 @@ func TestBetaMessagesBatchesCreate(t *testing.T) {
 			"                  start_char_index: 0\n" +
 			"                  type: char_location\n" +
 			"          role: user\n" +
-			"          clear_at: next_user_message\n" +
-			"          output_config:\n" +
-			"            effort: low\n" +
 			"      model: claude-opus-5-5\n" +
 			"      cache_control:\n" +
 			"        type: ephemeral\n" +
@@ -138,7 +134,6 @@ func TestBetaMessagesBatchesCreate(t *testing.T) {
 			"              end_char_index: 0\n" +
 			"              start_char_index: 0\n" +
 			"              type: char_location\n" +
-			"      temperature: 1\n" +
 			"      thinking:\n" +
 			"        type: adaptive\n" +
 			"        block_binding:\n" +
@@ -167,12 +162,9 @@ func TestBetaMessagesBatchesCreate(t *testing.T) {
 			"          input_examples:\n" +
 			"            - foo: bar\n" +
 			"          strict: true\n" +
-			"          type: custom\n" +
-			"      top_k: 5\n" +
-			"      top_p: 0.7\n")
+			"          type: custom\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:messages:batches", "create",
 			"--beta", "message-batches-2024-09-24",
 			"--user-profile-id", "anthropic-user-profile-id",
@@ -182,10 +174,10 @@ func TestBetaMessagesBatchesCreate(t *testing.T) {
 }
 
 func TestBetaMessagesBatchesRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:messages:batches", "retrieve",
 			"--message-batch-id", "message_batch_id",
 			"--beta", "message-batches-2024-09-24",
@@ -195,10 +187,10 @@ func TestBetaMessagesBatchesRetrieve(t *testing.T) {
 }
 
 func TestBetaMessagesBatchesList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:messages:batches", "list",
 			"--max-items", "10",
 			"--after-id", "after_id",
@@ -211,10 +203,10 @@ func TestBetaMessagesBatchesList(t *testing.T) {
 }
 
 func TestBetaMessagesBatchesDelete(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:messages:batches", "delete",
 			"--message-batch-id", "message_batch_id",
 			"--beta", "message-batches-2024-09-24",
@@ -224,10 +216,10 @@ func TestBetaMessagesBatchesDelete(t *testing.T) {
 }
 
 func TestBetaMessagesBatchesCancel(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:messages:batches", "cancel",
 			"--message-batch-id", "message_batch_id",
 			"--beta", "message-batches-2024-09-24",
@@ -237,10 +229,10 @@ func TestBetaMessagesBatchesCancel(t *testing.T) {
 }
 
 func TestBetaMessagesBatchesResults(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:messages:batches", "results",
 			"--max-items", "10",
 			"--message-batch-id", "message_batch_id",

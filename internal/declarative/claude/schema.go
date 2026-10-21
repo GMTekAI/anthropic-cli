@@ -7,7 +7,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/anthropics/anthropic-cli/internal/declarative/core"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/core"
 )
 
 // schema is the file layout `ant apply` expects: a resource as a YAML file, or

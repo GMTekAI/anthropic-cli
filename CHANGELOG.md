@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.0.0](https://github.com/anthropics/anthropic-cli/compare/v1.44.0...v2.0.0) (2026-10-21)
+
+### ⚠ BREAKING CHANGES
+
+* **api:** add support for new API version 2026-10-21
+
+### Features
+
+* **api:** add a workspace_id filter and the usage_tier scope type to list spend limits
+* **api:** add support for new API version 2026-10-21
+
+
+### Chores
+
+* bump go sdk to v2.0.0
+
+
+### Documentation
+
+* **api:** remove outdated system role note from messages description
+
 ## [1.44.0](https://github.com/anthropics/anthropic-cli/compare/v1.43.0...v1.44.0) (2026-10-20)
 
 ### Features

@@ -3,14 +3,14 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestBetaEnvironmentsCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:environments", "create",
 			"--name", "python-data-analysis",
 			"--config", "{type: cloud, networking: {type: limited, allow_mcp_servers: true, allow_package_managers: true, allowed_hosts: [api.example.com]}, packages: {apt: [string], cargo: [string], gem: [string], go: [string], npm: [string], pip: [pandas, numpy], type: packages}}",
@@ -55,7 +55,6 @@ func TestBetaEnvironmentsCreate(t *testing.T) {
 			"scope: organization\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:environments", "create",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -64,10 +63,10 @@ func TestBetaEnvironmentsCreate(t *testing.T) {
 }
 
 func TestBetaEnvironmentsRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:environments", "retrieve",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--beta", "message-batches-2024-09-24",
@@ -77,10 +76,10 @@ func TestBetaEnvironmentsRetrieve(t *testing.T) {
 }
 
 func TestBetaEnvironmentsUpdate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:environments", "update",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--config", "{type: cloud, networking: {type: limited, allow_mcp_servers: true, allow_package_managers: true, allowed_hosts: [api.example.com]}, packages: {apt: [string], cargo: [string], gem: [string], go: [string], npm: [string], pip: [pandas, numpy], type: packages}}",
@@ -126,7 +125,6 @@ func TestBetaEnvironmentsUpdate(t *testing.T) {
 			"scope: organization\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:environments", "update",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--beta", "message-batches-2024-09-24",
@@ -136,10 +134,10 @@ func TestBetaEnvironmentsUpdate(t *testing.T) {
 }
 
 func TestBetaEnvironmentsList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:environments", "list",
 			"--max-items", "10",
 			"--include-archived=true",
@@ -152,10 +150,10 @@ func TestBetaEnvironmentsList(t *testing.T) {
 }
 
 func TestBetaEnvironmentsDelete(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:environments", "delete",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--beta", "message-batches-2024-09-24",
@@ -165,10 +163,10 @@ func TestBetaEnvironmentsDelete(t *testing.T) {
 }
 
 func TestBetaEnvironmentsArchive(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:environments", "archive",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--beta", "message-batches-2024-09-24",

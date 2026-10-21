@@ -3,15 +3,15 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
-	"github.com/anthropics/anthropic-cli/internal/requestflag"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/requestflag"
 )
 
 func TestUserProfilesCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"user-profiles", "create",
 			"--access-type", "application",
 			"--external-user-details", "{account_status: active, country: US, email_hash: x, entity_type: business, name_hash: x, onboarded_at: '2024-11-02T08:15:00Z', reference_id: user_12345}",
@@ -28,7 +28,6 @@ func TestUserProfilesCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"user-profiles", "create",
 			"--access-type", "application",
 			"--external-user-details.account-status", "active",
@@ -60,7 +59,6 @@ func TestUserProfilesCreate(t *testing.T) {
 			"name: Example User\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"user-profiles", "create",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
@@ -68,10 +66,10 @@ func TestUserProfilesCreate(t *testing.T) {
 }
 
 func TestUserProfilesRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"user-profiles", "retrieve",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -80,10 +78,10 @@ func TestUserProfilesRetrieve(t *testing.T) {
 }
 
 func TestUserProfilesUpdate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"user-profiles", "update",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--access-type", "application",
@@ -101,7 +99,6 @@ func TestUserProfilesUpdate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"user-profiles", "update",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--access-type", "application",
@@ -135,7 +132,6 @@ func TestUserProfilesUpdate(t *testing.T) {
 			"name: x\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"user-profiles", "update",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -144,10 +140,10 @@ func TestUserProfilesUpdate(t *testing.T) {
 }
 
 func TestUserProfilesList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"user-profiles", "list",
 			"--max-items", "10",
 			"--limit", "0",
@@ -160,10 +156,10 @@ func TestUserProfilesList(t *testing.T) {
 }
 
 func TestUserProfilesDelete(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"user-profiles", "delete",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",

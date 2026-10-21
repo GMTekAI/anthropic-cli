@@ -10,7 +10,7 @@ import (
 	"github.com/muesli/reflow/wordwrap"
 	"github.com/muesli/reflow/wrap"
 
-	"github.com/anthropics/anthropic-cli/internal/sessions/timeline"
+	"github.com/anthropics/anthropic-cli/v2/internal/sessions/timeline"
 )
 
 // wrapLines word-wraps, then hard-wraps what has no spaces; both passes are

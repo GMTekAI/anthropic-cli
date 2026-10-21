@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/anthropics/anthropic-cli/internal/apiquery"
-	"github.com/anthropics/anthropic-cli/internal/requestflag"
-	"github.com/anthropics/anthropic-sdk-go"
-	"github.com/anthropics/anthropic-sdk-go/option"
+	"github.com/anthropics/anthropic-cli/v2/internal/apiquery"
+	"github.com/anthropics/anthropic-cli/v2/internal/requestflag"
+	"github.com/anthropics/anthropic-sdk-go/v2"
+	"github.com/anthropics/anthropic-sdk-go/v2/option"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
 )
@@ -22,11 +22,6 @@ var modelsRetrieve = cli.Command{
 			Usage:     "Model identifier or alias.",
 			Required:  true,
 			PathParam: "model_id",
-		},
-		&requestflag.Flag[[]string]{
-			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
-			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",
@@ -63,11 +58,6 @@ var modelsList = cli.Command{
 			Usage:     "Number of items to return per page.\n\nDefaults to `20`. Ranges from `1` to `1000`.",
 			Default:   20,
 			QueryPath: "limit",
-		},
-		&requestflag.Flag[[]string]{
-			Name:       "beta",
-			Usage:      "Optional header to specify the beta version(s) you want to use.",
-			HeaderPath: "anthropic-beta",
 		},
 		&requestflag.Flag[string]{
 			Name:       "workspace-id",

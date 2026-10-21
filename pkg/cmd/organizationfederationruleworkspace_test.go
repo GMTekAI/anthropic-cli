@@ -3,14 +3,14 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestOrganizationFederationRulesWorkspacesList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:federation:rules:workspaces", "list",
 			"--max-items", "10",
 			"--federation-rule-id", "federation_rule_id",
@@ -21,10 +21,10 @@ func TestOrganizationFederationRulesWorkspacesList(t *testing.T) {
 }
 
 func TestOrganizationFederationRulesWorkspacesAdd(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:federation:rules:workspaces", "add",
 			"--federation-rule-id", "federation_rule_id",
 			"--workspace-id", "workspace_id",
@@ -36,7 +36,6 @@ func TestOrganizationFederationRulesWorkspacesAdd(t *testing.T) {
 		pipeData := []byte("workspace_id: workspace_id")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"organization:federation:rules:workspaces", "add",
 			"--federation-rule-id", "federation_rule_id",
 		)
@@ -44,10 +43,10 @@ func TestOrganizationFederationRulesWorkspacesAdd(t *testing.T) {
 }
 
 func TestOrganizationFederationRulesWorkspacesRemove(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:federation:rules:workspaces", "remove",
 			"--federation-rule-id", "federation_rule_id",
 			"--workspace-id", "workspace_id",

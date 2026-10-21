@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/declarative/acctest"
-	"github.com/anthropics/anthropic-cli/internal/declarative/claude"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/acctest"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/claude"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

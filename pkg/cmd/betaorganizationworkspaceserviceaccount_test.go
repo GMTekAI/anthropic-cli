@@ -3,14 +3,14 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestBetaOrganizationWorkspacesServiceAccountsRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:workspaces:service-accounts", "retrieve",
 			"--workspace-id", "workspace_id",
 			"--service-account-id", "service_account_id",
@@ -20,10 +20,10 @@ func TestBetaOrganizationWorkspacesServiceAccountsRetrieve(t *testing.T) {
 }
 
 func TestBetaOrganizationWorkspacesServiceAccountsUpdate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:workspaces:service-accounts", "update",
 			"--workspace-id", "workspace_id",
 			"--service-account-id", "service_account_id",
@@ -37,7 +37,6 @@ func TestBetaOrganizationWorkspacesServiceAccountsUpdate(t *testing.T) {
 		pipeData := []byte("workspace_role: workspace_admin")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:organization:workspaces:service-accounts", "update",
 			"--workspace-id", "workspace_id",
 			"--service-account-id", "service_account_id",
@@ -47,10 +46,10 @@ func TestBetaOrganizationWorkspacesServiceAccountsUpdate(t *testing.T) {
 }
 
 func TestBetaOrganizationWorkspacesServiceAccountsList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:workspaces:service-accounts", "list",
 			"--max-items", "10",
 			"--workspace-id", "workspace_id",
@@ -62,10 +61,10 @@ func TestBetaOrganizationWorkspacesServiceAccountsList(t *testing.T) {
 }
 
 func TestBetaOrganizationWorkspacesServiceAccountsAdd(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:workspaces:service-accounts", "add",
 			"--workspace-id", "workspace_id",
 			"--service-account-id", "service_account_id",
@@ -81,7 +80,6 @@ func TestBetaOrganizationWorkspacesServiceAccountsAdd(t *testing.T) {
 			"workspace_role: workspace_admin\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:organization:workspaces:service-accounts", "add",
 			"--workspace-id", "workspace_id",
 			"--beta", "message-batches-2024-09-24",
@@ -90,10 +88,10 @@ func TestBetaOrganizationWorkspacesServiceAccountsAdd(t *testing.T) {
 }
 
 func TestBetaOrganizationWorkspacesServiceAccountsRemove(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:workspaces:service-accounts", "remove",
 			"--workspace-id", "workspace_id",
 			"--service-account-id", "service_account_id",

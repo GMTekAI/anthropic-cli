@@ -6,7 +6,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/anthropics/anthropic-cli/internal/declarative/core"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/core"
 )
 
 // Notices and questions around the two phases: where a first apply will create

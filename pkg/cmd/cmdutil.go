@@ -18,9 +18,9 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/anthropics/anthropic-cli/internal/jsonview"
-	"github.com/anthropics/anthropic-sdk-go/config"
-	"github.com/anthropics/anthropic-sdk-go/option"
+	"github.com/anthropics/anthropic-cli/v2/internal/jsonview"
+	"github.com/anthropics/anthropic-sdk-go/v2/config"
+	"github.com/anthropics/anthropic-sdk-go/v2/option"
 	"github.com/charmbracelet/x/term"
 	"github.com/itchyny/json2yaml"
 	"github.com/muesli/reflow/wrap"
@@ -68,15 +68,14 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 	// subcommand's same-named local flag (e.g. a --service-account-id path
 	// param) can't shadow them under urfave/cli's leaf-first lookup.
 	root := cmd.Root()
-	warnIfCredentialOnCommandLine(os.Stderr)
 	if err := applyStdinCredential(root); err != nil {
 		// TODO: same os.Exit wart as the OAuth resolution failure below.
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 	// Credential precedence mirrors the WIF User Guide's "Credential resolution" section:
-	//   1. --api-key-stdin / ANTHROPIC_API_KEY (or deprecated --api-key)          (doc tiers 1+2)
-	//   2. --auth-token-stdin / ANTHROPIC_AUTH_TOKEN (or deprecated --auth-token) (doc tiers 1+2)
+	//   1. --api-key-stdin / ANTHROPIC_API_KEY       (doc tiers 1+2)
+	//   2. --auth-token-stdin / ANTHROPIC_AUTH_TOKEN (doc tiers 1+2)
 	//   3. profile named by --profile / ANTHROPIC_PROFILE (explicit)
 	//   4. ANTHROPIC_FEDERATION_RULE_ID + ANTHROPIC_ORGANIZATION_ID +
 	//      ANTHROPIC_IDENTITY_TOKEN[_FILE]
@@ -91,8 +90,8 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 	// federation env vars and the Google Cloud and AWS settings (you asked for
 	// it), but those beat a profile that just happened to be lying around in
 	// active_config.
-	apiKey, apiKeySet := directCredential(root, "api-key")
-	authToken, authTokenSet := directCredential(root, "auth-token")
+	apiKey, apiKeySet := directCredential("api-key")
+	authToken, authTokenSet := directCredential("auth-token")
 	cfg, profileExplicit := loadProfileIfUsable(root)
 	fed := federationFromRoot(root)
 	fedAnySet := fed.AnySet()
@@ -189,8 +188,8 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 // winner. No secret values are printed. Order matches the User Guide's
 // precedence (explicit profile beats federation, Google Cloud and AWS;
 // implicit doesn't). apiKeySrc / authTokenSrc are the source labels for those
-// tiers ("" when unset) so a stdin-supplied credential isn't reported as
-// --api-key.
+// tiers ("" when unset) so a stdin-supplied credential isn't reported as its
+// env var.
 func warnIfMultipleAuthSources(apiKeySrc, authTokenSrc string, profileExplicit, federation, googleCloud, awsTier, profileImplicit bool, envVar, profile string) {
 	type src struct {
 		on   bool

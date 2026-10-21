@@ -8,8 +8,8 @@ import (
 	"os"
 	"sync"
 
-	"github.com/anthropics/anthropic-sdk-go/aws"
-	"github.com/anthropics/anthropic-sdk-go/option"
+	"github.com/anthropics/anthropic-sdk-go/v2/aws"
+	"github.com/anthropics/anthropic-sdk-go/v2/option"
 	"github.com/urfave/cli/v3"
 )
 
@@ -42,7 +42,7 @@ type awsPlatform struct {
 // subcommand's same-named local flag can't shadow them. applyStdinCredential
 // must run first for the API key.
 func awsFromRoot(root *cli.Command) awsPlatform {
-	apiKey, _ := directCredential(root, "aws-api-key")
+	apiKey, _ := directCredential("aws-api-key")
 	return awsPlatform{
 		Region:      root.String("aws-region"),
 		WorkspaceID: root.String("aws-workspace-id"),

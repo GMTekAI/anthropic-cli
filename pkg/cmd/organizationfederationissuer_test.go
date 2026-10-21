@@ -3,14 +3,14 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestOrganizationFederationIssuersCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:federation:issuers", "create",
 			"--issuer-url", "x",
 			"--name", "x",
@@ -33,17 +33,16 @@ func TestOrganizationFederationIssuersCreate(t *testing.T) {
 			"max_jwt_lifetime_seconds: 1\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"organization:federation:issuers", "create",
 		)
 	})
 }
 
 func TestOrganizationFederationIssuersRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:federation:issuers", "retrieve",
 			"--federation-issuer-id", "federation_issuer_id",
 		)
@@ -51,10 +50,10 @@ func TestOrganizationFederationIssuersRetrieve(t *testing.T) {
 }
 
 func TestOrganizationFederationIssuersUpdate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:federation:issuers", "update",
 			"--federation-issuer-id", "federation_issuer_id",
 			"--check-jti=true",
@@ -80,7 +79,6 @@ func TestOrganizationFederationIssuersUpdate(t *testing.T) {
 			"name: x\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"organization:federation:issuers", "update",
 			"--federation-issuer-id", "federation_issuer_id",
 		)
@@ -88,10 +86,10 @@ func TestOrganizationFederationIssuersUpdate(t *testing.T) {
 }
 
 func TestOrganizationFederationIssuersList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:federation:issuers", "list",
 			"--max-items", "10",
 			"--include-archived=true",
@@ -102,10 +100,10 @@ func TestOrganizationFederationIssuersList(t *testing.T) {
 }
 
 func TestOrganizationFederationIssuersArchive(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:federation:issuers", "archive",
 			"--federation-issuer-id", "federation_issuer_id",
 		)

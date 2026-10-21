@@ -18,7 +18,7 @@ for tool in vhs ttyd ffmpeg python3; do
 done
 
 # Mark the necessary Go modules as private to avoid Go's proxy
-export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/anthropics/anthropic-sdk-go,github.com/anthropics/anthropic-sdk-go-private"
+export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/anthropics/anthropic-sdk-go/v2,github.com/anthropics/anthropic-sdk-go-private"
 
 echo "==> Building ant"
 go build ./cmd/ant
@@ -120,7 +120,8 @@ mkdir -p "$DEMO_DIR/config"
 cat > "$DEMO_DIR/ant" <<EOF
 #!/usr/bin/env bash
 export ANTHROPIC_CONFIG_DIR="$DEMO_DIR/config"
-exec "$PWD/ant" --base-url http://127.0.0.1:$MOCK_PORT --api-key demo-key "\$@"
+export ANTHROPIC_API_KEY=demo-key
+exec "$PWD/ant" --base-url http://127.0.0.1:$MOCK_PORT "\$@"
 EOF
 chmod +x "$DEMO_DIR/ant"
 

@@ -5,9 +5,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/anthropics/anthropic-sdk-go"
+	"github.com/anthropics/anthropic-sdk-go/v2"
 
-	"github.com/anthropics/anthropic-cli/internal/sessions/live"
+	"github.com/anthropics/anthropic-cli/v2/internal/sessions/live"
 )
 
 // hub is the sole reader of the session's Updates and fans frames out to

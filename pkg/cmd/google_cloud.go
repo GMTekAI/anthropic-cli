@@ -7,8 +7,8 @@ import (
 	"io"
 	"sync"
 
-	"github.com/anthropics/anthropic-sdk-go/googlecloud"
-	"github.com/anthropics/anthropic-sdk-go/option"
+	"github.com/anthropics/anthropic-sdk-go/v2/googlecloud"
+	"github.com/anthropics/anthropic-sdk-go/v2/option"
 	"github.com/urfave/cli/v3"
 )
 

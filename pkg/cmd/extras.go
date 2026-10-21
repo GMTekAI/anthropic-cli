@@ -4,10 +4,7 @@ package cmd
 // must survive a regen lives here rather than in the generated files.
 
 import (
-	"fmt"
-
-	"github.com/anthropics/anthropic-cli/internal/requestflag"
-	"github.com/anthropics/anthropic-sdk-go/option"
+	"github.com/anthropics/anthropic-sdk-go/v2/option"
 	"github.com/urfave/cli/v3"
 )
 
@@ -65,11 +62,6 @@ func init() {
 	for _, f := range Command.Flags {
 		if sf, ok := f.(*cli.StringFlag); ok && sf.Name == "base-url" {
 			sf.Sources = cli.EnvVars("ANTHROPIC_BASE_URL")
-		}
-		if rf, ok := f.(*requestflag.Flag[string]); ok {
-			if alt, deprecated := argvCredentialFlags[rf.Name]; deprecated {
-				rf.Usage = fmt.Sprintf(argvCredentialDeprecation, alt)
-			}
 		}
 	}
 	Command.Flags = append(Command.Flags,

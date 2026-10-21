@@ -3,15 +3,15 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
-	"github.com/anthropics/anthropic-cli/internal/requestflag"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/requestflag"
 )
 
 func TestBetaOrganizationWorkspacesRateLimitsUpdate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:workspaces:rate-limits", "update",
 			"--workspace-id", "workspace_id",
 			"--rate-limit-id", "rate_limit_id",
@@ -26,7 +26,6 @@ func TestBetaOrganizationWorkspacesRateLimitsUpdate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:workspaces:rate-limits", "update",
 			"--workspace-id", "workspace_id",
 			"--rate-limit-id", "rate_limit_id",
@@ -43,7 +42,6 @@ func TestBetaOrganizationWorkspacesRateLimitsUpdate(t *testing.T) {
 			"    value: 0\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:organization:workspaces:rate-limits", "update",
 			"--workspace-id", "workspace_id",
 			"--rate-limit-id", "rate_limit_id",
@@ -52,10 +50,10 @@ func TestBetaOrganizationWorkspacesRateLimitsUpdate(t *testing.T) {
 }
 
 func TestBetaOrganizationWorkspacesRateLimitsList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:workspaces:rate-limits", "list",
 			"--max-items", "10",
 			"--workspace-id", "workspace_id",

@@ -330,6 +330,7 @@ func TestOtelScope(t *testing.T) {
 	clearWorkerEnv(t)
 	otelTestEnv(t, nil)
 	t.Setenv("ANTHROPIC_CONFIG_DIR", t.TempDir())
+	t.Setenv("ANTHROPIC_API_KEY", "k")
 	recorded := tracetest.NewSpanRecorder()
 	provider := cliScopeTracerProvider{inner: sdktrace.NewTracerProvider(sdktrace.WithSpanProcessor(recorded))}
 	otel.SetTracerProvider(provider)
@@ -339,7 +340,7 @@ func TestOtelScope(t *testing.T) {
 	}))
 	defer api.Close()
 
-	require.NoError(t, Command.Run(context.Background(), []string{"ant", "--api-key", "k", "--base-url", api.URL, "models", "list"}))
+	require.NoError(t, Command.Run(context.Background(), []string{"ant", "--base-url", api.URL, "models", "list"}))
 	_, span := provider.Tracer("com.anthropic.sdk.go",
 		trace.WithInstrumentationVersion("0.0.1"),
 		trace.WithSchemaURL("https://example.com/schema"),
@@ -554,7 +555,7 @@ func TestOtelEndToEnd(t *testing.T) {
 	}))
 	defer api.Close()
 
-	cmd := exec.Command("go", "run", "./cmd/ant", "--api-key", "k", "--base-url", api.URL, "models", "list")
+	cmd := exec.Command("go", "run", "./cmd/ant", "--base-url", api.URL, "models", "list")
 	cmd.Dir = "../.."
 	// Dropped rather than overridden: a signal-specific OTLP variable in the
 	// environment of the test run would otherwise win over the endpoint set here.
@@ -562,6 +563,7 @@ func TestOtelEndToEnd(t *testing.T) {
 		return strings.HasPrefix(kv, "OTEL_") || strings.HasPrefix(kv, "TRACESTATE=")
 	})
 	cmd.Env = append(env,
+		"ANTHROPIC_API_KEY=k",
 		"ANTHROPIC_CONFIG_DIR="+t.TempDir(),
 		"OTEL_EXPORTER_OTLP_ENDPOINT="+collector.URL,
 		"OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf",

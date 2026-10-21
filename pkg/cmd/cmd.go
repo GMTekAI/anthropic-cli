@@ -10,8 +10,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/anthropics/anthropic-cli/internal/autocomplete"
-	"github.com/anthropics/anthropic-cli/internal/requestflag"
+	"github.com/anthropics/anthropic-cli/v2/internal/autocomplete"
+	"github.com/anthropics/anthropic-cli/v2/internal/requestflag"
 	docs "github.com/urfave/cli-docs/v3"
 	"github.com/urfave/cli/v3"
 )
@@ -77,27 +77,11 @@ func init() {
 				Usage:   "If the result is a string, print it without JSON quotes. This can be useful for making output transforms talk to non-JSON-based systems.",
 			},
 			&requestflag.Flag[string]{
-				Name:    "api-key",
-				Sources: cli.EnvVars("ANTHROPIC_API_KEY"),
-			},
-			&requestflag.Flag[string]{
-				Name:    "auth-token",
-				Sources: cli.EnvVars("ANTHROPIC_AUTH_TOKEN"),
-			},
-			&requestflag.Flag[string]{
 				Name:    "webhook-key",
 				Sources: cli.EnvVars("ANTHROPIC_WEBHOOK_SIGNING_KEY"),
 			},
 		},
 		Commands: []*cli.Command{
-			{
-				Name:     "completions",
-				Category: "API RESOURCE",
-				Suggest:  true,
-				Commands: []*cli.Command{
-					&completionsCreate,
-				},
-			},
 			{
 				Name:     "messages",
 				Category: "API RESOURCE",

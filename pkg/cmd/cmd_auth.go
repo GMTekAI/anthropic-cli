@@ -24,7 +24,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/anthropics/anthropic-sdk-go/config"
+	"github.com/anthropics/anthropic-sdk-go/v2/config"
 	"github.com/urfave/cli/v3"
 )
 
@@ -678,12 +678,11 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 	profileTokenPresent := cfgErr == nil && cfg != nil && credsErr == nil && creds.AccessToken != ""
 
 	root := c.Root()
-	warnIfCredentialOnCommandLine(os.Stderr)
 	if err := applyStdinCredential(root); err != nil {
 		return err
 	}
-	apiKey, apiKeySet := directCredential(root, "api-key")
-	authToken, authTokenSet := directCredential(root, "auth-token")
+	apiKey, apiKeySet := directCredential("api-key")
+	authToken, authTokenSet := directCredential("auth-token")
 	fed := federationFromRoot(root)
 	fedReady := fed.AnySet() && len(fed.Missing()) == 0
 	fedMissing := fed.Missing()
@@ -806,7 +805,7 @@ func authStatus(ctx context.Context, c *cli.Command) error {
 
 	// Surface the surprising-override case: the user ran `ant auth login` but
 	// has a credential env var set that silently beats the profile on every
-	// request. A credential given on stdin or the command line is a
+	// request. A credential piped via --api-key-stdin / --auth-token-stdin is a
 	// per-invocation choice, not an ambient override, so it doesn't warn.
 	envOverride := ""
 	switch {

@@ -3,14 +3,14 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestBetaSessionsEventsList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:sessions:events", "list",
 			"--max-items", "10",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -29,10 +29,10 @@ func TestBetaSessionsEventsList(t *testing.T) {
 }
 
 func TestBetaSessionsEventsSend(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:sessions:events", "send",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
 			"--event", "{content: [{text: 'Where is my order #1234?', type: text}], type: user.message}",
@@ -51,7 +51,6 @@ func TestBetaSessionsEventsSend(t *testing.T) {
 			"    type: user.message\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:sessions:events", "send",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
 			"--beta", "message-batches-2024-09-24",
@@ -61,10 +60,10 @@ func TestBetaSessionsEventsSend(t *testing.T) {
 }
 
 func TestBetaSessionsEventsStream(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:sessions:events", "stream",
 			"--max-items", "10",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",

@@ -4,14 +4,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestSkillsCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"skills", "create",
 			"--file", mocktest.TestFile(t, "Example data"),
 			"--display-name", "display_name",
@@ -30,7 +30,6 @@ func TestSkillsCreate(t *testing.T) {
 		pipeData := []byte(pipeDataStr)
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"skills", "create",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
@@ -38,10 +37,10 @@ func TestSkillsCreate(t *testing.T) {
 }
 
 func TestSkillsRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"skills", "retrieve",
 			"--skill-id", "skill_id",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -50,10 +49,10 @@ func TestSkillsRetrieve(t *testing.T) {
 }
 
 func TestSkillsList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"skills", "list",
 			"--max-items", "10",
 			"--limit", "1",
@@ -65,10 +64,10 @@ func TestSkillsList(t *testing.T) {
 }
 
 func TestSkillsDelete(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"skills", "delete",
 			"--skill-id", "skill_id",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",

@@ -3,14 +3,14 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestBetaOrganizationSpendLimitsIncreaseRequestsRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:spend-limits:increase-requests", "retrieve",
 			"--spend-limit-increase-request-id", "spend_limit_increase_request_id",
 		)
@@ -18,10 +18,10 @@ func TestBetaOrganizationSpendLimitsIncreaseRequestsRetrieve(t *testing.T) {
 }
 
 func TestBetaOrganizationSpendLimitsIncreaseRequestsList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:spend-limits:increase-requests", "list",
 			"--max-items", "10",
 			"--actor-id", "string",
@@ -33,10 +33,10 @@ func TestBetaOrganizationSpendLimitsIncreaseRequestsList(t *testing.T) {
 }
 
 func TestBetaOrganizationSpendLimitsIncreaseRequestsApprove(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:spend-limits:increase-requests", "approve",
 			"--spend-limit-increase-request-id", "spend_limit_increase_request_id",
 			"--amount", "50000",
@@ -53,7 +53,6 @@ func TestBetaOrganizationSpendLimitsIncreaseRequestsApprove(t *testing.T) {
 			"suppress_notification: true\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:organization:spend-limits:increase-requests", "approve",
 			"--spend-limit-increase-request-id", "spend_limit_increase_request_id",
 		)
@@ -61,10 +60,10 @@ func TestBetaOrganizationSpendLimitsIncreaseRequestsApprove(t *testing.T) {
 }
 
 func TestBetaOrganizationSpendLimitsIncreaseRequestsDeny(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:spend-limits:increase-requests", "deny",
 			"--spend-limit-increase-request-id", "spend_limit_increase_request_id",
 			"--suppress-notification=true",
@@ -76,7 +75,6 @@ func TestBetaOrganizationSpendLimitsIncreaseRequestsDeny(t *testing.T) {
 		pipeData := []byte("suppress_notification: true")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:organization:spend-limits:increase-requests", "deny",
 			"--spend-limit-increase-request-id", "spend_limit_increase_request_id",
 		)

@@ -15,10 +15,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/declarative/core"
-	"github.com/anthropics/anthropic-sdk-go"
-	"github.com/anthropics/anthropic-sdk-go/config"
-	"github.com/anthropics/anthropic-sdk-go/option"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/core"
+	"github.com/anthropics/anthropic-sdk-go/v2"
+	"github.com/anthropics/anthropic-sdk-go/v2/config"
+	"github.com/anthropics/anthropic-sdk-go/v2/option"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v3"
@@ -75,8 +75,6 @@ func googleCloudTestRoot(action cli.ActionFunc) *cli.Command {
 	return &cli.Command{
 		Name: "ant",
 		Flags: []cli.Flag{
-			&cli.StringFlag{Name: "api-key", Sources: cli.EnvVars("ANTHROPIC_API_KEY")},
-			&cli.StringFlag{Name: "auth-token", Sources: cli.EnvVars("ANTHROPIC_AUTH_TOKEN")},
 			&cli.BoolFlag{Name: "api-key-stdin"},
 			&cli.BoolFlag{Name: "auth-token-stdin"},
 			&cli.StringFlag{Name: "webhook-key"},
@@ -232,10 +230,10 @@ func TestGoogleCloudTier(t *testing.T) {
 			req = runGoogleCloudLeaf(t, "--google-cloud-project", "my-project", "--google-cloud-workspace-id", "wrkspc_05")
 		})
 		assert.Equal(t, "api.anthropic.com", req.URL.Host)
-		assert.Equal(t, "test-fake-api-key-not-real", req.Header.Get("x-api-key"))
-		assert.Empty(t, req.Header.Get("Authorization"), "the Google token must not ride along with a winning API key")
+		assert.Equal(t, []string{"Bearer test-fake-api-key-not-real"}, req.Header.Values("Authorization"),
+			"the Google token must not ride along with a winning API key")
 		assert.Contains(t, notice, "Google Cloud")
-		assert.Contains(t, notice, "using --api-key / ANTHROPIC_API_KEY per precedence")
+		assert.Contains(t, notice, "using ANTHROPIC_API_KEY per precedence")
 		assert.NotContains(t, notice, "test-fake-api-key-not-real")
 	})
 
@@ -355,12 +353,12 @@ func TestGoogleCloudInUse(t *testing.T) {
 		inUse, baseURL, _ := probe(t, "--google-cloud-workspace-id", "wrkspc_01")
 		assert.False(t, inUse)
 		assert.Equal(t, defaultBaseURL, baseURL)
+		assert.Equal(t, "API key (ANTHROPIC_API_KEY)", credentials)
 	})
 
 	t.Run("an API key piped on stdin wins", func(t *testing.T) {
 		setup(t)
 		argv := []string{"--api-key-stdin", "--google-cloud-workspace-id", "wrkspc_01", "leaf"}
-		withCommandLine(t, argv...)
 		withStdinCredential(t, "test-fake-api-key-not-real\n")
 		var inUse bool
 		var baseURL string
@@ -369,11 +367,13 @@ func TestGoogleCloudInUse(t *testing.T) {
 				return err
 			}
 			inUse, baseURL = googleCloudInUse(c), currentBaseURL(c)
+			credentials = describeOrigin(c, core.Origin{BaseURL: baseURL}).Credentials
 			return nil
 		})
 		require.NoError(t, root.Run(context.Background(), append([]string{"ant"}, argv...)))
 		assert.False(t, inUse)
 		assert.Equal(t, defaultBaseURL, baseURL)
+		assert.Equal(t, "API key (--api-key-stdin)", credentials)
 	})
 
 	t.Run("an implicit profile is not in use", func(t *testing.T) {

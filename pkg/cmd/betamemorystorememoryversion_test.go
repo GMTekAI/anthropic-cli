@@ -3,14 +3,14 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestBetaMemoryStoresMemoryVersionsRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:memory-stores:memory-versions", "retrieve",
 			"--memory-store-id", "memory_store_id",
 			"--memory-version-id", "memory_version_id",
@@ -22,10 +22,10 @@ func TestBetaMemoryStoresMemoryVersionsRetrieve(t *testing.T) {
 }
 
 func TestBetaMemoryStoresMemoryVersionsList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:memory-stores:memory-versions", "list",
 			"--max-items", "10",
 			"--memory-store-id", "memory_store_id",
@@ -46,10 +46,10 @@ func TestBetaMemoryStoresMemoryVersionsList(t *testing.T) {
 }
 
 func TestBetaMemoryStoresMemoryVersionsRedact(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:memory-stores:memory-versions", "redact",
 			"--memory-store-id", "memory_store_id",
 			"--memory-version-id", "memory_version_id",

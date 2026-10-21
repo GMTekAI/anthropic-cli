@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/declarative/core"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/core"
 	"github.com/stretchr/testify/require"
 )
 

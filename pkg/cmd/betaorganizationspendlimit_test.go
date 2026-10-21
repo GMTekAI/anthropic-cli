@@ -3,14 +3,14 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestBetaOrganizationSpendLimitsRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:spend-limits", "retrieve",
 			"--spend-limit-id", "spend_limit_id",
 		)
@@ -18,25 +18,26 @@ func TestBetaOrganizationSpendLimitsRetrieve(t *testing.T) {
 }
 
 func TestBetaOrganizationSpendLimitsList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:spend-limits", "list",
 			"--max-items", "10",
 			"--limit", "1",
 			"--page", "page",
 			"--scope-type", "organization",
+			"--workspace-id", "workspace_id",
 			"--beta", "message-batches-2024-09-24",
 		)
 	})
 }
 
 func TestBetaOrganizationSpendLimitsDelete(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:spend-limits", "delete",
 			"--spend-limit-id", "spend_limit_id",
 		)
@@ -44,10 +45,10 @@ func TestBetaOrganizationSpendLimitsDelete(t *testing.T) {
 }
 
 func TestBetaOrganizationSpendLimitsSet(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:spend-limits", "set",
 			"--amount", "50000",
 			"--scope", "{type: user, user_id: user_01WCz1FkmYMm4gnmykNKUu3Q}",
@@ -66,7 +67,6 @@ func TestBetaOrganizationSpendLimitsSet(t *testing.T) {
 			"period: monthly\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:organization:spend-limits", "set",
 			"--beta", "message-batches-2024-09-24",
 		)

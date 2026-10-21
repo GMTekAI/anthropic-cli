@@ -3,15 +3,15 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
-	"github.com/anthropics/anthropic-cli/internal/requestflag"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/requestflag"
 )
 
 func TestOrganizationFederationRulesCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:federation:rules", "create",
 			"--issuer-id", "issuer_id",
 			"--match", "{audience: audience, claims: {foo: string}, condition: condition, subject_prefix: subject_prefix}",
@@ -32,7 +32,6 @@ func TestOrganizationFederationRulesCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:federation:rules", "create",
 			"--issuer-id", "issuer_id",
 			"--match.audience", "audience",
@@ -73,17 +72,16 @@ func TestOrganizationFederationRulesCreate(t *testing.T) {
 			"workspace_id: workspace_id\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"organization:federation:rules", "create",
 		)
 	})
 }
 
 func TestOrganizationFederationRulesRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:federation:rules", "retrieve",
 			"--federation-rule-id", "federation_rule_id",
 		)
@@ -91,10 +89,10 @@ func TestOrganizationFederationRulesRetrieve(t *testing.T) {
 }
 
 func TestOrganizationFederationRulesUpdate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:federation:rules", "update",
 			"--federation-rule-id", "federation_rule_id",
 			"--applies-to-all-workspaces=true",
@@ -115,7 +113,6 @@ func TestOrganizationFederationRulesUpdate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:federation:rules", "update",
 			"--federation-rule-id", "federation_rule_id",
 			"--applies-to-all-workspaces=true",
@@ -155,7 +152,6 @@ func TestOrganizationFederationRulesUpdate(t *testing.T) {
 			"workspace_id: workspace_id\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"organization:federation:rules", "update",
 			"--federation-rule-id", "federation_rule_id",
 		)
@@ -163,10 +159,10 @@ func TestOrganizationFederationRulesUpdate(t *testing.T) {
 }
 
 func TestOrganizationFederationRulesList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:federation:rules", "list",
 			"--max-items", "10",
 			"--include-archived=true",
@@ -178,10 +174,10 @@ func TestOrganizationFederationRulesList(t *testing.T) {
 }
 
 func TestOrganizationFederationRulesArchive(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:federation:rules", "archive",
 			"--federation-rule-id", "federation_rule_id",
 		)
