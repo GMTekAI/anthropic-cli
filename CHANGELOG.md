@@ -6,6 +6,11 @@
 
 * **api:** add enforcement status, actions and filter to user profiles
 
+
+### Chores
+
+* bump go sdk to v2.1.0
+
 ## [2.0.0](https://github.com/anthropics/anthropic-cli/compare/v1.44.0...v2.0.0) (2026-10-21)
 
 ### ⚠ BREAKING CHANGES
