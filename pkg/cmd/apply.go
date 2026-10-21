@@ -13,13 +13,13 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/anthropics/anthropic-cli/internal/debugmiddleware"
-	"github.com/anthropics/anthropic-cli/internal/declarative/claude"
-	"github.com/anthropics/anthropic-cli/internal/declarative/core"
-	"github.com/anthropics/anthropic-cli/internal/declarative/render"
-	"github.com/anthropics/anthropic-sdk-go"
-	"github.com/anthropics/anthropic-sdk-go/config"
-	"github.com/anthropics/anthropic-sdk-go/option"
+	"github.com/anthropics/anthropic-cli/v2/internal/debugmiddleware"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/claude"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/core"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/render"
+	"github.com/anthropics/anthropic-sdk-go/v2"
+	"github.com/anthropics/anthropic-sdk-go/v2/config"
+	"github.com/anthropics/anthropic-sdk-go/v2/option"
 	"github.com/charmbracelet/x/term"
 	"github.com/urfave/cli/v3"
 )
@@ -298,8 +298,8 @@ func profileInUse(cmd *cli.Command) *config.Config {
 	cfg, explicit := loadProfileIfUsable(cmd)
 	root := cmd.Root()
 	fed := federationFromRoot(root)
-	_, apiKeySet := directCredential(root, "api-key")
-	_, authTokenSet := directCredential(root, "auth-token")
+	_, apiKeySet := directCredential("api-key")
+	_, authTokenSet := directCredential("auth-token")
 	switch {
 	case cfg == nil, apiKeySet, authTokenSet:
 		return nil
@@ -317,8 +317,8 @@ func profileInUse(cmd *cli.Command) *config.Config {
 // Google Cloud tier, by the client's own precedence.
 func googleCloudInUse(cmd *cli.Command) bool {
 	root := cmd.Root()
-	_, apiKeySet := directCredential(root, "api-key")
-	_, authTokenSet := directCredential(root, "auth-token")
+	_, apiKeySet := directCredential("api-key")
+	_, authTokenSet := directCredential("auth-token")
 	if apiKeySet || authTokenSet || !googleCloudFromRoot(root).AnySet() {
 		return false
 	}
@@ -332,8 +332,8 @@ func googleCloudInUse(cmd *cli.Command) bool {
 // by the client's own precedence.
 func awsInUse(cmd *cli.Command) bool {
 	root := cmd.Root()
-	_, apiKeySet := directCredential(root, "api-key")
-	_, authTokenSet := directCredential(root, "auth-token")
+	_, apiKeySet := directCredential("api-key")
+	_, authTokenSet := directCredential("auth-token")
 	if apiKeySet || authTokenSet || !awsFromRoot(root).AnySet() || googleCloudFromRoot(root).AnySet() {
 		return false
 	}
@@ -360,8 +360,8 @@ func describeOrigin(cmd *cli.Command, o core.Origin) render.OriginSummary {
 	c := render.OriginSummary{Host: hostOf(o.BaseURL), Organization: o.OrganizationID, Workspace: o.WorkspaceID}
 	root := cmd.Root()
 	cfg := profileInUse(cmd)
-	_, apiKeySet := directCredential(root, "api-key")
-	_, authTokenSet := directCredential(root, "auth-token")
+	_, apiKeySet := directCredential("api-key")
+	_, authTokenSet := directCredential("auth-token")
 	switch {
 	case cfg != nil:
 		name, dir := activeProfile(cmd)
@@ -375,9 +375,9 @@ func describeOrigin(cmd *cli.Command, o core.Origin) render.OriginSummary {
 			}
 		}
 	case apiKeySet:
-		c.Credentials = "API key (--api-key / ANTHROPIC_API_KEY)"
+		c.Credentials = "API key (" + credentialSourceLabel(root, "api-key") + ")"
 	case authTokenSet:
-		c.Credentials = "auth token (--auth-token / ANTHROPIC_AUTH_TOKEN)"
+		c.Credentials = "auth token (" + credentialSourceLabel(root, "auth-token") + ")"
 	case googleCloudInUse(cmd):
 		c.Credentials = "Google Cloud (Application Default Credentials)"
 	case awsInUse(cmd) && awsFromRoot(root).APIKey != "":

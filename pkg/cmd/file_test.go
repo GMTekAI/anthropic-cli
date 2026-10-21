@@ -4,14 +4,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestFilesList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"files", "list",
 			"--max-items", "10",
 			"--id", "string",
@@ -23,10 +23,10 @@ func TestFilesList(t *testing.T) {
 }
 
 func TestFilesDelete(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"files", "delete",
 			"--file-id", "file_id",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -35,10 +35,10 @@ func TestFilesDelete(t *testing.T) {
 }
 
 func TestFilesDownload(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"files", "download",
 			"--file-id", "file_id",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -48,10 +48,10 @@ func TestFilesDownload(t *testing.T) {
 }
 
 func TestFilesRetrieveMetadata(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"files", "retrieve-metadata",
 			"--file-id", "file_id",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -60,10 +60,10 @@ func TestFilesRetrieveMetadata(t *testing.T) {
 }
 
 func TestFilesUpload(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"files", "upload",
 			"--file", mocktest.TestFile(t, "Example data"),
 			"--expires-in-seconds", "3600",
@@ -81,7 +81,6 @@ func TestFilesUpload(t *testing.T) {
 		pipeData := []byte(pipeDataStr)
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"files", "upload",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)

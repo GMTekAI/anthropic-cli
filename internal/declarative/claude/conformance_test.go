@@ -20,10 +20,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/declarative/claude"
-	"github.com/anthropics/anthropic-cli/internal/declarative/conformance"
-	"github.com/anthropics/anthropic-cli/internal/declarative/core"
-	"github.com/anthropics/anthropic-sdk-go"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/claude"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/conformance"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/core"
+	"github.com/anthropics/anthropic-sdk-go/v2"
 	"github.com/stretchr/testify/require"
 )
 

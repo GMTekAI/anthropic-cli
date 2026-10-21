@@ -3,15 +3,15 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
-	"github.com/anthropics/anthropic-cli/internal/requestflag"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/requestflag"
 )
 
 func TestBetaUserProfilesActionURLsCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:user-profiles:action-urls", "create",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--action", "{type: enroll_end_user}",
@@ -27,7 +27,6 @@ func TestBetaUserProfilesActionURLsCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:user-profiles:action-urls", "create",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--action.type", "enroll_end_user",
@@ -43,7 +42,6 @@ func TestBetaUserProfilesActionURLsCreate(t *testing.T) {
 			"  type: enroll_end_user\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:user-profiles:action-urls", "create",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--beta", "message-batches-2024-09-24",

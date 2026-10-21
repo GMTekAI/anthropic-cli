@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/anthropics/anthropic-sdk-go"
+	"github.com/anthropics/anthropic-sdk-go/v2"
 )
 
 // sendTimeout bounds one POST of an event, on top of the caller's ctx.
@@ -16,15 +16,16 @@ const sendTimeout = 30 * time.Second
 // the goroutine that drains Updates().
 func (c *Conn) SendMessage(ctx context.Context, text string) error {
 	ev := anthropic.BetaManagedAgentsEventParamsOfUserMessage([]anthropic.BetaManagedAgentsUserMessageEventParamsContentUnion{{
-		OfText: &anthropic.BetaManagedAgentsTextBlockParam{Type: anthropic.BetaManagedAgentsTextBlockTypeText, Text: text},
+		OfText: &anthropic.BetaManagedAgentsTextBlockParam{Text: text},
 	}})
-	ev.OfUserMessage.Type = anthropic.BetaManagedAgentsUserMessageEventParamsTypeUserMessage
 	return c.send(ctx, ev)
 }
 
 // Interrupt posts a user.interrupt, asking the agent to stop its current turn.
 func (c *Conn) Interrupt(ctx context.Context) error {
-	return c.send(ctx, anthropic.BetaManagedAgentsEventParamsOfUserInterrupt(anthropic.BetaManagedAgentsUserInterruptEventParamsTypeUserInterrupt))
+	return c.send(ctx, anthropic.BetaManagedAgentsEventParamsUnion{
+		OfUserInterrupt: &anthropic.BetaManagedAgentsUserInterruptEventParams{},
+	})
 }
 
 // Confirm answers a pending tool call. denyMessage is only sent with a
@@ -36,7 +37,7 @@ func (c *Conn) Confirm(ctx context.Context, toolUseID string, allow bool, denyMe
 	if !allow {
 		result = anthropic.BetaManagedAgentsUserToolConfirmationEventParamsResultDeny
 	}
-	ev := anthropic.BetaManagedAgentsEventParamsOfUserToolConfirmation(result, toolUseID, anthropic.BetaManagedAgentsUserToolConfirmationEventParamsTypeUserToolConfirmation)
+	ev := anthropic.BetaManagedAgentsEventParamsOfUserToolConfirmation(result, toolUseID)
 	if !allow && denyMessage != "" {
 		ev.OfUserToolConfirmation.DenyMessage = anthropic.String(denyMessage)
 	}

@@ -4,26 +4,12 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"slices"
 	"strings"
 	"sync"
 
 	"github.com/charmbracelet/x/term"
 	"github.com/urfave/cli/v3"
 )
-
-// Credentials passed as argv are visible in shell history and process
-// listings; --api-key / --auth-token are deprecated in favor of the env vars,
-// the *-stdin flags below, or `ant auth login`. Values are the replacement
-// each deprecation notice points at.
-var argvCredentialFlags = map[string]string{
-	"api-key":    "ANTHROPIC_API_KEY, --api-key-stdin, or 'ant auth login'",
-	"auth-token": "ANTHROPIC_AUTH_TOKEN or --auth-token-stdin",
-}
-
-// No backticks in flag usage text: urfave/cli renders a backticked span as
-// the flag's value placeholder.
-const argvCredentialDeprecation = "Deprecated: a credential on the command line is visible in shell history and process listings. Use %s instead."
 
 var stdinCredentialFlags = []struct{ stdinFlag, target string }{
 	{"api-key-stdin", "api-key"},
@@ -37,14 +23,12 @@ var directCredentialEnv = map[string]string{
 	"aws-api-key": "ANTHROPIC_AWS_API_KEY",
 }
 
-// Vars so tests can substitute argv and stdin.
+// Vars so tests can substitute stdin.
 var (
-	commandLineArgs        = func() []string { return os.Args[1:] }
-	credentialStdin        = func() io.Reader { return os.Stdin }
-	credentialStdinIsTTY   = func() bool { return term.IsTerminal(os.Stdin.Fd()) }
-	argvCredentialWarnOnce sync.Once
-	stdinCredentialOnce    sync.Once
-	stdinCredentialErr     error
+	credentialStdin      = func() io.Reader { return os.Stdin }
+	credentialStdinIsTTY = func() bool { return term.IsTerminal(os.Stdin.Fd()) }
+	stdinCredentialOnce  sync.Once
+	stdinCredentialErr   error
 	// stdinCredential is the credential read from stdin; stdin carries at most one.
 	stdinCredential struct{ target, value string }
 	// stdinConsumedByCredential names the *-stdin flag that drained stdin, so
@@ -52,48 +36,12 @@ var (
 	stdinConsumedByCredential string
 )
 
-// credentialFlagsOnCommandLine returns the credential flag names (without
-// dashes) that appear literally in argv. urfave/cli can't tell a flag value
-// that came from argv from one that came from its env source, so argv is
-// inspected directly; scanning stops at "--".
-func credentialFlagsOnCommandLine() []string {
-	var found []string
-	for _, arg := range commandLineArgs() {
-		if arg == "--" {
-			break
-		}
-		name := strings.TrimLeft(arg, "-")
-		if name == arg {
-			continue
-		}
-		name, _, _ = strings.Cut(name, "=")
-		if _, ok := argvCredentialFlags[name]; ok {
-			found = append(found, name)
-		}
-	}
-	return found
-}
-
-func warnIfCredentialOnCommandLine(w io.Writer) {
-	names := credentialFlagsOnCommandLine()
-	if len(names) == 0 {
-		return
-	}
-	argvCredentialWarnOnce.Do(func() {
-		for _, name := range names {
-			fmt.Fprintf(w, "Warning: --%s is deprecated and will be removed in a future release: "+
-				"a credential on the command line is visible in shell history and process listings. Use %s instead.\n",
-				name, argvCredentialFlags[name])
-		}
-	})
-}
-
 // applyStdinCredential reads a credential from stdin when --api-key-stdin or
 // --auth-token-stdin is set, for directCredential to return. It consumes all
 // of stdin: a command using it must take its request body from flags.
 func applyStdinCredential(cmd *cli.Command) error {
 	stdinCredentialOnce.Do(func() {
-		stdinCredential.target, stdinCredential.value, stdinCredentialErr = readStdinCredential(cmd, credentialStdin(), credentialStdinIsTTY(), credentialFlagsOnCommandLine())
+		stdinCredential.target, stdinCredential.value, stdinCredentialErr = readStdinCredential(cmd, credentialStdin(), credentialStdinIsTTY())
 	})
 	return stdinCredentialErr
 }
@@ -101,19 +49,14 @@ func applyStdinCredential(cmd *cli.Command) error {
 // directCredential returns the api-key or auth-token credential for this run,
 // the two that skip profiles and federation: the value piped to
 // --<target>-stdin, else the env var. applyStdinCredential must run first.
-func directCredential(root *cli.Command, target string) (string, bool) {
+func directCredential(target string) (string, bool) {
 	if stdinCredential.target == target {
 		return stdinCredential.value, true
-	}
-	// While the root still declares the deprecated --api-key / --auth-token,
-	// that flag holds the argv value, or the env var's through its Sources.
-	if root.IsSet(target) {
-		return root.String(target), true
 	}
 	return os.LookupEnv(directCredentialEnv[target])
 }
 
-func readStdinCredential(cmd *cli.Command, in io.Reader, isTTY bool, onCommandLine []string) (target, secret string, err error) {
+func readStdinCredential(cmd *cli.Command, in io.Reader, isTTY bool) (target, secret string, err error) {
 	var chosen []struct{ stdinFlag, target string }
 	for _, f := range stdinCredentialFlags {
 		if cmd.Bool(f.stdinFlag) {
@@ -128,11 +71,6 @@ func readStdinCredential(cmd *cli.Command, in io.Reader, isTTY bool, onCommandLi
 		return "", "", fmt.Errorf("--%s and --%s are mutually exclusive: stdin can carry only one credential", chosen[0].stdinFlag, chosen[1].stdinFlag)
 	}
 	f := chosen[0]
-	for _, name := range onCommandLine {
-		if name == f.target {
-			return "", "", fmt.Errorf("--%s cannot be combined with --%s", f.stdinFlag, f.target)
-		}
-	}
 	if isTTY {
 		return "", "", fmt.Errorf("--%s reads the credential from standard input; pipe it in (e.g. op read op://vault/item/credential | ant --%s ...)", f.stdinFlag, f.stdinFlag)
 	}
@@ -163,13 +101,13 @@ func credentialSourceLabel(cmd *cli.Command, target string) string {
 	if credentialFromStdin(cmd, target) {
 		return "--" + target + "-stdin"
 	}
-	return fmt.Sprintf("--%s / %s", target, directCredentialEnv[target])
+	return directCredentialEnv[target]
 }
 
 // credentialEnvVar names the env var an api-key / auth-token value came from,
-// or "" when it was piped to --<target>-stdin or passed as --<target>.
+// or "" when it was piped to --<target>-stdin.
 func credentialEnvVar(cmd *cli.Command, target string) string {
-	if credentialFromStdin(cmd, target) || slices.Contains(credentialFlagsOnCommandLine(), target) {
+	if credentialFromStdin(cmd, target) {
 		return ""
 	}
 	return directCredentialEnv[target]

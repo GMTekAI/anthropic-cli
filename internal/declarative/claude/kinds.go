@@ -11,8 +11,8 @@ package claude
 import (
 	"maps"
 
-	"github.com/anthropics/anthropic-cli/internal/apischema"
-	"github.com/anthropics/anthropic-cli/internal/declarative/core"
+	"github.com/anthropics/anthropic-cli/v2/internal/apischema"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/core"
 )
 
 // The kinds `ant apply` manages. Each is the `type` of its API resource, by

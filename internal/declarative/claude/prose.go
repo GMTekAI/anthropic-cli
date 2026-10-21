@@ -5,7 +5,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/anthropics/anthropic-cli/internal/declarative/core"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/core"
 )
 
 // prose says where a kind puts a markdown body. Every file-backed kind but a

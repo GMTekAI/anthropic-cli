@@ -3,14 +3,14 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestOrganizationExternalKeysCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:external-keys", "create",
 			"--provider-config", "{kms_arn: arn:aws:kms:us-east-1:111122223333:key/abcd1234-5678-90ab-cdef-000011112222, type: aws, region: us-east-1}",
 			"--display-name", "x",
@@ -29,17 +29,16 @@ func TestOrganizationExternalKeysCreate(t *testing.T) {
 			"geo: us\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"organization:external-keys", "create",
 		)
 	})
 }
 
 func TestOrganizationExternalKeysRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:external-keys", "retrieve",
 			"--external-key-id", "external_key_id",
 		)
@@ -47,10 +46,10 @@ func TestOrganizationExternalKeysRetrieve(t *testing.T) {
 }
 
 func TestOrganizationExternalKeysUpdate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:external-keys", "update",
 			"--external-key-id", "external_key_id",
 			"--display-name", "x",
@@ -70,7 +69,6 @@ func TestOrganizationExternalKeysUpdate(t *testing.T) {
 			"  region: us-east-1\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"organization:external-keys", "update",
 			"--external-key-id", "external_key_id",
 		)
@@ -78,10 +76,10 @@ func TestOrganizationExternalKeysUpdate(t *testing.T) {
 }
 
 func TestOrganizationExternalKeysList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:external-keys", "list",
 			"--max-items", "10",
 			"--limit", "1",
@@ -91,10 +89,10 @@ func TestOrganizationExternalKeysList(t *testing.T) {
 }
 
 func TestOrganizationExternalKeysDelete(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:external-keys", "delete",
 			"--external-key-id", "external_key_id",
 		)
@@ -102,10 +100,10 @@ func TestOrganizationExternalKeysDelete(t *testing.T) {
 }
 
 func TestOrganizationExternalKeysValidate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:external-keys", "validate",
 			"--external-key-id", "external_key_id",
 		)

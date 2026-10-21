@@ -34,11 +34,11 @@ func TestWorkspaceIDHeader(t *testing.T) {
 				fmt.Fprint(w, `{"data":[],"has_more":false,"first_id":null,"last_id":null}`)
 			}))
 
-			args := append([]string{"run", "./cmd/ant", "--api-key", "k", "--base-url", srv.URL}, tc.global...)
+			args := append([]string{"run", "./cmd/ant", "--base-url", srv.URL}, tc.global...)
 			args = append(args, "models", "list")
 			cmd := exec.Command("go", append(args, tc.leaf...)...)
 			cmd.Dir = "../.."
-			cmd.Env = append(cmd.Environ(), "ANTHROPIC_CONFIG_DIR="+t.TempDir(), tc.env)
+			cmd.Env = append(cmd.Environ(), "ANTHROPIC_CONFIG_DIR="+t.TempDir(), "ANTHROPIC_API_KEY=k", tc.env)
 			out, err := cmd.CombinedOutput()
 			srv.Close()
 

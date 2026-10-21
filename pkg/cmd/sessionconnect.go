@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/anthropics/anthropic-cli/internal/apiquery"
-	"github.com/anthropics/anthropic-cli/internal/requestflag"
-	"github.com/anthropics/anthropic-cli/internal/sessions/live"
-	"github.com/anthropics/anthropic-cli/internal/sessions/tui"
-	"github.com/anthropics/anthropic-cli/internal/sessions/web"
-	"github.com/anthropics/anthropic-sdk-go"
+	"github.com/anthropics/anthropic-cli/v2/internal/apiquery"
+	"github.com/anthropics/anthropic-cli/v2/internal/requestflag"
+	"github.com/anthropics/anthropic-cli/v2/internal/sessions/live"
+	"github.com/anthropics/anthropic-cli/v2/internal/sessions/tui"
+	"github.com/anthropics/anthropic-cli/v2/internal/sessions/web"
+	"github.com/anthropics/anthropic-sdk-go/v2"
 	"github.com/urfave/cli/v3"
 )
 

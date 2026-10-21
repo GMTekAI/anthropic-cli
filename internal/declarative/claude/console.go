@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/anthropics/anthropic-cli/internal/declarative/core"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/core"
 )
 
 // consolePages maps a kind to the Console section that shows it. Kinds with a

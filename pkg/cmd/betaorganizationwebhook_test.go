@@ -3,14 +3,14 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestBetaOrganizationWebhooksCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:webhooks", "create",
 			"--enabled-event", "user_profile.enforcement_action_opened",
 			"--url", "x",
@@ -30,7 +30,6 @@ func TestBetaOrganizationWebhooksCreate(t *testing.T) {
 			"name: name\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:organization:webhooks", "create",
 			"--beta", "message-batches-2024-09-24",
 		)
@@ -38,10 +37,10 @@ func TestBetaOrganizationWebhooksCreate(t *testing.T) {
 }
 
 func TestBetaOrganizationWebhooksRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:webhooks", "retrieve",
 			"--webhook-endpoint-id", "webhook_endpoint_id",
 			"--beta", "message-batches-2024-09-24",
@@ -50,10 +49,10 @@ func TestBetaOrganizationWebhooksRetrieve(t *testing.T) {
 }
 
 func TestBetaOrganizationWebhooksUpdate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:webhooks", "update",
 			"--webhook-endpoint-id", "webhook_endpoint_id",
 			"--description", "description",
@@ -76,7 +75,6 @@ func TestBetaOrganizationWebhooksUpdate(t *testing.T) {
 			"url: x\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:organization:webhooks", "update",
 			"--webhook-endpoint-id", "webhook_endpoint_id",
 			"--beta", "message-batches-2024-09-24",
@@ -85,10 +83,10 @@ func TestBetaOrganizationWebhooksUpdate(t *testing.T) {
 }
 
 func TestBetaOrganizationWebhooksList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:webhooks", "list",
 			"--max-items", "10",
 			"--after-id", "after_id",
@@ -101,10 +99,10 @@ func TestBetaOrganizationWebhooksList(t *testing.T) {
 }
 
 func TestBetaOrganizationWebhooksDelete(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:webhooks", "delete",
 			"--webhook-endpoint-id", "webhook_endpoint_id",
 			"--beta", "message-batches-2024-09-24",
@@ -113,10 +111,10 @@ func TestBetaOrganizationWebhooksDelete(t *testing.T) {
 }
 
 func TestBetaOrganizationWebhooksRegenerateSigningSecret(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:webhooks", "regenerate-signing-secret",
 			"--webhook-endpoint-id", "webhook_endpoint_id",
 			"--beta", "message-batches-2024-09-24",

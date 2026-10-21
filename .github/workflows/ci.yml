@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  GOPRIVATE: github.com/anthropics/anthropic-sdk-go,github.com/anthropics/anthropic-sdk-go-private
+  GOPRIVATE: github.com/anthropics/anthropic-sdk-go/v2,github.com/anthropics/anthropic-sdk-go-private/v2
 
 jobs:
   lint:
@@ -58,7 +58,7 @@ jobs:
           REF_NAME: ${{ github.ref_name }}
           BASE_REF: ${{ steps.pr-base.outputs.ref }}
         run: |
-          if ! ./scripts/link "github.com/anthropics/anthropic-sdk-go-private@${REF_NAME}" ${BASE_REF:+"github.com/anthropics/anthropic-sdk-go-private@${BASE_REF}"}; then
+          if ! ./scripts/link "github.com/anthropics/anthropic-sdk-go-private/v2@${REF_NAME}" ${BASE_REF:+"github.com/anthropics/anthropic-sdk-go-private/v2@${BASE_REF}"}; then
             echo "::warning::Could not link the Go SDK at ${REF_NAME}${BASE_REF:+ or ${BASE_REF}}, so this build uses the Go SDK version in go.mod"
           fi
 
@@ -103,7 +103,7 @@ jobs:
           REF_NAME: ${{ github.ref_name }}
           BASE_REF: ${{ steps.pr-base.outputs.ref }}
         run: |
-          if ! ./scripts/link "github.com/anthropics/anthropic-sdk-go-private@${REF_NAME}" ${BASE_REF:+"github.com/anthropics/anthropic-sdk-go-private@${BASE_REF}"}; then
+          if ! ./scripts/link "github.com/anthropics/anthropic-sdk-go-private/v2@${REF_NAME}" ${BASE_REF:+"github.com/anthropics/anthropic-sdk-go-private/v2@${BASE_REF}"}; then
             echo "::warning::Could not link the Go SDK at ${REF_NAME}${BASE_REF:+ or ${BASE_REF}}, so this build uses the Go SDK version in go.mod"
           fi
 
@@ -236,7 +236,7 @@ jobs:
           REF_NAME: ${{ github.ref_name }}
           BASE_REF: ${{ steps.pr-base.outputs.ref }}
         run: |
-          if ! ./scripts/link "github.com/anthropics/anthropic-sdk-go-private@${REF_NAME}" ${BASE_REF:+"github.com/anthropics/anthropic-sdk-go-private@${BASE_REF}"}; then
+          if ! ./scripts/link "github.com/anthropics/anthropic-sdk-go-private/v2@${REF_NAME}" ${BASE_REF:+"github.com/anthropics/anthropic-sdk-go-private/v2@${BASE_REF}"}; then
             echo "::warning::Could not link the Go SDK at ${REF_NAME}${BASE_REF:+ or ${BASE_REF}}, so this build uses the Go SDK version in go.mod"
           fi
 

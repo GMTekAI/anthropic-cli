@@ -7,13 +7,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/anthropics/anthropic-sdk-go"
+	"github.com/anthropics/anthropic-sdk-go/v2"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/stretchr/testify/require"
 
-	"github.com/anthropics/anthropic-cli/internal/sessions/live"
-	"github.com/anthropics/anthropic-cli/internal/sessions/sessiontest"
-	"github.com/anthropics/anthropic-cli/internal/sessions/timeline"
+	"github.com/anthropics/anthropic-cli/v2/internal/sessions/live"
+	"github.com/anthropics/anthropic-cli/v2/internal/sessions/sessiontest"
+	"github.com/anthropics/anthropic-cli/v2/internal/sessions/timeline"
 )
 
 var (

@@ -3,17 +3,17 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
-	"github.com/anthropics/anthropic-cli/internal/requestflag"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/requestflag"
 )
 
 func TestMessagesBatchesCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"messages:batches", "create",
-			"--request", "{custom_id: my-custom-id-1, params: {max_tokens: 1024, messages: [{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user}], model: claude-opus-5-5, cache_control: {type: ephemeral, ttl: 5m}, container: {id: id, skills: [{skill_id: pdf, type: anthropic, version: latest}]}, diagnostics: {previous_message_id: previous_message_id}, inference_geo: inference_geo, metadata: {user_id: 13803d75-b4b5-4c3e-b2a2-6f21399b021b}, output_config: {effort: low, format: {schema: {foo: bar}, type: json_schema}}, service_tier: auto, speed: standard, stop_sequences: [string], stream: false, system: [{text: Today's date is 2024-06-01., type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], temperature: 1, thinking: {type: adaptive, display: summarized}, tool_choice: {type: auto, disable_parallel_tool_use: true}, tools: [{input_schema: {type: object, properties: {location: bar, unit: bar}, required: [location]}, name: name, allowed_callers: [direct], cache_control: {type: ephemeral, ttl: 5m}, defer_loading: true, description: Get the current weather in a given location, eager_input_streaming: true, input_examples: [{foo: bar}], strict: true, type: custom}], top_k: 5, top_p: 0.7}}",
+			"--request", "{custom_id: my-custom-id-1, params: {max_tokens: 1024, messages: [{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user}], model: claude-opus-5-5, cache_control: {type: ephemeral, ttl: 5m}, container: {id: id, skills: [{skill_id: pdf, type: anthropic, version: latest}]}, diagnostics: {previous_message_id: previous_message_id}, inference_geo: inference_geo, metadata: {user_id: 13803d75-b4b5-4c3e-b2a2-6f21399b021b}, output_config: {effort: low, format: {schema: {foo: bar}, type: json_schema}}, service_tier: auto, speed: standard, stop_sequences: [string], stream: false, system: [{text: Today's date is 2024-06-01., type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], thinking: {type: adaptive, display: summarized}, tool_choice: {type: auto, disable_parallel_tool_use: true}, tools: [{input_schema: {type: object, properties: {location: bar, unit: bar}, required: [location]}, name: name, allowed_callers: [direct], cache_control: {type: ephemeral, ttl: 5m}, defer_loading: true, description: Get the current weather in a given location, eager_input_streaming: true, input_examples: [{foo: bar}], strict: true, type: custom}]}}",
 			"--user-profile-id", "anthropic-user-profile-id",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
@@ -26,10 +26,9 @@ func TestMessagesBatchesCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"messages:batches", "create",
 			"--request.custom-id", "my-custom-id-1",
-			"--request.params", "{max_tokens: 1024, messages: [{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user}], model: claude-opus-5-5, cache_control: {type: ephemeral, ttl: 5m}, container: {id: id, skills: [{skill_id: pdf, type: anthropic, version: latest}]}, diagnostics: {previous_message_id: previous_message_id}, inference_geo: inference_geo, metadata: {user_id: 13803d75-b4b5-4c3e-b2a2-6f21399b021b}, output_config: {effort: low, format: {schema: {foo: bar}, type: json_schema}}, service_tier: auto, speed: standard, stop_sequences: [string], stream: false, system: [{text: Today's date is 2024-06-01., type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], temperature: 1, thinking: {type: adaptive, display: summarized}, tool_choice: {type: auto, disable_parallel_tool_use: true}, tools: [{input_schema: {type: object, properties: {location: bar, unit: bar}, required: [location]}, name: name, allowed_callers: [direct], cache_control: {type: ephemeral, ttl: 5m}, defer_loading: true, description: Get the current weather in a given location, eager_input_streaming: true, input_examples: [{foo: bar}], strict: true, type: custom}], top_k: 5, top_p: 0.7}",
+			"--request.params", "{max_tokens: 1024, messages: [{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user}], model: claude-opus-5-5, cache_control: {type: ephemeral, ttl: 5m}, container: {id: id, skills: [{skill_id: pdf, type: anthropic, version: latest}]}, diagnostics: {previous_message_id: previous_message_id}, inference_geo: inference_geo, metadata: {user_id: 13803d75-b4b5-4c3e-b2a2-6f21399b021b}, output_config: {effort: low, format: {schema: {foo: bar}, type: json_schema}}, service_tier: auto, speed: standard, stop_sequences: [string], stream: false, system: [{text: Today's date is 2024-06-01., type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], thinking: {type: adaptive, display: summarized}, tool_choice: {type: auto, disable_parallel_tool_use: true}, tools: [{input_schema: {type: object, properties: {location: bar, unit: bar}, required: [location]}, name: name, allowed_callers: [direct], cache_control: {type: ephemeral, ttl: 5m}, defer_loading: true, description: Get the current weather in a given location, eager_input_streaming: true, input_examples: [{foo: bar}], strict: true, type: custom}]}",
 			"--user-profile-id", "anthropic-user-profile-id",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
 		)
@@ -96,7 +95,6 @@ func TestMessagesBatchesCreate(t *testing.T) {
 			"              end_char_index: 0\n" +
 			"              start_char_index: 0\n" +
 			"              type: char_location\n" +
-			"      temperature: 1\n" +
 			"      thinking:\n" +
 			"        type: adaptive\n" +
 			"        display: summarized\n" +
@@ -123,12 +121,9 @@ func TestMessagesBatchesCreate(t *testing.T) {
 			"          input_examples:\n" +
 			"            - foo: bar\n" +
 			"          strict: true\n" +
-			"          type: custom\n" +
-			"      top_k: 5\n" +
-			"      top_p: 0.7\n")
+			"          type: custom\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"messages:batches", "create",
 			"--user-profile-id", "anthropic-user-profile-id",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -137,10 +132,10 @@ func TestMessagesBatchesCreate(t *testing.T) {
 }
 
 func TestMessagesBatchesRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"messages:batches", "retrieve",
 			"--message-batch-id", "message_batch_id",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -149,10 +144,10 @@ func TestMessagesBatchesRetrieve(t *testing.T) {
 }
 
 func TestMessagesBatchesList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"messages:batches", "list",
 			"--max-items", "10",
 			"--after-id", "after_id",
@@ -164,10 +159,10 @@ func TestMessagesBatchesList(t *testing.T) {
 }
 
 func TestMessagesBatchesDelete(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"messages:batches", "delete",
 			"--message-batch-id", "message_batch_id",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -176,10 +171,10 @@ func TestMessagesBatchesDelete(t *testing.T) {
 }
 
 func TestMessagesBatchesCancel(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"messages:batches", "cancel",
 			"--message-batch-id", "message_batch_id",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -188,10 +183,10 @@ func TestMessagesBatchesCancel(t *testing.T) {
 }
 
 func TestMessagesBatchesResults(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"messages:batches", "results",
 			"--max-items", "10",
 			"--message-batch-id", "message_batch_id",

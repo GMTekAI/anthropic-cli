@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/x/ansi"
 	"github.com/stretchr/testify/require"
 
-	"github.com/anthropics/anthropic-cli/internal/sessions/timeline"
+	"github.com/anthropics/anthropic-cli/v2/internal/sessions/timeline"
 )
 
 func TestDurationsAndTokenCountsFormatCompactly(t *testing.T) {

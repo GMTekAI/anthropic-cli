@@ -13,9 +13,9 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/anthropics/anthropic-cli/internal/declarative/core"
-	"github.com/anthropics/anthropic-sdk-go"
-	"github.com/anthropics/anthropic-sdk-go/option"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/core"
+	"github.com/anthropics/anthropic-sdk-go/v2"
+	"github.com/anthropics/anthropic-sdk-go/v2/option"
 )
 
 // sdkClient implements core.Client on top of the Anthropic Go SDK.

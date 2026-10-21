@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/anthropics/anthropic-cli/internal/apiquery"
-	"github.com/anthropics/anthropic-cli/internal/requestflag"
-	"github.com/anthropics/anthropic-sdk-go"
-	"github.com/anthropics/anthropic-sdk-go/option"
+	"github.com/anthropics/anthropic-cli/v2/internal/apiquery"
+	"github.com/anthropics/anthropic-cli/v2/internal/requestflag"
+	"github.com/anthropics/anthropic-sdk-go/v2"
+	"github.com/anthropics/anthropic-sdk-go/v2/option"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
 )
@@ -167,7 +167,8 @@ var betaSessionsResourcesAdd = cli.Command{
 		&requestflag.Flag[string]{
 			Name:     "type",
 			Usage:    `Allowed values: "file".`,
-			Required: true,
+			Default:  "file",
+			Const:    true,
 			BodyPath: "type",
 		},
 		&requestflag.Flag[*string]{

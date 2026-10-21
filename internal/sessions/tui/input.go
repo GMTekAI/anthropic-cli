@@ -10,7 +10,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
-	"github.com/anthropics/anthropic-cli/internal/sessions/timeline"
+	"github.com/anthropics/anthropic-cli/v2/internal/sessions/timeline"
 )
 
 // mode is what the strip between the two rules is doing.

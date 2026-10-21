@@ -4,14 +4,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestBetaOrganizationPluginsCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:plugins", "create",
 			"--file", mocktest.TestFile(t, "Example data"),
 			"--marketplace-id", "marketplace_id",
@@ -32,7 +32,6 @@ func TestBetaOrganizationPluginsCreate(t *testing.T) {
 		pipeData := []byte(pipeDataStr)
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:organization:plugins", "create",
 			"--beta", "message-batches-2024-09-24",
 		)
@@ -40,10 +39,10 @@ func TestBetaOrganizationPluginsCreate(t *testing.T) {
 }
 
 func TestBetaOrganizationPluginsRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:plugins", "retrieve",
 			"--plugin-id", "plugin_id",
 			"--organization-id", "organization_id",
@@ -53,10 +52,10 @@ func TestBetaOrganizationPluginsRetrieve(t *testing.T) {
 }
 
 func TestBetaOrganizationPluginsUpdate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:plugins", "update",
 			"--plugin-id", "plugin_id",
 			"--served-version-id", "pluginver_01KaZmQpRsTuVwXyZ2b4c6d8",
@@ -69,7 +68,6 @@ func TestBetaOrganizationPluginsUpdate(t *testing.T) {
 		pipeData := []byte("served_version_id: pluginver_01KaZmQpRsTuVwXyZ2b4c6d8")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:organization:plugins", "update",
 			"--plugin-id", "plugin_id",
 			"--beta", "message-batches-2024-09-24",
@@ -78,10 +76,10 @@ func TestBetaOrganizationPluginsUpdate(t *testing.T) {
 }
 
 func TestBetaOrganizationPluginsList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:plugins", "list",
 			"--max-items", "10",
 			"--created-at-gt", "'2019-12-27T18:11:19.117Z'",
@@ -100,10 +98,10 @@ func TestBetaOrganizationPluginsList(t *testing.T) {
 }
 
 func TestBetaOrganizationPluginsDelete(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:plugins", "delete",
 			"--plugin-id", "plugin_id",
 			"--beta", "message-batches-2024-09-24",

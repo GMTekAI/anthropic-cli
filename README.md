@@ -26,7 +26,7 @@ brew install anthropics/tap/ant
 To install from source, you need [Go](https://go.dev/doc/install) version 1.22 or later.
 
 ```sh
-go install 'github.com/anthropics/anthropic-cli/cmd/ant@latest'
+go install 'github.com/anthropics/anthropic-cli/v2/cmd/ant@latest'
 ```
 
 The binary is placed in `$(go env GOPATH)/bin`. If `ant` isn't found after installation, add that directory to your `PATH`:
@@ -48,13 +48,11 @@ ant auth login
 
 Or set the `ANTHROPIC_API_KEY` environment variable to an API key from the [Claude Console](https://platform.claude.com/settings/keys).
 
-To hand the CLI a key from a secret manager without putting it in the environment or on the command line, pipe it on stdin:
+To hand the CLI a key from a secret manager without putting it in the environment, pipe it on stdin:
 
 ```sh
 op read op://vault/anthropic/api-key | ant --api-key-stdin models list
 ```
-
-Passing a credential as `--api-key <value>` / `--auth-token <value>` is deprecated: the value is visible in shell history and process listings.
 
 Then send your first message:
 
@@ -315,4 +313,4 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License, Version 2.0. See the [LICENSE](LICENSE) file for details. Versions released before the change from the MIT License, and third-party contributions merged before it, remain under the MIT License. See [LICENSE-MIT](LICENSE-MIT).

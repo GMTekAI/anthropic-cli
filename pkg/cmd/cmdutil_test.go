@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 
-	"github.com/anthropics/anthropic-cli/internal/jsonview"
+	"github.com/anthropics/anthropic-cli/v2/internal/jsonview"
 )
 
 func TestStreamOutput(t *testing.T) {

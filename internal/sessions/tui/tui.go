@@ -13,10 +13,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/anthropics/anthropic-sdk-go"
+	"github.com/anthropics/anthropic-sdk-go/v2"
 	tea "github.com/charmbracelet/bubbletea"
 
-	"github.com/anthropics/anthropic-cli/internal/sessions/live"
+	"github.com/anthropics/anthropic-cli/v2/internal/sessions/live"
 )
 
 // Run takes over the terminal until the user detaches or ctx ends.

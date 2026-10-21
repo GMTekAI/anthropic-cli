@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/anthropics/anthropic-sdk-go/config"
+	"github.com/anthropics/anthropic-sdk-go/v2/config"
 	"github.com/urfave/cli/v3"
 )
 

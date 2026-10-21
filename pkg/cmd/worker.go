@@ -15,8 +15,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/anthropics/anthropic-sdk-go"
-	"github.com/anthropics/anthropic-sdk-go/lib/environments"
+	"github.com/anthropics/anthropic-sdk-go/v2"
+	"github.com/anthropics/anthropic-sdk-go/v2/lib/environments"
 	"github.com/urfave/cli/v3"
 	"go.opentelemetry.io/otel/trace"
 )

@@ -14,7 +14,7 @@ package timeline
 import (
 	"time"
 
-	"github.com/anthropics/anthropic-sdk-go"
+	"github.com/anthropics/anthropic-sdk-go/v2"
 )
 
 // Event is one session event as the API returns it.

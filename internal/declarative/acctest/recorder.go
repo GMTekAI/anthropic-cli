@@ -3,7 +3,7 @@ package acctest
 import (
 	"context"
 
-	"github.com/anthropics/anthropic-cli/internal/declarative/core"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/core"
 )
 
 // recordingClient wraps a Client and remembers every write it was asked to

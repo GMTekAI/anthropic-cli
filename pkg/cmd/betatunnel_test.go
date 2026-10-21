@@ -3,14 +3,14 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestBetaTunnelsCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:tunnels", "create",
 			"--display-name", "x",
 			"--beta", "message-batches-2024-09-24",
@@ -23,7 +23,6 @@ func TestBetaTunnelsCreate(t *testing.T) {
 		pipeData := []byte("display_name: x")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:tunnels", "create",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -32,10 +31,10 @@ func TestBetaTunnelsCreate(t *testing.T) {
 }
 
 func TestBetaTunnelsRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:tunnels", "retrieve",
 			"--tunnel-id", "tunnel_id",
 			"--beta", "message-batches-2024-09-24",
@@ -45,10 +44,10 @@ func TestBetaTunnelsRetrieve(t *testing.T) {
 }
 
 func TestBetaTunnelsList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:tunnels", "list",
 			"--max-items", "10",
 			"--include-archived=true",
@@ -61,10 +60,10 @@ func TestBetaTunnelsList(t *testing.T) {
 }
 
 func TestBetaTunnelsArchive(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:tunnels", "archive",
 			"--tunnel-id", "tunnel_id",
 			"--beta", "message-batches-2024-09-24",
@@ -74,10 +73,10 @@ func TestBetaTunnelsArchive(t *testing.T) {
 }
 
 func TestBetaTunnelsRevealToken(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:tunnels", "reveal-token",
 			"--tunnel-id", "tunnel_id",
 			"--beta", "message-batches-2024-09-24",
@@ -87,10 +86,10 @@ func TestBetaTunnelsRevealToken(t *testing.T) {
 }
 
 func TestBetaTunnelsRotateToken(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:tunnels", "rotate-token",
 			"--tunnel-id", "tunnel_id",
 			"--reason", "reason",
@@ -104,7 +103,6 @@ func TestBetaTunnelsRotateToken(t *testing.T) {
 		pipeData := []byte("reason: reason")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:tunnels", "rotate-token",
 			"--tunnel-id", "tunnel_id",
 			"--beta", "message-batches-2024-09-24",

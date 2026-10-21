@@ -3,15 +3,15 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
-	"github.com/anthropics/anthropic-cli/internal/requestflag"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/requestflag"
 )
 
 func TestOrganizationWorkspacesCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:workspaces", "create",
 			"--name", "x",
 			"--data-residency", "{allowed_inference_geos: unrestricted, default_inference_geo: global, workspace_geo: us}",
@@ -28,7 +28,6 @@ func TestOrganizationWorkspacesCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:workspaces", "create",
 			"--name", "x",
 			"--data-residency.allowed-inference-geos", "unrestricted",
@@ -55,17 +54,16 @@ func TestOrganizationWorkspacesCreate(t *testing.T) {
 			"  team: platform\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"organization:workspaces", "create",
 		)
 	})
 }
 
 func TestOrganizationWorkspacesRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:workspaces", "retrieve",
 			"--workspace-id", "workspace_id",
 		)
@@ -73,10 +71,10 @@ func TestOrganizationWorkspacesRetrieve(t *testing.T) {
 }
 
 func TestOrganizationWorkspacesUpdate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:workspaces", "update",
 			"--workspace-id", "workspace_id",
 			"--data-residency", "{allowed_inference_geos: unrestricted, default_inference_geo: global}",
@@ -94,7 +92,6 @@ func TestOrganizationWorkspacesUpdate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:workspaces", "update",
 			"--workspace-id", "workspace_id",
 			"--data-residency.allowed-inference-geos", "unrestricted",
@@ -120,7 +117,6 @@ func TestOrganizationWorkspacesUpdate(t *testing.T) {
 			"  team: platform\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"organization:workspaces", "update",
 			"--workspace-id", "workspace_id",
 		)
@@ -128,10 +124,10 @@ func TestOrganizationWorkspacesUpdate(t *testing.T) {
 }
 
 func TestOrganizationWorkspacesList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:workspaces", "list",
 			"--max-items", "10",
 			"--after-id", "after_id",
@@ -144,10 +140,10 @@ func TestOrganizationWorkspacesList(t *testing.T) {
 }
 
 func TestOrganizationWorkspacesArchive(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:workspaces", "archive",
 			"--workspace-id", "workspace_id",
 		)

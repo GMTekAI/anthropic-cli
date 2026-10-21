@@ -3,14 +3,14 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestBetaTunnelsCertificatesCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:tunnels:certificates", "create",
 			"--tunnel-id", "tunnel_id",
 			"--ca-certificate-pem", "ca_certificate_pem",
@@ -24,7 +24,6 @@ func TestBetaTunnelsCertificatesCreate(t *testing.T) {
 		pipeData := []byte("ca_certificate_pem: ca_certificate_pem")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:tunnels:certificates", "create",
 			"--tunnel-id", "tunnel_id",
 			"--beta", "message-batches-2024-09-24",
@@ -34,10 +33,10 @@ func TestBetaTunnelsCertificatesCreate(t *testing.T) {
 }
 
 func TestBetaTunnelsCertificatesRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:tunnels:certificates", "retrieve",
 			"--tunnel-id", "tunnel_id",
 			"--certificate-id", "certificate_id",
@@ -48,10 +47,10 @@ func TestBetaTunnelsCertificatesRetrieve(t *testing.T) {
 }
 
 func TestBetaTunnelsCertificatesList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:tunnels:certificates", "list",
 			"--max-items", "10",
 			"--tunnel-id", "tunnel_id",
@@ -65,10 +64,10 @@ func TestBetaTunnelsCertificatesList(t *testing.T) {
 }
 
 func TestBetaTunnelsCertificatesArchive(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:tunnels:certificates", "archive",
 			"--tunnel-id", "tunnel_id",
 			"--certificate-id", "certificate_id",

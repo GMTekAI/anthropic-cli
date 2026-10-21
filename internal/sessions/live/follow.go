@@ -8,7 +8,7 @@ import (
 	"slices"
 	"time"
 
-	"github.com/anthropics/anthropic-sdk-go"
+	"github.com/anthropics/anthropic-sdk-go/v2"
 )
 
 // Tunables; tests shorten them.

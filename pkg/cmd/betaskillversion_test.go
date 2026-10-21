@@ -4,14 +4,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestBetaSkillsVersionsCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:skills:versions", "create",
 			"--skill-id", "skill_id",
 			"--file", mocktest.TestFile(t, "Example data"),
@@ -30,7 +30,6 @@ func TestBetaSkillsVersionsCreate(t *testing.T) {
 		pipeData := []byte(pipeDataStr)
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:skills:versions", "create",
 			"--skill-id", "skill_id",
 			"--beta", "message-batches-2024-09-24",
@@ -40,10 +39,10 @@ func TestBetaSkillsVersionsCreate(t *testing.T) {
 }
 
 func TestBetaSkillsVersionsRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:skills:versions", "retrieve",
 			"--skill-id", "skill_id",
 			"--version", "version",
@@ -54,10 +53,10 @@ func TestBetaSkillsVersionsRetrieve(t *testing.T) {
 }
 
 func TestBetaSkillsVersionsList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:skills:versions", "list",
 			"--max-items", "10",
 			"--skill-id", "skill_id",
@@ -70,10 +69,10 @@ func TestBetaSkillsVersionsList(t *testing.T) {
 }
 
 func TestBetaSkillsVersionsDelete(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:skills:versions", "delete",
 			"--skill-id", "skill_id",
 			"--version", "version",
@@ -84,10 +83,10 @@ func TestBetaSkillsVersionsDelete(t *testing.T) {
 }
 
 func TestBetaSkillsVersionsDownload(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:skills:versions", "download",
 			"--skill-id", "skill_id",
 			"--version", "version",

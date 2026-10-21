@@ -3,14 +3,14 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestOrganizationUsersRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:users", "retrieve",
 			"--user-id", "user_id",
 		)
@@ -18,10 +18,10 @@ func TestOrganizationUsersRetrieve(t *testing.T) {
 }
 
 func TestOrganizationUsersUpdate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:users", "update",
 			"--user-id", "user_id",
 			"--role", "user",
@@ -33,7 +33,6 @@ func TestOrganizationUsersUpdate(t *testing.T) {
 		pipeData := []byte("role: user")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"organization:users", "update",
 			"--user-id", "user_id",
 		)
@@ -41,10 +40,10 @@ func TestOrganizationUsersUpdate(t *testing.T) {
 }
 
 func TestOrganizationUsersList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:users", "list",
 			"--max-items", "10",
 			"--after-id", "after_id",
@@ -57,10 +56,10 @@ func TestOrganizationUsersList(t *testing.T) {
 }
 
 func TestOrganizationUsersRemove(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"organization:users", "remove",
 			"--user-id", "user_id",
 		)

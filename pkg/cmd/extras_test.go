@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/anthropics/anthropic-sdk-go"
-	"github.com/anthropics/anthropic-sdk-go/config"
-	"github.com/anthropics/anthropic-sdk-go/option"
+	"github.com/anthropics/anthropic-sdk-go/v2"
+	"github.com/anthropics/anthropic-sdk-go/v2/config"
+	"github.com/anthropics/anthropic-sdk-go/v2/option"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v3"
@@ -59,7 +59,7 @@ func TestBaseURLEnvRealTree(t *testing.T) {
 	require.NoError(t, Command.Run(context.Background(), []string{"ant", "probe"}))
 	require.NotNil(t, captured, "no request captured")
 	assert.Equal(t, "env.invalid", captured.URL.Host, "request host")
-	assert.Equal(t, "test-fake-api-key-not-real", captured.Header.Get("x-api-key"))
+	assert.Equal(t, "Bearer test-fake-api-key-not-real", captured.Header.Get("Authorization"))
 }
 
 // runShadowedLeaf runs a fresh tree whose root mirrors the global credential /
@@ -95,8 +95,6 @@ func runShadowedLeaf(t *testing.T, argv ...string) *http.Request {
 	root := &cli.Command{
 		Name: "ant",
 		Flags: []cli.Flag{
-			&cli.StringFlag{Name: "api-key", Sources: cli.EnvVars("ANTHROPIC_API_KEY")},
-			&cli.StringFlag{Name: "auth-token"},
 			&cli.BoolFlag{Name: "api-key-stdin"},
 			&cli.BoolFlag{Name: "auth-token-stdin"},
 			&cli.StringFlag{Name: "webhook-key"},

@@ -3,15 +3,15 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
-	"github.com/anthropics/anthropic-cli/internal/requestflag"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/requestflag"
 )
 
 func TestBetaAgentsCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:agents", "create",
 			"--model", "claude-opus-5-5",
 			"--name", "My First Agent",
@@ -35,7 +35,6 @@ func TestBetaAgentsCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:agents", "create",
 			"--model", "claude-opus-5-5",
 			"--name", "My First Agent",
@@ -95,7 +94,6 @@ func TestBetaAgentsCreate(t *testing.T) {
 			"        type: always_allow\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:agents", "create",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -104,10 +102,10 @@ func TestBetaAgentsCreate(t *testing.T) {
 }
 
 func TestBetaAgentsRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:agents", "retrieve",
 			"--agent-id", "agent_011CZkYpogX7uDKUyvBTophP",
 			"--version", "0",
@@ -118,10 +116,10 @@ func TestBetaAgentsRetrieve(t *testing.T) {
 }
 
 func TestBetaAgentsUpdate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:agents", "update",
 			"--agent-id", "agent_011CZkYpogX7uDKUyvBTophP",
 			"--description", "updated",
@@ -147,7 +145,6 @@ func TestBetaAgentsUpdate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:agents", "update",
 			"--agent-id", "agent_011CZkYpogX7uDKUyvBTophP",
 			"--description", "updated",
@@ -214,7 +211,6 @@ func TestBetaAgentsUpdate(t *testing.T) {
 			"version: 1\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:agents", "update",
 			"--agent-id", "agent_011CZkYpogX7uDKUyvBTophP",
 			"--beta", "message-batches-2024-09-24",
@@ -224,10 +220,10 @@ func TestBetaAgentsUpdate(t *testing.T) {
 }
 
 func TestBetaAgentsList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:agents", "list",
 			"--max-items", "10",
 			"--created-at-gte", "'2019-12-27T18:11:19.117Z'",
@@ -242,10 +238,10 @@ func TestBetaAgentsList(t *testing.T) {
 }
 
 func TestBetaAgentsArchive(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:agents", "archive",
 			"--agent-id", "agent_011CZkYpogX7uDKUyvBTophP",
 			"--beta", "message-batches-2024-09-24",

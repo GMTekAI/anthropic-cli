@@ -3,14 +3,14 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestBetaSessionsThreadsEventsList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:sessions:threads:events", "list",
 			"--max-items", "10",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -24,10 +24,10 @@ func TestBetaSessionsThreadsEventsList(t *testing.T) {
 }
 
 func TestBetaSessionsThreadsEventsStream(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:sessions:threads:events", "stream",
 			"--max-items", "10",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",

@@ -3,15 +3,15 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
-	"github.com/anthropics/anthropic-cli/internal/requestflag"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/requestflag"
 )
 
 func TestBetaOrganizationTelemetryDestinationsCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:telemetry-destinations", "create",
 			"--endpoint-url", "x",
 			"--workspaces", "{type: all}",
@@ -29,7 +29,6 @@ func TestBetaOrganizationTelemetryDestinationsCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:telemetry-destinations", "create",
 			"--endpoint-url", "x",
 			"--workspaces", "{type: all}",
@@ -59,7 +58,6 @@ func TestBetaOrganizationTelemetryDestinationsCreate(t *testing.T) {
 			"  max_content_bytes: 0\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:organization:telemetry-destinations", "create",
 			"--beta", "message-batches-2024-09-24",
 		)
@@ -67,10 +65,10 @@ func TestBetaOrganizationTelemetryDestinationsCreate(t *testing.T) {
 }
 
 func TestBetaOrganizationTelemetryDestinationsRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:telemetry-destinations", "retrieve",
 			"--destination-id", "destination_id",
 			"--beta", "message-batches-2024-09-24",
@@ -79,10 +77,10 @@ func TestBetaOrganizationTelemetryDestinationsRetrieve(t *testing.T) {
 }
 
 func TestBetaOrganizationTelemetryDestinationsUpdate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:telemetry-destinations", "update",
 			"--destination-id", "destination_id",
 			"--display-name", "display_name",
@@ -102,7 +100,6 @@ func TestBetaOrganizationTelemetryDestinationsUpdate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:telemetry-destinations", "update",
 			"--destination-id", "destination_id",
 			"--display-name", "display_name",
@@ -136,7 +133,6 @@ func TestBetaOrganizationTelemetryDestinationsUpdate(t *testing.T) {
 			"  type: all\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:organization:telemetry-destinations", "update",
 			"--destination-id", "destination_id",
 			"--beta", "message-batches-2024-09-24",
@@ -145,10 +141,10 @@ func TestBetaOrganizationTelemetryDestinationsUpdate(t *testing.T) {
 }
 
 func TestBetaOrganizationTelemetryDestinationsList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:telemetry-destinations", "list",
 			"--max-items", "10",
 			"--limit", "0",
@@ -160,10 +156,10 @@ func TestBetaOrganizationTelemetryDestinationsList(t *testing.T) {
 }
 
 func TestBetaOrganizationTelemetryDestinationsDelete(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:telemetry-destinations", "delete",
 			"--destination-id", "destination_id",
 			"--beta", "message-batches-2024-09-24",
@@ -172,10 +168,10 @@ func TestBetaOrganizationTelemetryDestinationsDelete(t *testing.T) {
 }
 
 func TestBetaOrganizationTelemetryDestinationsTest(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:telemetry-destinations", "test",
 			"--destination-id", "destination_id",
 			"--beta", "message-batches-2024-09-24",

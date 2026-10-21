@@ -90,7 +90,7 @@ snapshot:
   version_template: '{{ .Tag }}-next'
 
 nfpms:
-  - license: MIT
+  - license: Apache-2.0
     maintainer: support@anthropic.com
     bindir: /usr
     formats:
@@ -115,7 +115,7 @@ homebrew_casks:
         enabled: true
     homepage: anthropic.com
     description: CLI for the Claude Platform
-    license: MIT
+    license: Apache-2.0
     binaries: ["ant"]
     completions:
       bash: "completions/ant.bash"

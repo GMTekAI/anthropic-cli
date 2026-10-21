@@ -3,14 +3,14 @@ package cmd
 import (
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/mocktest"
+	"github.com/anthropics/anthropic-cli/v2/internal/mocktest"
 )
 
 func TestBetaOrganizationRBACGroupsCreate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:rbac-groups", "create",
 			"--name", "Engineering",
 		)
@@ -21,17 +21,16 @@ func TestBetaOrganizationRBACGroupsCreate(t *testing.T) {
 		pipeData := []byte("name: Engineering")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:organization:rbac-groups", "create",
 		)
 	})
 }
 
 func TestBetaOrganizationRBACGroupsRetrieve(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:rbac-groups", "retrieve",
 			"--rbac-group-id", "rbac_group_id",
 		)
@@ -39,10 +38,10 @@ func TestBetaOrganizationRBACGroupsRetrieve(t *testing.T) {
 }
 
 func TestBetaOrganizationRBACGroupsUpdate(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:rbac-groups", "update",
 			"--rbac-group-id", "rbac_group_id",
 			"--name", "Engineering",
@@ -54,7 +53,6 @@ func TestBetaOrganizationRBACGroupsUpdate(t *testing.T) {
 		pipeData := []byte("name: Engineering")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
-			"--api-key", "string",
 			"beta:organization:rbac-groups", "update",
 			"--rbac-group-id", "rbac_group_id",
 		)
@@ -62,10 +60,10 @@ func TestBetaOrganizationRBACGroupsUpdate(t *testing.T) {
 }
 
 func TestBetaOrganizationRBACGroupsList(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:rbac-groups", "list",
 			"--max-items", "10",
 			"--limit", "1",
@@ -75,10 +73,10 @@ func TestBetaOrganizationRBACGroupsList(t *testing.T) {
 }
 
 func TestBetaOrganizationRBACGroupsDelete(t *testing.T) {
+	t.Setenv("ANTHROPIC_API_KEY", "string")
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
-			"--api-key", "string",
 			"beta:organization:rbac-groups", "delete",
 			"--rbac-group-id", "rbac_group_id",
 		)

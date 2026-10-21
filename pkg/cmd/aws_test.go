@@ -8,10 +8,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/anthropics/anthropic-cli/internal/declarative/core"
-	"github.com/anthropics/anthropic-sdk-go"
-	"github.com/anthropics/anthropic-sdk-go/config"
-	"github.com/anthropics/anthropic-sdk-go/option"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/core"
+	"github.com/anthropics/anthropic-sdk-go/v2"
+	"github.com/anthropics/anthropic-sdk-go/v2/config"
+	"github.com/anthropics/anthropic-sdk-go/v2/option"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v3"
@@ -180,17 +180,17 @@ func TestAWSTier(t *testing.T) {
 		t.Setenv("ANTHROPIC_AWS_API_KEY", fakeAWSAPIKey)
 		req := runAWSLeaf(t, "--aws-region", "us-east-1", "--aws-workspace-id", "wrkspc_01")
 		assert.Equal(t, "aws-external-anthropic.us-east-1.api.aws", req.URL.Host)
-		assert.Equal(t, fakeAWSAPIKey, req.Header.Get("x-api-key"))
+		assert.Equal(t, "Bearer "+fakeAWSAPIKey, req.Header.Get("Authorization"))
 		assert.Equal(t, "wrkspc_01", req.Header.Get("anthropic-workspace-id"))
-		assert.Empty(t, req.Header.Get("Authorization"))
+		assert.Empty(t, req.Header.Get("x-api-key"))
 	})
 
 	t.Run("--aws-api-key-stdin sends the piped key", func(t *testing.T) {
 		setupAWSTest(t)
 		withStdinCredential(t, fakeAWSAPIKey+"\n")
 		req := runAWSLeaf(t, "--aws-api-key-stdin", "--aws-region", "us-east-1", "--aws-workspace-id", "wrkspc_01")
-		assert.Equal(t, fakeAWSAPIKey, req.Header.Get("x-api-key"))
-		assert.Empty(t, req.Header.Get("Authorization"))
+		assert.Equal(t, "Bearer "+fakeAWSAPIKey, req.Header.Get("Authorization"))
+		assert.Empty(t, req.Header.Get("x-api-key"))
 	})
 
 	t.Run("--workspace-id doesn't override the AWS workspace", func(t *testing.T) {
@@ -231,8 +231,8 @@ func TestAWSTier(t *testing.T) {
 		t.Setenv("ANTHROPIC_API_KEY", "fake-first-party-key")
 		req := runAWSLeaf(t, "--workspace-id", "wrkspc_01")
 		assert.Equal(t, "api.anthropic.com", req.URL.Host)
-		assert.Equal(t, "fake-first-party-key", req.Header.Get("x-api-key"))
-		assert.Empty(t, req.Header.Get("Authorization"))
+		assert.Equal(t, "Bearer fake-first-party-key", req.Header.Get("Authorization"))
+		assert.Empty(t, req.Header.Get("x-api-key"))
 	})
 }
 
@@ -288,10 +288,10 @@ func TestAWSPrecedence(t *testing.T) {
 		t.Setenv("ANTHROPIC_API_KEY", "fake-first-party-key")
 		var req *http.Request
 		stderr := captureStderr(t, func() { req = runAWSLeaf(t, awsArgs...) })
-		assert.Equal(t, "fake-first-party-key", req.Header.Get("x-api-key"))
-		assert.Empty(t, req.Header.Get("Authorization"))
+		assert.Equal(t, "Bearer fake-first-party-key", req.Header.Get("Authorization"))
+		assert.Empty(t, req.Header.Get("x-api-key"))
 		assert.Contains(t, stderr, "AWS (--aws-* / ANTHROPIC_AWS_*)")
-		assert.Contains(t, stderr, "using --api-key / ANTHROPIC_API_KEY per precedence")
+		assert.Contains(t, stderr, "using ANTHROPIC_API_KEY per precedence")
 	})
 
 	t.Run("an AWS API key alone is not a second source", func(t *testing.T) {
@@ -404,7 +404,7 @@ func TestAuthStatusAWS(t *testing.T) {
 			return awsTestRoot(nil).Run(context.Background(), []string{"ant", "--aws-region", "us-east-1", "auth", "status"})
 		})
 		require.NoError(t, err)
-		assert.Regexp(t, `\(active\) \* --api-key / ANTHROPIC_API_KEY`, out)
+		assert.Regexp(t, `\(active\) \* ANTHROPIC_API_KEY`, out)
 		assert.Regexp(t, `\n\s+\* AWS\s`, out)
 	})
 }

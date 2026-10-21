@@ -16,7 +16,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/anthropics/anthropic-sdk-go/config"
+	"github.com/anthropics/anthropic-sdk-go/v2/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v3"
@@ -411,13 +411,10 @@ func TestMultiAuthWarning(t *testing.T) {
 
 	t.Run("api-key and explicit profile", func(t *testing.T) {
 		reset()
-		out := captureStderr(t, func() {
-			warnIfMultipleAuthSources("--api-key / ANTHROPIC_API_KEY", "", true, false, false, false, false, "", "")
-		})
+		out := captureStderr(t, func() { warnIfMultipleAuthSources("ANTHROPIC_API_KEY", "", true, false, false, false, false, "", "") })
 		assert.Contains(t, out, "multiple auth sources configured")
-		assert.Contains(t, out, "--api-key / ANTHROPIC_API_KEY")
 		assert.Contains(t, out, "profile from --profile / ANTHROPIC_PROFILE")
-		assert.Contains(t, out, "using --api-key / ANTHROPIC_API_KEY per precedence")
+		assert.Contains(t, out, "using ANTHROPIC_API_KEY per precedence")
 		assert.Contains(t, out, "ant auth status")
 	})
 
@@ -437,20 +434,14 @@ func TestMultiAuthWarning(t *testing.T) {
 
 	t.Run("single source is silent", func(t *testing.T) {
 		reset()
-		out := captureStderr(t, func() {
-			warnIfMultipleAuthSources("--api-key / ANTHROPIC_API_KEY", "", false, false, false, false, false, "", "")
-		})
+		out := captureStderr(t, func() { warnIfMultipleAuthSources("ANTHROPIC_API_KEY", "", false, false, false, false, false, "", "") })
 		assert.Empty(t, out)
 	})
 
 	t.Run("emits once", func(t *testing.T) {
 		reset()
-		first := captureStderr(t, func() {
-			warnIfMultipleAuthSources("", "--auth-token / ANTHROPIC_AUTH_TOKEN", true, true, false, false, false, "", "")
-		})
-		second := captureStderr(t, func() {
-			warnIfMultipleAuthSources("", "--auth-token / ANTHROPIC_AUTH_TOKEN", true, true, false, false, false, "", "")
-		})
+		first := captureStderr(t, func() { warnIfMultipleAuthSources("", "ANTHROPIC_AUTH_TOKEN", true, true, false, false, false, "", "") })
+		second := captureStderr(t, func() { warnIfMultipleAuthSources("", "ANTHROPIC_AUTH_TOKEN", true, true, false, false, false, "", "") })
 		assert.NotEmpty(t, first)
 		assert.Empty(t, second)
 	})
@@ -465,7 +456,6 @@ func runWithCredentialSources(t *testing.T, seed func(t *testing.T, dir string),
 	clearGoogleCloudEnv(t)
 	clearAWSEnv(t)
 	resetWarnOnce(t)
-	withCommandLine(t, argv...)
 	withStdinCredential(t, "sk-stdin\n")
 	seed(t, os.Getenv("ANTHROPIC_CONFIG_DIR"))
 	for k, v := range env {
@@ -512,26 +502,26 @@ func TestEnvCredentialOverridesProfileNotice(t *testing.T) {
 			name: "API key and active profile", seed: activeProfileWork,
 			env:        map[string]string{"ANTHROPIC_API_KEY": "sk-env"},
 			wantStderr: "Note: ANTHROPIC_API_KEY is set in your environment and overrides profile \"work\". Unset it to use the profile.\n",
-			wantHeader: "X-Api-Key", wantValue: "sk-env",
+			wantHeader: "Authorization", wantValue: "Bearer sk-env",
 		},
 		{
 			name: "API key and --profile", seed: savedProfileWork,
 			env:        map[string]string{"ANTHROPIC_API_KEY": "sk-env"},
 			argv:       []string{"--profile", "work"},
 			wantStderr: "Note: ANTHROPIC_API_KEY is set in your environment and overrides profile \"work\". Unset it to use the profile.\n",
-			wantHeader: "X-Api-Key", wantValue: "sk-env",
+			wantHeader: "Authorization", wantValue: "Bearer sk-env",
 		},
 		{
 			name: "API key and ANTHROPIC_PROFILE", seed: savedProfileWork,
 			env:        map[string]string{"ANTHROPIC_API_KEY": "sk-env", "ANTHROPIC_PROFILE": "work"},
 			wantStderr: "Note: ANTHROPIC_API_KEY is set in your environment and overrides profile \"work\". Unset it to use the profile.\n",
-			wantHeader: "X-Api-Key", wantValue: "sk-env",
+			wantHeader: "Authorization", wantValue: "Bearer sk-env",
 		},
 		{
 			name: "empty API key and active profile", seed: activeProfileWork,
 			env:        map[string]string{"ANTHROPIC_API_KEY": ""},
 			wantStderr: "Note: ANTHROPIC_API_KEY is set but empty in your environment and overrides profile \"work\". Unset it to use the profile.\n",
-			wantHeader: "X-Api-Key", wantValue: "",
+			wantHeader: "Authorization", wantValue: "Bearer ",
 		},
 		{
 			name: "auth token and active profile", seed: activeProfileWork,
@@ -542,12 +532,12 @@ func TestEnvCredentialOverridesProfileNotice(t *testing.T) {
 		{
 			name: "API key and no profile is silent", seed: noProfile,
 			env:        map[string]string{"ANTHROPIC_API_KEY": "sk-env"},
-			wantHeader: "X-Api-Key", wantValue: "sk-env",
+			wantHeader: "Authorization", wantValue: "Bearer sk-env",
 		},
 		{
 			name: "API key and a profile that is not selected is silent", seed: savedProfileWork,
 			env:        map[string]string{"ANTHROPIC_API_KEY": "sk-env"},
-			wantHeader: "X-Api-Key", wantValue: "sk-env",
+			wantHeader: "Authorization", wantValue: "Bearer sk-env",
 		},
 		{
 			name: "active profile and no env credential is silent", seed: activeProfileWork,
@@ -596,10 +586,6 @@ func TestMultiAuthWarningWhenProfileIsNotNextInLine(t *testing.T) {
 			argv: []string{"--federation-rule", "fdrl_x"},
 		},
 		{
-			name: "API key from --api-key", seed: activeProfileWork,
-			argv: []string{"--api-key", "sk-argv"},
-		},
-		{
 			name: "API key from --api-key-stdin", seed: activeProfileWork,
 			env:  map[string]string{"ANTHROPIC_API_KEY": "sk-env"},
 			argv: []string{"--api-key-stdin"},
@@ -636,7 +622,6 @@ func TestCredentialPrecedenceFederationVsProfile(t *testing.T) {
 	require.NoError(t, config.SetActiveProfile(dir, "p"))
 
 	root := &cli.Command{Flags: []cli.Flag{
-		&cli.StringFlag{Name: "api-key"}, &cli.StringFlag{Name: "auth-token"},
 		&cli.StringFlag{Name: "identity-token"}, &cli.StringFlag{Name: "identity-token-file"},
 		&cli.StringFlag{Name: "federation-rule"}, &cli.StringFlag{Name: "organization-id"},
 		&cli.StringFlag{Name: "service-account-id"},
@@ -2053,10 +2038,10 @@ func TestAuthLogoutAllWithoutActiveConfig(t *testing.T) {
 }
 
 // runStatus runs `auth status` against a synthetic root that carries the
-// global flags authStatus reads via c.Root() (api-key/auth-token/base-url/
-// organization-id/federation inputs). None are set in these tests; the flags
-// exist so root.String/root.IsSet resolve to zero values rather than depend
-// on undefined-flag behaviour.
+// global flags authStatus reads via c.Root() (base-url/organization-id/
+// federation inputs). None are set in these tests; the flags exist so
+// root.String/root.IsSet resolve to zero values rather than depend on
+// undefined-flag behaviour.
 func runStatus(t *testing.T, globalArgs ...string) (string, error) {
 	t.Helper()
 	clearEnv(t, "ANTHROPIC_API_KEY")
@@ -2070,8 +2055,6 @@ func runStatusKeepingCredentialEnv(t *testing.T, globalArgs ...string) (string, 
 		Name: "ant",
 		Flags: []cli.Flag{
 			&cli.StringFlag{Name: "profile", Sources: cli.EnvVars("ANTHROPIC_PROFILE")},
-			&cli.StringFlag{Name: "api-key"},
-			&cli.StringFlag{Name: "auth-token"},
 			&cli.BoolFlag{Name: "api-key-stdin"},
 			&cli.BoolFlag{Name: "auth-token-stdin"},
 			&cli.StringFlag{Name: "base-url"},

@@ -20,9 +20,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/anthropics/anthropic-sdk-go"
+	"github.com/anthropics/anthropic-sdk-go/v2"
 
-	"github.com/anthropics/anthropic-cli/internal/sessions/live"
+	"github.com/anthropics/anthropic-cli/v2/internal/sessions/live"
 )
 
 //go:embed viewer/viewer.html.gz

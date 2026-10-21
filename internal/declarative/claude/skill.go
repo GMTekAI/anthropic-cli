@@ -16,7 +16,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/anthropics/anthropic-cli/internal/declarative/core"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/core"
 )
 
 // skillFileName is the file that marks a directory as a skill.

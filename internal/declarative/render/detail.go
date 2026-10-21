@@ -7,7 +7,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/anthropics/anthropic-cli/internal/declarative/core"
+	"github.com/anthropics/anthropic-cli/v2/internal/declarative/core"
 )
 
 // Rendering what an expanded row shows beneath it: the identifying fields of a
