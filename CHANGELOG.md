@@ -12,6 +12,11 @@
 * **api:** add support for new API version 2026-10-21
 
 
+### Chores
+
+* bump go sdk to v2.0.0
+
+
 ### Documentation
 
 * **api:** remove outdated system role note from messages description
