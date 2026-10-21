@@ -190,6 +190,11 @@ var userProfilesList = cli.Command{
 	Usage:   "List User Profiles",
 	Suggest: true,
 	Flags: []cli.Flag{
+		&requestflag.Flag[[]string]{
+			Name:      "enforcement-status",
+			Usage:     "Return only the user profiles whose `enforcement_status` is one of these values: `unrestricted`, `pending`, `restricted` or `banned`. Repeat the parameter to match any of several. With it set, a page may hold fewer than `limit` profiles, or none, and still carry a `next_page`: the service examines a bounded number of profiles per request, and only a null `next_page` means the listing is complete. Rejected with `invalid_request_error` under the `user-profiles-2026-09-04` and earlier beta headers. Fails with `overloaded_error` when a profile's enforcement actions cannot be read for the moment.",
+			QueryPath: "enforcement_status",
+		},
 		&requestflag.Flag[int64]{
 			Name:      "limit",
 			Usage:     "The maximum number of user profiles to return, from 1 to 100. Defaults to 20.",

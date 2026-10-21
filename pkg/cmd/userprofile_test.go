@@ -146,6 +146,7 @@ func TestUserProfilesList(t *testing.T) {
 			t,
 			"user-profiles", "list",
 			"--max-items", "10",
+			"--enforcement-status", "unrestricted",
 			"--limit", "0",
 			"--order", "asc",
 			"--order-by", "created_at",
