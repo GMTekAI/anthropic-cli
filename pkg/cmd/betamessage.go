@@ -121,6 +121,11 @@ var betaMessagesCreate = requestflag.WithInnerFlags(cli.Command{
 			BodyPath: "thinking",
 		},
 		&requestflag.Flag[map[string]any]{
+			Name:     "thread",
+			Usage:    "Server-held conversation state (a Thread). `{\"type\": \"create\"}` asks the server to hold this conversation's state under the response's `id`; `{\"type\": \"continue\", \"previous_message_id\": ...}` resumes from a previous response so only the new turn's messages are sent. The response shape is unchanged.",
+			BodyPath: "thread",
+		},
+		&requestflag.Flag[map[string]any]{
 			Name:     "tool-choice",
 			Usage:    "How the model should use the provided tools. The model can use a specific tool, any available tool, decide by itself, or not use tools at all.",
 			BodyPath: "tool_choice",
@@ -314,6 +319,18 @@ var betaMessagesCreate = requestflag.WithInnerFlags(cli.Command{
 			Name:       "thinking.display",
 			Usage:      "Controls how thinking content appears in the response. When set to `summarized`, thinking is returned normally. When set to `omitted`, thinking content is redacted but a signature is returned for multi-turn continuity. The default depends on the model; see [Controlling thinking display](https://platform.claude.com/docs/en/build-with-claude/thinking#controlling-thinking-display).",
 			InnerField: "display",
+		},
+	},
+	"thread": {
+		&requestflag.InnerFlag[string]{
+			Name:       "thread.type",
+			Usage:      `Allowed values: "create", "continue".`,
+			InnerField: "type",
+		},
+		&requestflag.InnerFlag[string]{
+			Name:       "thread.previous-message-id",
+			Usage:      "The `id` of the previous response in this Thread.",
+			InnerField: "previous_message_id",
 		},
 	},
 	"tool-choice": {
