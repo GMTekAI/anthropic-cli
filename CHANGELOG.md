@@ -9,6 +9,7 @@
 
 ### Bug Fixes
 
+* **apply:** print control characters in plan output, warnings and errors as visible escapes
 * **sessions:** show the full input of MCP and custom tool calls in the `--web` session viewer
 * **sessions:** show the full input of MCP and custom tool calls in the terminal view, including at its approval prompt
 * **sessions:** show the input fields a built-in tool's layout leaves out at the terminal view's approval prompt

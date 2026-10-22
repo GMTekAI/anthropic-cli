@@ -40,7 +40,8 @@ type Renderer struct {
 	Viewport Viewport
 	// Link, when set, returns a URL for a resource ID (or ""), and IDs are
 	// printed as terminal hyperlinks to it. Only honoured with Color, since a
-	// terminal that takes no colour will not take the escape either.
+	// terminal that takes no colour will not take the escape either. The URL
+	// goes into that escape as it is, so it must be percent-encoded.
 	Link func(kind core.Kind, id string) string
 
 	cols    columns
@@ -93,7 +94,7 @@ func (r *Renderer) RenderPlan(plan *core.Plan) {
 	}
 	r.heading("Preview", note)
 	for _, w := range plan.Warnings {
-		r.line(r.paint(updateStyle, "warning: ") + w)
+		r.line(r.paint(updateStyle, "warning: ") + Escape(w))
 	}
 	r.blank()
 
@@ -124,8 +125,8 @@ func (r *Renderer) RenderPlan(plan *core.Plan) {
 		r.blank()
 		r.line(r.paint(destroyStyle, "This plan cannot be applied:"))
 		for _, c := range blocked {
-			r.line(r.paint(destroyStyle, "✗ ") + r.paint(boldStyle, c.Key))
-			r.line(indentStep + c.Blocked.Error())
+			r.line(r.paint(destroyStyle, "✗ ") + r.paint(boldStyle, Escape(c.Key)))
+			r.line(indentStep + strings.ReplaceAll(EscapeLines(c.Blocked.Error()), "\n", "\n"+indentStep))
 		}
 	}
 }
@@ -203,7 +204,7 @@ func (r *Renderer) diffHint(d *core.Diff) string {
 			break
 		}
 		glyph, style := diffGlyph(d.Fields[name].Kind)
-		parts = append(parts, r.paint(style, glyph+name))
+		parts = append(parts, r.paint(style, glyph+Escape(name)))
 	}
 	return r.paint(dimStyle, "[") + strings.Join(parts, " ") + r.paint(dimStyle, "]")
 }
@@ -294,7 +295,7 @@ func (r *Renderer) measure(plan *core.Plan) {
 		if !r.listed(c) {
 			continue
 		}
-		r.cols.name = max(r.cols.name, len(c.Key))
+		r.cols.name = max(r.cols.name, len(Escape(c.Key)))
 	}
 	r.cols.name = min(r.cols.name, maxNameWidth)
 }
@@ -312,6 +313,7 @@ func (r *Renderer) row(glyph string, glyphStyle styleFunc, name, status string, 
 	if glyph == "" {
 		glyph = " "
 	}
+	name = Escape(name)
 	// Nine cells fit every plan status ("unchanged" is the longest); a longer
 	// apply outcome such as "already gone" just pushes the info column right.
 	s := fmt.Sprintf("%s %s  %s",
@@ -347,7 +349,7 @@ func (r *Renderer) blank() { fmt.Fprintln(r.out()) }
 // id renders a resource ID dimmed and, with Color on and a URL from Link, as
 // an OSC 8 hyperlink. Terminals without hyperlink support show the plain text.
 func (r *Renderer) id(kind core.Kind, id string) string {
-	text := r.paint(dimStyle, id)
+	text := r.paint(dimStyle, Escape(id))
 	if !r.Color || r.Link == nil || id == "" {
 		return text
 	}
@@ -366,18 +368,19 @@ func pad(s string, n int) string {
 }
 
 // DisplayPath shows a path relative to the working directory when it is
-// beneath it, which is nearly always and much shorter.
+// beneath it, which is nearly always and much shorter. The result is escaped
+// for printing.
 func DisplayPath(p string) string {
 	wd, err := os.Getwd()
 	if err != nil {
-		return p
+		return Escape(p)
 	}
 	rel, err := filepath.Rel(wd, p)
 	if err != nil || strings.HasPrefix(rel, "..") {
-		return p
+		return Escape(p)
 	}
 	if rel == "." {
 		return "./"
 	}
-	return "./" + filepath.ToSlash(rel)
+	return "./" + Escape(filepath.ToSlash(rel))
 }

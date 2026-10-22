@@ -83,7 +83,14 @@ Nothing is changed until you approve the plan.`,
 // tracked sources, and plans. Once planned, the plan is always shown. A dry
 // run, a blocked plan, a plan with no work or a declined prompt stops there;
 // anything else is applied and the lockfile updated as it goes.
-func handleApply(ctx context.Context, cmd *cli.Command) error {
+func handleApply(ctx context.Context, cmd *cli.Command) (err error) {
+	// Errors can name files and lockfile entries from the repository, so
+	// escape them before they are printed.
+	defer func() {
+		if err != nil {
+			err = applyError{err}
+		}
+	}()
 	ctx, stop := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
@@ -225,6 +232,17 @@ func handleApply(ctx context.Context, cmd *cli.Command) error {
 	}
 	return err
 }
+
+// applyError prints an error with control characters escaped and continuation
+// lines indented, so a newline in a file name can't forge a line of output. It
+// unwraps to the original so errors.Is and errors.As still work.
+type applyError struct{ err error }
+
+func (e applyError) Error() string {
+	return strings.ReplaceAll(render.EscapeLines(e.err.Error()), "\n", "\n    ")
+}
+
+func (e applyError) Unwrap() error { return e.err }
 
 // loadApplyLockfile opens the lockfile --lock-file names, or else finds
 // claude-lock.json by walking up from the working directory.

@@ -6,6 +6,7 @@ import (
 	"maps"
 	"slices"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/anthropics/anthropic-cli/v2/internal/declarative/core"
 )
@@ -48,7 +49,7 @@ func (r *Renderer) detail(c *core.Change, indent string) bool {
 		mark, style = "! ", updateStyle
 	}
 	for _, reason := range c.Reasons {
-		r.line(indent + r.paint(style, mark+reason))
+		r.line(indent + r.paint(style, mark+Escape(reason)))
 	}
 	return wrote || len(c.Reasons) > 0
 }
@@ -74,7 +75,7 @@ func (r *Renderer) createDetail(c *core.Change, indent string) bool {
 		if c.IsSensitive(k) {
 			val = r.paint(dimStyle, "(sensitive)")
 		}
-		r.wrapLine(indent+r.paint(dimStyle, k+": "), indent+indentStep, val)
+		r.wrapLine(indent+r.paint(dimStyle, Escape(k)+": "), indent+indentStep, val)
 		wrote = true
 	}
 	return wrote
@@ -108,7 +109,7 @@ func (r *Renderer) renderDiff(d *core.Diff, indent string) {
 // its glyph.
 func (r *Renderer) renderFields(d *core.Diff, indent string) {
 	for _, name := range slices.Sorted(maps.Keys(d.Fields)) {
-		label, child := collapse(name, d.Fields[name])
+		label, child := collapse(Escape(name), d.Fields[name])
 		r.renderNamed(r.glyphFor(child)+" "+label, child, indent)
 	}
 }
@@ -118,7 +119,7 @@ func (r *Renderer) renderFields(d *core.Diff, indent string) {
 func collapse(label string, d *core.Diff) (string, *core.Diff) {
 	for d.Kind == core.DiffObject && len(d.Fields) == 1 {
 		for k, v := range d.Fields {
-			label, d = label+"."+k, v
+			label, d = label+"."+Escape(k), v
 		}
 	}
 	return label, d
@@ -214,7 +215,7 @@ func (r *Renderer) text(before, after string) string {
 	if short || after == core.KnownAfterApply {
 		return r.beforeAfter(before, after)
 	}
-	runs, ok := diffWords(before, after)
+	runs, ok := diffWords(EscapeLines(before), EscapeLines(after))
 	if !ok {
 		return r.paint(dimStyle, fmt.Sprintf("(%d → %d characters of text)", len(before), len(after)))
 	}
@@ -275,7 +276,9 @@ func (r *Renderer) value(v any) string {
 	if !r.Verbose {
 		s = elide(s, valueWidth)
 	}
-	return s
+	// json.Marshal escapes only C0 controls; Escape catches DEL, C1 and format
+	// characters.
+	return Escape(s)
 }
 
 func quote(s string) string {
@@ -284,12 +287,18 @@ func quote(s string) string {
 }
 
 // elide keeps the head and tail of a long value: an ID's prefix and its last
-// characters are both worth seeing.
+// characters are both worth seeing. The cuts fall between characters.
 func elide(s string, width int) string {
 	if len(s) <= width {
 		return s
 	}
 	head := (width - 1) * 2 / 3
-	tail := width - 1 - head
-	return s[:head] + "…" + s[len(s)-tail:]
+	start := len(s) - (width - 1 - head)
+	for head > 0 && !utf8.RuneStart(s[head]) {
+		head--
+	}
+	for start < len(s) && !utf8.RuneStart(s[start]) {
+		start++
+	}
+	return s[:head] + "…" + s[start:]
 }
