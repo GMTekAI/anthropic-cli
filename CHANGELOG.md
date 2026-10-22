@@ -2,6 +2,13 @@
 
 ## [2.1.1](https://github.com/anthropics/anthropic-cli/compare/v2.1.0...v2.1.1) (2026-10-22)
 
+### Bug Fixes
+
+* **sessions:** show the full input of MCP and custom tool calls in the terminal view, including at its approval prompt
+* **sessions:** show the input fields a built-in tool's layout leaves out at the terminal view's approval prompt
+* **sessions:** in the terminal view, drop bidirectional control characters from session text, and show control and invisible characters in names and tool input as escapes such as `\x1b` or `\u200b`
+
+
 ### Chores
 
 * **ci:** update the runner label for internal CI jobs

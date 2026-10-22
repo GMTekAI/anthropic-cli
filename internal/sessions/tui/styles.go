@@ -40,8 +40,8 @@ var (
 )
 
 // toolGlyph is the symbol that marks a tool row, chosen by timeline.ToolKind.
-func toolGlyph(toolName string) string {
-	if glyph, ok := toolGlyphs[timeline.ToolKind(toolName)]; ok {
+func toolGlyph(use timeline.Event) string {
+	if glyph, ok := toolGlyphs[timeline.ToolKind(use)]; ok {
 		return glyph
 	}
 	return "⚙"

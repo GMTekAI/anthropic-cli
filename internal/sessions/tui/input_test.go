@@ -229,3 +229,36 @@ func TestApprovalShowsPayloadInFull(t *testing.T) {
 	require.Equal(t, 13, strings.Count(got, "│ │ "), "dense caps apply once it has run")
 	require.Contains(t, got, "more lines · 12 of 42 shown")
 }
+
+func TestApprovalShowsFullInputOfMCPToolNamedLikeABuiltin(t *testing.T) {
+	cases := map[string]string{
+		"bash":      `{"command":"deploy","target":"prod"}`,
+		"read":      `{"file_path":"a.txt","target":"prod"}`,
+		"web_fetch": `{"url":"https://x.dev","target":"prod"}`,
+	}
+	for name, input := range cases {
+		evs := []timeline.Event{
+			mk(t, "span.model_request_start", 100, ""),
+			mk(t, "agent.mcp_tool_use", 200, `"name":"`+name+`","mcp_server_name":"ops","evaluated_permission":"ask","input":`+input),
+			mk(t, "span.model_request_end", 300, `"model_request_start_id":"e100"`),
+			mk(t, "session.status_idle", 400, `"stop_reason":{"type":"requires_action","event_ids":["e200"]}`),
+		}
+		for _, verbose := range []bool{false, true} {
+			got := renderEvents(t, verbose, evs...)
+			require.Contains(t, got, `"target": "prod"`, name)
+			require.Contains(t, got, "▾ ⚙ ops/"+name+"  "+input+" ", name)
+		}
+		f := timeline.NewFold()
+		f.Reset(evs)
+		require.Contains(t, approvalBox(f.Status().Pending[0], 1, 0, 100), "⚙ ops/"+name+"  "+input+" ", name)
+	}
+}
+
+func TestApprovalShowsFieldsABuiltinLayoutDoesNot(t *testing.T) {
+	evs := askBash(t, 100, `{"command":"make","cwd":"/etc/cron.d"}`)
+	for _, verbose := range []bool{false, true} {
+		got := renderEvents(t, verbose, evs...)
+		require.Contains(t, got, "$ make")
+		require.Contains(t, got, `"cwd": "/etc/cron.d"`)
+	}
+}
