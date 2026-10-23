@@ -13,6 +13,7 @@
 * **docs:** update descriptions of the per-user usage and cost reports
 * **internal:** check the repository by owner and public name in workflows
 * **internal:** read the Go SDK's repo name from a CI variable
+* **internal:** remove preview build upload from CI
 
 
 ### Documentation
