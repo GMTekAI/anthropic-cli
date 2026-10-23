@@ -11,7 +11,7 @@ runs:
   using: composite
   steps:
     - uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
-      if: github.repository == 'anthropics/anthropic-sdk-cli-private'
+      if: github.repository_owner == 'anthropics' && github.repository != 'anthropics/anthropic-cli'
       id: app-token
       with:
         app-id: ${{ inputs.app-id }}
@@ -21,7 +21,7 @@ runs:
         permission-contents: read
 
     - name: Configure Git for access to the Go SDK's staging repo
-      if: github.repository == 'anthropics/anthropic-sdk-cli-private'
+      if: github.repository_owner == 'anthropics' && github.repository != 'anthropics/anthropic-cli'
       shell: bash
       run: git config --global url."https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/anthropics/anthropic-sdk-go-private".insteadOf "https://github.com/anthropics/anthropic-sdk-go-private"
 
