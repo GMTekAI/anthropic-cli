@@ -19,6 +19,7 @@
 
 ### Chores
 
+* bump go sdk to v2.2.0
 * **ci:** update the runner label for internal CI jobs
 * **docs:** fix usage and cost report examples and ending_at docs
 
