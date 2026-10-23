@@ -11,6 +11,7 @@ func TestBetaOrganizationAnalyticsSummariesList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:analytics:summaries", "list",
 			"--max-items", "10",
 			"--starting-date", "'2019-12-27'",

@@ -12,6 +12,7 @@ func TestBetaSkillsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:skills", "create",
 			"--file", mocktest.TestFile(t, "Example data"),
 			"--display-name", "display_name",
@@ -31,6 +32,7 @@ func TestBetaSkillsCreate(t *testing.T) {
 		pipeData := []byte(pipeDataStr)
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:skills", "create",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -43,6 +45,7 @@ func TestBetaSkillsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:skills", "retrieve",
 			"--skill-id", "skill_id",
 			"--beta", "message-batches-2024-09-24",
@@ -56,6 +59,7 @@ func TestBetaSkillsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:skills", "list",
 			"--max-items", "10",
 			"--limit", "1",
@@ -72,6 +76,7 @@ func TestBetaSkillsDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:skills", "delete",
 			"--skill-id", "skill_id",
 			"--beta", "message-batches-2024-09-24",

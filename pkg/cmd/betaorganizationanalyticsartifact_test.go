@@ -11,6 +11,7 @@ func TestBetaOrganizationAnalyticsArtifactsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:analytics:artifacts", "list",
 			"--max-items", "10",
 			"--date", "'2019-12-27'",

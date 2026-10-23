@@ -11,6 +11,7 @@ func TestBetaOrganizationWorkspacesServiceAccountsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces:service-accounts", "retrieve",
 			"--workspace-id", "workspace_id",
 			"--service-account-id", "service_account_id",
@@ -24,6 +25,7 @@ func TestBetaOrganizationWorkspacesServiceAccountsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces:service-accounts", "update",
 			"--workspace-id", "workspace_id",
 			"--service-account-id", "service_account_id",
@@ -37,6 +39,7 @@ func TestBetaOrganizationWorkspacesServiceAccountsUpdate(t *testing.T) {
 		pipeData := []byte("workspace_role: workspace_admin")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces:service-accounts", "update",
 			"--workspace-id", "workspace_id",
 			"--service-account-id", "service_account_id",
@@ -50,6 +53,7 @@ func TestBetaOrganizationWorkspacesServiceAccountsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces:service-accounts", "list",
 			"--max-items", "10",
 			"--workspace-id", "workspace_id",
@@ -65,6 +69,7 @@ func TestBetaOrganizationWorkspacesServiceAccountsAdd(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces:service-accounts", "add",
 			"--workspace-id", "workspace_id",
 			"--service-account-id", "service_account_id",
@@ -80,6 +85,7 @@ func TestBetaOrganizationWorkspacesServiceAccountsAdd(t *testing.T) {
 			"workspace_role: workspace_admin\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces:service-accounts", "add",
 			"--workspace-id", "workspace_id",
 			"--beta", "message-batches-2024-09-24",
@@ -92,6 +98,7 @@ func TestBetaOrganizationWorkspacesServiceAccountsRemove(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces:service-accounts", "remove",
 			"--workspace-id", "workspace_id",
 			"--service-account-id", "service_account_id",

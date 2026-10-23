@@ -11,6 +11,7 @@ func TestBetaOrganizationUsersRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:users", "retrieve",
 			"--user-id", "user_id",
 		)
@@ -22,6 +23,7 @@ func TestBetaOrganizationUsersUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:users", "update",
 			"--user-id", "user_id",
 			"--role", "user",
@@ -33,6 +35,7 @@ func TestBetaOrganizationUsersUpdate(t *testing.T) {
 		pipeData := []byte("role: user")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:users", "update",
 			"--user-id", "user_id",
 		)
@@ -44,6 +47,7 @@ func TestBetaOrganizationUsersList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:users", "list",
 			"--max-items", "10",
 			"--after-id", "after_id",
@@ -60,6 +64,7 @@ func TestBetaOrganizationUsersRemove(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:users", "remove",
 			"--user-id", "user_id",
 		)

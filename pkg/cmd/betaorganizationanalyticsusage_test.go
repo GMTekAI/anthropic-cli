@@ -11,6 +11,7 @@ func TestBetaOrganizationAnalyticsUsageList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:analytics:usage", "list",
 			"--max-items", "10",
 			"--starting-at", "'2026-09-01T00:00:00Z'",

@@ -11,6 +11,7 @@ func TestBetaSessionsThreadsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions:threads", "retrieve",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
 			"--thread-id", "sthr_011CZkZVWa6oJjw1rgXZpnBt",
@@ -25,6 +26,7 @@ func TestBetaSessionsThreadsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions:threads", "list",
 			"--max-items", "10",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -42,6 +44,7 @@ func TestBetaSessionsThreadsArchive(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions:threads", "archive",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
 			"--thread-id", "sthr_011CZkZVWa6oJjw1rgXZpnBt",

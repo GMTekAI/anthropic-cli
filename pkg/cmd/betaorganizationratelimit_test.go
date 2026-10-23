@@ -11,6 +11,7 @@ func TestBetaOrganizationRateLimitsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:rate-limits", "list",
 			"--max-items", "10",
 			"--group-type", "batch",

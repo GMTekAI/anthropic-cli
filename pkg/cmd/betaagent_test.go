@@ -12,6 +12,7 @@ func TestBetaAgentsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:agents", "create",
 			"--model", "claude-opus-5-5",
 			"--name", "My First Agent",
@@ -35,6 +36,7 @@ func TestBetaAgentsCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:agents", "create",
 			"--model", "claude-opus-5-5",
 			"--name", "My First Agent",
@@ -94,6 +96,7 @@ func TestBetaAgentsCreate(t *testing.T) {
 			"        type: always_allow\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:agents", "create",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -106,6 +109,7 @@ func TestBetaAgentsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:agents", "retrieve",
 			"--agent-id", "agent_011CZkYpogX7uDKUyvBTophP",
 			"--version", "0",
@@ -120,6 +124,7 @@ func TestBetaAgentsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:agents", "update",
 			"--agent-id", "agent_011CZkYpogX7uDKUyvBTophP",
 			"--description", "updated",
@@ -145,6 +150,7 @@ func TestBetaAgentsUpdate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:agents", "update",
 			"--agent-id", "agent_011CZkYpogX7uDKUyvBTophP",
 			"--description", "updated",
@@ -211,6 +217,7 @@ func TestBetaAgentsUpdate(t *testing.T) {
 			"version: 1\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:agents", "update",
 			"--agent-id", "agent_011CZkYpogX7uDKUyvBTophP",
 			"--beta", "message-batches-2024-09-24",
@@ -224,6 +231,7 @@ func TestBetaAgentsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:agents", "list",
 			"--max-items", "10",
 			"--created-at-gte", "'2019-12-27T18:11:19.117Z'",
@@ -242,6 +250,7 @@ func TestBetaAgentsArchive(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:agents", "archive",
 			"--agent-id", "agent_011CZkYpogX7uDKUyvBTophP",
 			"--beta", "message-batches-2024-09-24",

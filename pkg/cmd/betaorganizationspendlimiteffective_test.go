@@ -11,6 +11,7 @@ func TestBetaOrganizationSpendLimitsEffectiveList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:spend-limits:effective", "list",
 			"--max-items", "10",
 			"--limit", "1",

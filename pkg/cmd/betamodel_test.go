@@ -11,6 +11,7 @@ func TestBetaModelsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:models", "retrieve",
 			"--model-id", "model_id",
 			"--beta", "message-batches-2024-09-24",
@@ -24,6 +25,7 @@ func TestBetaModelsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:models", "list",
 			"--max-items", "10",
 			"--after-id", "after_id",

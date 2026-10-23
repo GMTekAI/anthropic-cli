@@ -12,6 +12,7 @@ func TestBetaFilesList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:files", "list",
 			"--max-items", "10",
 			"--id", "string",
@@ -29,6 +30,7 @@ func TestBetaFilesDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:files", "delete",
 			"--file-id", "file_id",
 			"--beta", "message-batches-2024-09-24",
@@ -42,6 +44,7 @@ func TestBetaFilesDownload(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:files", "download",
 			"--file-id", "file_id",
 			"--beta", "message-batches-2024-09-24",
@@ -56,6 +59,7 @@ func TestBetaFilesRetrieveMetadata(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:files", "retrieve-metadata",
 			"--file-id", "file_id",
 			"--beta", "message-batches-2024-09-24",
@@ -69,6 +73,7 @@ func TestBetaFilesUpload(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:files", "upload",
 			"--file", mocktest.TestFile(t, "Example data"),
 			"--expires-in-seconds", "3600",
@@ -87,6 +92,7 @@ func TestBetaFilesUpload(t *testing.T) {
 		pipeData := []byte(pipeDataStr)
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:files", "upload",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",

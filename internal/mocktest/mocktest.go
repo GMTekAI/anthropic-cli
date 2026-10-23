@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"net/http/httptest"
+	"net/http/httputil"
 	"net/url"
 	"os"
 	"os/exec"
@@ -91,6 +93,27 @@ func TestRunMockTestWithPipeAndFlags(t *testing.T, pipeData []byte, args ...stri
 	assert.NoError(t, err, "Test failed\nError: %v\nOutput: %s", err, output)
 
 	t.Logf("Test passed successfully\nOutput:\n%s", string(output))
+}
+
+// ServerWithQuery starts a server that hands each request to the mock server with the given query
+// params set, and returns its URL to pass as `--base-url`. The mock server needs them to tell two
+// operations with the same path apart.
+func ServerWithQuery(t *testing.T, query string) string {
+	params, err := url.ParseQuery(query)
+	require.NoError(t, err)
+
+	server := httptest.NewServer(&httputil.ReverseProxy{
+		Rewrite: func(r *httputil.ProxyRequest) {
+			r.SetURL(mockServerURL)
+			values := r.Out.URL.Query()
+			for name, value := range params {
+				values[name] = value
+			}
+			r.Out.URL.RawQuery = values.Encode()
+		},
+	})
+	t.Cleanup(server.Close)
+	return server.URL
 }
 
 func TestFile(t *testing.T, contents string) string {

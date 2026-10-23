@@ -11,6 +11,7 @@ func TestBetaOrganizationRBACGroupsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:rbac-groups", "create",
 			"--name", "Engineering",
 		)
@@ -21,6 +22,7 @@ func TestBetaOrganizationRBACGroupsCreate(t *testing.T) {
 		pipeData := []byte("name: Engineering")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:rbac-groups", "create",
 		)
 	})
@@ -31,6 +33,7 @@ func TestBetaOrganizationRBACGroupsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:rbac-groups", "retrieve",
 			"--rbac-group-id", "rbac_group_id",
 		)
@@ -42,6 +45,7 @@ func TestBetaOrganizationRBACGroupsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:rbac-groups", "update",
 			"--rbac-group-id", "rbac_group_id",
 			"--name", "Engineering",
@@ -53,6 +57,7 @@ func TestBetaOrganizationRBACGroupsUpdate(t *testing.T) {
 		pipeData := []byte("name: Engineering")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:rbac-groups", "update",
 			"--rbac-group-id", "rbac_group_id",
 		)
@@ -64,6 +69,7 @@ func TestBetaOrganizationRBACGroupsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:rbac-groups", "list",
 			"--max-items", "10",
 			"--limit", "1",
@@ -77,6 +83,7 @@ func TestBetaOrganizationRBACGroupsDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:rbac-groups", "delete",
 			"--rbac-group-id", "rbac_group_id",
 		)

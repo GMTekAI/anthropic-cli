@@ -11,6 +11,7 @@ func TestBetaOrganizationPluginsSharesList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins:shares", "list",
 			"--max-items", "10",
 			"--plugin-id", "plugin_id",

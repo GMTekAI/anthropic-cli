@@ -12,6 +12,7 @@ func TestBetaSessionsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions", "create",
 			"--agent", "agent_011CZkYpogX7uDKUyvBTophP",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -33,6 +34,7 @@ func TestBetaSessionsCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions", "create",
 			"--agent", "agent_011CZkYpogX7uDKUyvBTophP",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -74,6 +76,7 @@ func TestBetaSessionsCreate(t *testing.T) {
 			"  - string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions", "create",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -86,6 +89,7 @@ func TestBetaSessionsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions", "retrieve",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
 			"--beta", "message-batches-2024-09-24",
@@ -99,6 +103,7 @@ func TestBetaSessionsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions", "update",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
 			"--agent", "{mcp_servers: [{name: example-mcp, type: url, url: https://example-server.modelcontextprotocol.io/sse}], tools: [{type: agent_toolset_20260401, configs: [{name: bash, enabled: true, permission_policy: {type: always_allow}, type: bash}], default_config: {enabled: true, permission_policy: {type: always_allow}}}]}",
@@ -118,6 +123,7 @@ func TestBetaSessionsUpdate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions", "update",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
 			"--agent.mcp-servers", "[{name: example-mcp, type: url, url: https://example-server.modelcontextprotocol.io/sse}]",
@@ -164,6 +170,7 @@ func TestBetaSessionsUpdate(t *testing.T) {
 			"  - string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions", "update",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
 			"--beta", "message-batches-2024-09-24",
@@ -177,6 +184,7 @@ func TestBetaSessionsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions", "list",
 			"--max-items", "10",
 			"--agent-id", "agent_id",
@@ -203,6 +211,7 @@ func TestBetaSessionsDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions", "delete",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
 			"--beta", "message-batches-2024-09-24",
@@ -216,6 +225,7 @@ func TestBetaSessionsArchive(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions", "archive",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
 			"--beta", "message-batches-2024-09-24",

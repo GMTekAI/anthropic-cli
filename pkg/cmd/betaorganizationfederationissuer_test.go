@@ -11,6 +11,7 @@ func TestBetaOrganizationFederationIssuersCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:federation:issuers", "create",
 			"--issuer-url", "x",
 			"--name", "x",
@@ -34,6 +35,7 @@ func TestBetaOrganizationFederationIssuersCreate(t *testing.T) {
 			"max_jwt_lifetime_seconds: 1\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:federation:issuers", "create",
 			"--beta", "message-batches-2024-09-24",
 		)
@@ -45,6 +47,7 @@ func TestBetaOrganizationFederationIssuersRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:federation:issuers", "retrieve",
 			"--federation-issuer-id", "federation_issuer_id",
 			"--beta", "message-batches-2024-09-24",
@@ -57,6 +60,7 @@ func TestBetaOrganizationFederationIssuersUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:federation:issuers", "update",
 			"--federation-issuer-id", "federation_issuer_id",
 			"--check-jti=true",
@@ -83,6 +87,7 @@ func TestBetaOrganizationFederationIssuersUpdate(t *testing.T) {
 			"name: x\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:federation:issuers", "update",
 			"--federation-issuer-id", "federation_issuer_id",
 			"--beta", "message-batches-2024-09-24",
@@ -95,6 +100,7 @@ func TestBetaOrganizationFederationIssuersList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:federation:issuers", "list",
 			"--max-items", "10",
 			"--include-archived=true",
@@ -110,6 +116,7 @@ func TestBetaOrganizationFederationIssuersArchive(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:federation:issuers", "archive",
 			"--federation-issuer-id", "federation_issuer_id",
 			"--beta", "message-batches-2024-09-24",

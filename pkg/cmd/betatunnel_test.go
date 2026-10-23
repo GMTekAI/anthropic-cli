@@ -11,6 +11,7 @@ func TestBetaTunnelsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:tunnels", "create",
 			"--display-name", "x",
 			"--beta", "message-batches-2024-09-24",
@@ -23,6 +24,7 @@ func TestBetaTunnelsCreate(t *testing.T) {
 		pipeData := []byte("display_name: x")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:tunnels", "create",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -35,6 +37,7 @@ func TestBetaTunnelsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:tunnels", "retrieve",
 			"--tunnel-id", "tunnel_id",
 			"--beta", "message-batches-2024-09-24",
@@ -48,6 +51,7 @@ func TestBetaTunnelsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:tunnels", "list",
 			"--max-items", "10",
 			"--include-archived=true",
@@ -64,6 +68,7 @@ func TestBetaTunnelsArchive(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:tunnels", "archive",
 			"--tunnel-id", "tunnel_id",
 			"--beta", "message-batches-2024-09-24",
@@ -77,6 +82,7 @@ func TestBetaTunnelsRevealToken(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:tunnels", "reveal-token",
 			"--tunnel-id", "tunnel_id",
 			"--beta", "message-batches-2024-09-24",
@@ -90,6 +96,7 @@ func TestBetaTunnelsRotateToken(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:tunnels", "rotate-token",
 			"--tunnel-id", "tunnel_id",
 			"--reason", "reason",
@@ -103,6 +110,7 @@ func TestBetaTunnelsRotateToken(t *testing.T) {
 		pipeData := []byte("reason: reason")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:tunnels", "rotate-token",
 			"--tunnel-id", "tunnel_id",
 			"--beta", "message-batches-2024-09-24",

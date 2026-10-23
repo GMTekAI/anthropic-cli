@@ -11,6 +11,7 @@ func TestBetaEnvironmentsWorkRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments:work", "retrieve",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--work-id", "work_id",
@@ -25,6 +26,7 @@ func TestBetaEnvironmentsWorkUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments:work", "update",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--work-id", "work_id",
@@ -41,6 +43,7 @@ func TestBetaEnvironmentsWorkUpdate(t *testing.T) {
 			"  foo: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments:work", "update",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--work-id", "work_id",
@@ -55,6 +58,7 @@ func TestBetaEnvironmentsWorkList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments:work", "list",
 			"--max-items", "10",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
@@ -70,6 +74,7 @@ func TestBetaEnvironmentsWorkAck(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments:work", "ack",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--work-id", "work_id",
@@ -83,6 +88,7 @@ func TestBetaEnvironmentsWorkHeartbeat(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments:work", "heartbeat",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--work-id", "work_id",
@@ -98,6 +104,7 @@ func TestBetaEnvironmentsWorkPoll(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments:work", "poll",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--block-ms", "1",
@@ -113,6 +120,7 @@ func TestBetaEnvironmentsWorkStats(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments:work", "stats",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--beta", "message-batches-2024-09-24",
@@ -126,6 +134,7 @@ func TestBetaEnvironmentsWorkStop(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments:work", "stop",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--work-id", "work_id",
@@ -140,6 +149,7 @@ func TestBetaEnvironmentsWorkStop(t *testing.T) {
 		pipeData := []byte("force: true")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments:work", "stop",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--work-id", "work_id",

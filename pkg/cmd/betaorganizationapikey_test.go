@@ -11,6 +11,7 @@ func TestBetaOrganizationAPIKeysRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:api-keys", "retrieve",
 			"--api-key-id", "api_key_id",
 		)
@@ -22,6 +23,7 @@ func TestBetaOrganizationAPIKeysUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:api-keys", "update",
 			"--api-key-id", "api_key_id",
 			"--name", "x",
@@ -36,6 +38,7 @@ func TestBetaOrganizationAPIKeysUpdate(t *testing.T) {
 			"status: active\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:api-keys", "update",
 			"--api-key-id", "api_key_id",
 		)
@@ -47,6 +50,7 @@ func TestBetaOrganizationAPIKeysList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:api-keys", "list",
 			"--max-items", "10",
 			"--after-id", "after_id",

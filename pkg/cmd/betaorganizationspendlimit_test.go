@@ -11,6 +11,7 @@ func TestBetaOrganizationSpendLimitsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:spend-limits", "retrieve",
 			"--spend-limit-id", "spend_limit_id",
 		)
@@ -22,6 +23,7 @@ func TestBetaOrganizationSpendLimitsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:spend-limits", "list",
 			"--max-items", "10",
 			"--limit", "1",
@@ -38,6 +40,7 @@ func TestBetaOrganizationSpendLimitsDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:spend-limits", "delete",
 			"--spend-limit-id", "spend_limit_id",
 		)
@@ -49,6 +52,7 @@ func TestBetaOrganizationSpendLimitsSet(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:spend-limits", "set",
 			"--amount", "50000",
 			"--scope", "{type: user, user_id: user_01WCz1FkmYMm4gnmykNKUu3Q}",
@@ -67,6 +71,7 @@ func TestBetaOrganizationSpendLimitsSet(t *testing.T) {
 			"period: monthly\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:spend-limits", "set",
 			"--beta", "message-batches-2024-09-24",
 		)

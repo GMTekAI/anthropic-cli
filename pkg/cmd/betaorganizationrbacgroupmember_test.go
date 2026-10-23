@@ -11,6 +11,7 @@ func TestBetaOrganizationRBACGroupsMembersList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:rbac-groups:members", "list",
 			"--max-items", "10",
 			"--rbac-group-id", "rbac_group_id",
@@ -25,6 +26,7 @@ func TestBetaOrganizationRBACGroupsMembersAdd(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:rbac-groups:members", "add",
 			"--rbac-group-id", "rbac_group_id",
 			"--user-id", "user_01WCz1FkmYMm4gnmykNKUu3Q",
@@ -36,6 +38,7 @@ func TestBetaOrganizationRBACGroupsMembersAdd(t *testing.T) {
 		pipeData := []byte("user_id: user_01WCz1FkmYMm4gnmykNKUu3Q")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:rbac-groups:members", "add",
 			"--rbac-group-id", "rbac_group_id",
 		)
@@ -47,6 +50,7 @@ func TestBetaOrganizationRBACGroupsMembersRemove(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:rbac-groups:members", "remove",
 			"--rbac-group-id", "rbac_group_id",
 			"--user-id", "user_id",

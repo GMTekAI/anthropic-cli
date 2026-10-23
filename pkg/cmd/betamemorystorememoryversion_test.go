@@ -11,6 +11,7 @@ func TestBetaMemoryStoresMemoryVersionsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:memory-stores:memory-versions", "retrieve",
 			"--memory-store-id", "memory_store_id",
 			"--memory-version-id", "memory_version_id",
@@ -26,6 +27,7 @@ func TestBetaMemoryStoresMemoryVersionsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:memory-stores:memory-versions", "list",
 			"--max-items", "10",
 			"--memory-store-id", "memory_store_id",
@@ -50,6 +52,7 @@ func TestBetaMemoryStoresMemoryVersionsRedact(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:memory-stores:memory-versions", "redact",
 			"--memory-store-id", "memory_store_id",
 			"--memory-version-id", "memory_version_id",

@@ -11,6 +11,7 @@ func TestBetaEnvironmentsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments", "create",
 			"--name", "python-data-analysis",
 			"--config", "{type: cloud, networking: {type: limited, allow_mcp_servers: true, allow_package_managers: true, allowed_hosts: [api.example.com]}, packages: {apt: [string], cargo: [string], gem: [string], go: [string], npm: [string], pip: [pandas, numpy], type: packages}}",
@@ -55,6 +56,7 @@ func TestBetaEnvironmentsCreate(t *testing.T) {
 			"scope: organization\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments", "create",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -67,6 +69,7 @@ func TestBetaEnvironmentsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments", "retrieve",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--beta", "message-batches-2024-09-24",
@@ -80,6 +83,7 @@ func TestBetaEnvironmentsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments", "update",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--config", "{type: cloud, networking: {type: limited, allow_mcp_servers: true, allow_package_managers: true, allowed_hosts: [api.example.com]}, packages: {apt: [string], cargo: [string], gem: [string], go: [string], npm: [string], pip: [pandas, numpy], type: packages}}",
@@ -125,6 +129,7 @@ func TestBetaEnvironmentsUpdate(t *testing.T) {
 			"scope: organization\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments", "update",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--beta", "message-batches-2024-09-24",
@@ -138,6 +143,7 @@ func TestBetaEnvironmentsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments", "list",
 			"--max-items", "10",
 			"--include-archived=true",
@@ -154,6 +160,7 @@ func TestBetaEnvironmentsDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments", "delete",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--beta", "message-batches-2024-09-24",
@@ -167,6 +174,7 @@ func TestBetaEnvironmentsArchive(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:environments", "archive",
 			"--environment-id", "env_011CZkZ9X2dpNyB7HsEFoRfW",
 			"--beta", "message-batches-2024-09-24",
