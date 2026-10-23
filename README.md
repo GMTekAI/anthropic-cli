@@ -144,8 +144,8 @@ instead of creating their own copies:
   "version": 1,
   "origin": {
     "base_url": "https://api.anthropic.com",
-    "organization_id": "1a5099b3-3dc8-4f5e-9d27-58cd1e7b40a1",
-    "workspace_id": "wrkspc_01JwQvzn5eR6bTzHkAqzYtGZ"
+    "organization_id": "00000000-0000-0000-0000-000000000000",
+    "workspace_id": "wrkspc_01AbCdEfGhIjKlMnOpQrSt"
   },
   "resources": {
     "./agents/code-reviewer.md": {
