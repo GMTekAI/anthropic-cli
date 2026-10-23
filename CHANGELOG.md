@@ -14,6 +14,7 @@
 
 ### Chores
 
+* bump go sdk to v2.3.0
 * **client:** stop sending query params hardcoded in endpoint paths
 * **docs:** update descriptions of the per-user usage and cost reports
 * **internal:** check the repository by owner and public name in workflows
