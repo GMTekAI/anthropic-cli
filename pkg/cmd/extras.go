@@ -110,22 +110,22 @@ func init() {
 		},
 		&cli.StringFlag{
 			Name:    "google-cloud-project",
-			Usage:   "Google Cloud project ID. Setting this, --google-cloud-location or --google-cloud-workspace-id sends requests to Claude Platform on Google Cloud, signed in with Google Application Default Credentials. Defaults to the credentials' project.",
+			Usage:   "Google Cloud project ID. Setting this, --google-cloud-location or --google-cloud-workspace-id sends requests to Claude Models on Google Cloud (Anthropic managed), signed in with Google Application Default Credentials. Defaults to the credentials' project.",
 			Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_PROJECT"),
 		},
 		&cli.StringFlag{
 			Name:    "google-cloud-location",
-			Usage:   "Google Cloud location for Claude Platform on Google Cloud (default: global).",
+			Usage:   "Google Cloud location for Claude Models on Google Cloud (Anthropic managed). Defaults to global.",
 			Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_LOCATION"),
 		},
 		&cli.StringFlag{
 			Name:    "google-cloud-workspace-id",
-			Usage:   "Workspace ID (wrkspc_...) to address on Claude Platform on Google Cloud. It is part of the gateway URL there, so --workspace-id is not needed.",
+			Usage:   "Workspace ID (wrkspc_...) to address on Claude Models on Google Cloud (Anthropic managed). It is part of the gateway URL there, so --workspace-id is not needed.",
 			Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_WORKSPACE_ID"),
 		},
 		&cli.StringFlag{
 			Name:    "google-cloud-base-url",
-			Usage:   "Override the gateway URL for Claude Platform on Google Cloud, once another --google-cloud-* flag has selected it. Google credentials are sent only here or to the gateway, never to --base-url.",
+			Usage:   "Override the gateway URL for Claude Models on Google Cloud (Anthropic managed), once another --google-cloud-* flag has selected it. Google credentials are sent only here or to the gateway, never to --base-url.",
 			Sources: cli.EnvVars("ANTHROPIC_GOOGLE_CLOUD_BASE_URL"),
 		},
 		&cli.StringFlag{

@@ -65,7 +65,7 @@ ant messages create \
 
 Structured flags accept relaxed JSON or YAML, so unquoted keys are fine.
 
-### Claude Platform on Google Cloud
+### Claude Models on Google Cloud (Anthropic managed)
 
 Sign in with Google and name your workspace; the CLI then sends requests through the Google Cloud gateway and keeps the Google access token fresh:
 

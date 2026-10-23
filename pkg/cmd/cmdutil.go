@@ -80,8 +80,9 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 	//   4. ANTHROPIC_FEDERATION_RULE_ID + ANTHROPIC_ORGANIZATION_ID +
 	//      ANTHROPIC_IDENTITY_TOKEN[_FILE]
 	//   5. --google-cloud-project / --google-cloud-location /
-	//      --google-cloud-workspace-id or their ANTHROPIC_GOOGLE_CLOUD_* env vars
-	//      (Claude Platform on Google Cloud, Google Application Default Credentials)
+	//      --google-cloud-workspace-id or their ANTHROPIC_GOOGLE_CLOUD_* env vars:
+	//      Claude Models on Google Cloud (Anthropic managed), Google Application
+	//      Default Credentials
 	//   6. --aws-workspace-id / --aws-region / --aws-api-key-stdin or
 	//      ANTHROPIC_AWS_WORKSPACE_ID / ANTHROPIC_AWS_API_KEY
 	//      (Claude Platform on AWS, AWS credentials or an AWS API key)
