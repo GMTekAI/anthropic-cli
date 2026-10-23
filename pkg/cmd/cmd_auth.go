@@ -52,9 +52,8 @@ type tokenResponse struct {
 	ExpiresIn    int    `json:"expires_in"`
 	TokenType    string `json:"token_type"`
 	Scope        string `json:"scope"`
-	// Organization, Account, and Workspace come from oauth-server's
-	// token_metadata_extension hook (api/oauth_server/oauth/grants/extensions.py)
-	// on the AuthorizationCode and RefreshToken grants. Workspace is
+	// Organization, Account, and Workspace are returned on the
+	// authorization code and refresh token grants. Workspace is
 	// populated when the authorization was bound to one (either via the
 	// authorize URL workspace_id param or via the Console picker), and
 	// carries the tagged `wrkspc_...` form so it round-trips with the
@@ -275,7 +274,7 @@ func authLogin(ctx context.Context, c *cli.Command) error {
 			params.Set("workspace_id", workspaceID)
 		}
 		if wantOrg != "" {
-			// Console's OAuthConsentPage reads ?orgUUID= and auto-switches to
+			// The consent page reads ?orgUUID= and auto-switches to
 			// that org (skipping the switcher) when the signed-in account is a
 			// member, or shows a no-access error when not. The mismatch guard
 			// below against the token response's organization.uuid remains the
@@ -410,7 +409,7 @@ func authLogin(ctx context.Context, c *cli.Command) error {
 
 	gotOrg := tok.Organization.UUID
 	if wantOrg != "" && gotOrg != "" && wantOrg != gotOrg {
-		// Console's OAuthConsentPage enforces ?orgUUID (auto-switches members,
+		// The consent page enforces ?orgUUID (auto-switches members,
 		// blocks non-members), so a post-exchange mismatch should only happen
 		// if the authorize URL was hand-edited or via a Console bug. Warn and
 		// proceed rather than discarding a valid token.
@@ -1184,10 +1183,8 @@ func readFullCredentials(cfg *config.Config, dir, profile string) (config.Creden
 }
 
 // refreshAccessToken redeems a refresh_token at /v1/oauth/token. Unlike
-// [exchangeCode], this sends a JSON body with the oauth-2025-04-20 beta —
-// the Python oauth-server requires that beta on the refresh_token grant for
-// user_oauth credentials. The federation beta is intentionally absent so the
-// request is not gateway-routed to api-go's jwt-bearer-only handler.
+// [exchangeCode], it sends a JSON body with the oauth-2025-04-20 beta, which
+// this grant requires, and never the federation beta.
 func refreshAccessToken(ctx context.Context, baseURL, clientID, refreshToken string) (*tokenResponse, error) {
 	if err := config.RequireSecureTokenEndpoint(baseURL); err != nil {
 		return nil, err
@@ -1297,16 +1294,9 @@ func waitForCallback(ctx context.Context, listener net.Listener, wantState strin
 }
 
 // exchangeCode redeems an authorization_code at /v1/oauth/token. It uses
-// form-encoding and no anthropic-beta header so the request lands on the
-// Python oauth_server (the established Claude Code path). The
-// oidc-federation-2026-04-01 beta header would route to api-go's userauth
-// handler, which currently only implements the jwt-bearer grant and rejects
-// authorization_code (api-go/core/betagating/interceptor.go).
-//
-// The Python oauth_server's AuthCodeTokenRequest model requires `state` on
-// the token exchange (not just the authorize redirect) as a bound CSRF
-// check across both legs — omitting it returns a 400 with
-// `oauth_request_parse_error`.
+// form encoding and no anthropic-beta header, because the token endpoint
+// rejects this grant with the federation beta. The exchange must repeat
+// `state`; omitting it returns a 400 with `oauth_request_parse_error`.
 func exchangeCode(ctx context.Context, baseURL, clientID, code, verifier, redirectURI, state string, debug bool) (*tokenResponse, error) {
 	if err := config.RequireSecureTokenEndpoint(baseURL); err != nil {
 		return nil, err

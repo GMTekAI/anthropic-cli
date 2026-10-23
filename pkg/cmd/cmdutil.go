@@ -73,9 +73,9 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-	// Credential precedence mirrors the WIF User Guide's "Credential resolution" section:
-	//   1. --api-key-stdin / ANTHROPIC_API_KEY       (doc tiers 1+2)
-	//   2. --auth-token-stdin / ANTHROPIC_AUTH_TOKEN (doc tiers 1+2)
+	// Credential precedence:
+	//   1. --api-key-stdin / ANTHROPIC_API_KEY
+	//   2. --auth-token-stdin / ANTHROPIC_AUTH_TOKEN
 	//   3. profile named by --profile / ANTHROPIC_PROFILE (explicit)
 	//   4. ANTHROPIC_FEDERATION_RULE_ID + ANTHROPIC_ORGANIZATION_ID +
 	//      ANTHROPIC_IDENTITY_TOKEN[_FILE]
@@ -185,7 +185,7 @@ func getDefaultRequestOptions(cmd *cli.Command) []option.RequestOption {
 
 // warnIfMultipleAuthSources emits a one-shot stderr notice when more than one
 // credential source is configured, naming the sources and the precedence
-// winner. No secret values are printed. Order matches the User Guide's
+// winner. No secret values are printed. Order matches the credential
 // precedence (explicit profile beats federation, Google Cloud and AWS;
 // implicit doesn't). apiKeySrc / authTokenSrc are the source labels for those
 // tiers ("" when unset) so a stdin-supplied credential isn't reported as its
@@ -237,8 +237,8 @@ func warnIfMultipleAuthSources(apiKeySrc, authTokenSrc string, profileExplicit, 
 }
 
 // profileIsExplicit reports whether the profile is named by --profile or
-// ANTHROPIC_PROFILE (User Guide tier 3) rather than resolved from
-// active_config / "default" (tier 5). --profile is a global flag (extras.go)
+// ANTHROPIC_PROFILE rather than resolved from
+// active_config / "default". --profile is a global flag (extras.go)
 // with Sources: ANTHROPIC_PROFILE, so IsSet covers both; the LookupEnv branch
 // is a defensive fallback for callers passing a Command not yet Run() (or nil).
 func profileIsExplicit(cmd *cli.Command) bool {

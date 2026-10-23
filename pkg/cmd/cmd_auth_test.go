@@ -157,8 +157,8 @@ func run(t *testing.T, defn *cli.Command, argv ...string) error {
 
 // TestExchangeCodeRequestShape guards the wire format of the
 // authorization_code → token exchange. The spec recommends JSON +
-// anthropic-beta on every token POST, but doing so routes to api-go's
-// jwt-bearer-only handler in prod and 400s. This test fails if someone
+// anthropic-beta on every token POST, but the token endpoint rejects this
+// grant with a 400 when sent that way. This test fails if someone
 // re-applies that recommendation.
 func TestExchangeCodeRequestShape(t *testing.T) {
 	var got struct {
@@ -183,7 +183,7 @@ func TestExchangeCodeRequestShape(t *testing.T) {
 
 	assert.Equal(t, "/v1/oauth/token", got.path)
 	assert.Equal(t, "application/x-www-form-urlencoded", got.contentType)
-	assert.Empty(t, got.beta, "must not send Anthropic-Beta on authorization_code grant (routes to api-go jwt-bearer handler)")
+	assert.Empty(t, got.beta, "must not send Anthropic-Beta on authorization_code grant")
 	assert.Equal(t, url.Values{
 		"grant_type":    {"authorization_code"},
 		"code":          {"code-x"},
@@ -602,8 +602,7 @@ func TestMultiAuthWarningWhenProfileIsNotNextInLine(t *testing.T) {
 
 // TestCredentialPrecedenceFederationVsProfile verifies that federation env
 // vars beat an implicitly-resolved profile (active_config) but lose to an
-// explicitly-named one (ANTHROPIC_PROFILE), per the User Guide's 5-tier
-// precedence.
+// explicitly-named one (ANTHROPIC_PROFILE).
 func TestCredentialPrecedenceFederationVsProfile(t *testing.T) {
 	dir := t.TempDir()
 	t.Setenv("ANTHROPIC_CONFIG_DIR", dir)

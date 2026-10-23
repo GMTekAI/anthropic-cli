@@ -131,9 +131,9 @@ func TestWorkerRunWorkSecretEnvVarAlone(t *testing.T) {
 	assert.Empty(t, workSecret, "the SDK reads ANTHROPIC_WORK_SECRET itself")
 }
 
-// TestWorkerRunOnPremEntrypoint pins the invocation cma-onprem's
-// kubernetes/sandbox/worker.sh uses: ids and base URL from env vars, the
-// secret from ANTHROPIC_WORK_SECRET_FILE, and no environment key anywhere.
+// TestWorkerRunOnPremEntrypoint pins the on-premises invocation: ids and
+// base URL from env vars, the secret from ANTHROPIC_WORK_SECRET_FILE, and no
+// environment key anywhere.
 func TestWorkerRunOnPremEntrypoint(t *testing.T) {
 	clearWorkerEnv(t)
 	t.Setenv("ANTHROPIC_SESSION_ID", "ses_1")
