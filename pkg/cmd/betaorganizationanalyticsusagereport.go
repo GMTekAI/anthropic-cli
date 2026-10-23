@@ -14,7 +14,7 @@ import (
 
 var betaOrganizationAnalyticsUsageReportList = cli.Command{
 	Name:    "list",
-	Usage:   "Get token usage over time across a date range.",
+	Usage:   "[Legacy] Get token usage over time across a date range.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[any]{

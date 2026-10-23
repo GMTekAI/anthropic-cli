@@ -14,7 +14,7 @@ import (
 
 var betaOrganizationAnalyticsUserCostReportList = cli.Command{
 	Name:    "list",
-	Usage:   "Get per-user cost in USD across a date range.",
+	Usage:   "[Legacy] Get per-user cost in USD across a date range.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[any]{
