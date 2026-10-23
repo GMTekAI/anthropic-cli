@@ -1161,6 +1161,6 @@ func generateManpages(ctx context.Context, c *cli.Command) error {
 			return err
 		}
 	}
-	fmt.Printf("Wrote manpages to %s\n", dir)
+	fmt.Fprintf(c.Writer, "Wrote manpages to %s\n", dir)
 	return nil
 }

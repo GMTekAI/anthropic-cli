@@ -96,14 +96,8 @@ func formatJSONArray(result gjson.Result, indent, width int) string {
 }
 
 func formatJSONObject(result gjson.Result, indent, width int) string {
-	keys := result.Get("@keys").Array()
-	if len(keys) == 0 {
-		return nullValueStyle.Render("(empty)")
-	}
-
 	var items []string
-	for _, key := range keys {
-		value := result.Get(key.String())
+	result.ForEach(func(key, value gjson.Result) bool {
 		keyStr := getIndent(indent) + keyStyle.Render(key.String()+":")
 		// If item will be a one-liner, put it inline after the key, otherwise
 		// it starts with a newline and goes below the key.
@@ -114,6 +108,10 @@ func formatJSONObject(result gjson.Result, indent, width int) string {
 		}
 		formattedValue := formatResult(value, indent+1, itemWidth)
 		items = append(items, keyStr+formattedValue)
+		return true
+	})
+	if len(items) == 0 {
+		return nullValueStyle.Render("(empty)")
 	}
 
 	return "\n" + strings.Join(items, "\n")
@@ -123,6 +121,7 @@ func getIndent(indent int) string {
 	return strings.Repeat(" ", indent*tabWidth)
 }
 
+// RenderJSON renders json for reading. Callers make it safe to print with termsafe.JSON.
 func RenderJSON(title string, json gjson.Result) string {
 	width, _, err := term.GetSize(os.Stdout.Fd())
 	if err != nil {

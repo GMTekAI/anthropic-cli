@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.2.1](https://github.com/anthropics/anthropic-cli/compare/v2.2.0...v2.2.1) (2026-10-23)
+
+### Bug Fixes
+
+* **cli:** escape terminal control sequences in rendered output
+
 ## [2.2.0](https://github.com/anthropics/anthropic-cli/compare/v2.1.0...v2.2.0) (2026-10-23)
 
 ### Features

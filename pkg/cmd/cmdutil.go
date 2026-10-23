@@ -489,14 +489,12 @@ func writeBinaryResponse(response *http.Response, stdout io.Writer, outfile stri
 	}
 	switch outfile {
 	case "-", "/dev/stdout":
-		_, err := stdout.Write(body)
-		return "", err
+		return "", writeBody(stdout, body)
 	case "":
 		// If output file is unspecified, then print to stdout for plain text or
 		// if stdout is not a terminal:
 		if !isTerminal(os.Stdout) || isUTF8TextFile(body) {
-			_, err := stdout.Write(body)
-			return "", err
+			return "", writeBody(stdout, body)
 		}
 
 		// If response has a suggested filename in the content-disposition
@@ -527,8 +525,7 @@ func createDownloadFile(response *http.Response, data []byte) (*os.File, error) 
 	_, params, err := mime.ParseMediaType(disp)
 	if err == nil {
 		if dispFilename, ok := params["filename"]; ok {
-			// Only use the last path component to prevent directory traversal
-			filename = filepath.Base(dispFilename)
+			filename = downloadFilename(dispFilename)
 			// Try to create the file with exclusive flag to avoid race conditions
 			file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0644)
 			if err == nil {
@@ -597,26 +594,16 @@ func shouldUseColors(w io.Writer) bool {
 }
 
 func formatJSON(res gjson.Result, opts ShowJSONOpts) ([]byte, error) {
-	if opts.Transform != "" {
-		transformed := res.Get(opts.Transform)
-		if transformed.Exists() {
-			res = transformed
-		}
-	}
+	res = displayedJSON(res, opts)
 	// Modeled after `jq -r` (`--raw-output`): if the result is a string, print it without JSON quotes so that
 	// it's easier to pipe into other programs.
 	if opts.RawOutput && res.Type == gjson.String {
 		return []byte(res.Str + "\n"), nil
 	}
 	switch strings.ToLower(opts.Format) {
-	case "auto":
-		autoOpts := opts
-		autoOpts.Format = "json"
-		autoOpts.Transform = ""
-		return formatJSON(res, autoOpts)
 	case "pretty":
 		return []byte(jsonview.RenderJSON(opts.Title, res) + "\n"), nil
-	case "json":
+	case "auto", "json":
 		prettyJSON := pretty.Pretty([]byte(res.Raw))
 		if shouldUseColors(opts.Stdout) {
 			return pretty.Color(prettyJSON, pretty.TerminalStyle), nil
@@ -687,13 +674,7 @@ func ShowJSON(res gjson.Result, opts ShowJSONOpts) error {
 			jsonOpts.Format = "json"
 			return ShowJSON(res, jsonOpts)
 		}
-		if opts.Transform != "" {
-			transformed := res.Get(opts.Transform)
-			if transformed.Exists() {
-				res = transformed
-			}
-		}
-		return jsonview.ExploreJSON(opts.Title, res)
+		return jsonview.ExploreJSON(opts.Title, displayedJSON(res, opts))
 	default:
 		bytes, err := formatJSON(res, opts)
 		if err != nil {
@@ -714,13 +695,24 @@ type hasRawJSON interface {
 	RawJSON() string
 }
 
+func itemJSON(item any) (gjson.Result, error) {
+	if hasRaw, ok := item.(hasRawJSON); ok {
+		return gjson.Parse(hasRaw.RawJSON()), nil
+	}
+	jsonData, err := json.Marshal(item)
+	if err != nil {
+		return gjson.Result{}, err
+	}
+	return gjson.ParseBytes(jsonData), nil
+}
+
 // ShowJSONIterator displays an iterator of values to the user. Use itemsToDisplay = -1 for no limit.
 func ShowJSONIterator[T any](iter jsonview.Iterator[T], itemsToDisplay int64, opts ShowJSONOpts) error {
 	opts.setDefaults()
 
 	if opts.Format == "explore" {
 		if isTerminal(opts.Stdout) {
-			return jsonview.ExploreJSONStream(opts.Title, iter)
+			return jsonview.ExploreJSONStream[safeItem](opts.Title, &safeIterator[T]{Iterator: iter})
 		}
 		if opts.ExplicitFormat {
 			fmt.Fprint(opts.Stderr, warningExploreNotSupported)
@@ -740,16 +732,9 @@ func ShowJSONIterator[T any](iter jsonview.Iterator[T], itemsToDisplay int64, op
 	numberOfNewlines := 0
 	// -1 is used to signal no limit of items to display
 	for itemsToDisplay != 0 && iter.Next() {
-		item := iter.Current()
-		var obj gjson.Result
-		if hasRaw, ok := any(item).(hasRawJSON); ok {
-			obj = gjson.Parse(hasRaw.RawJSON())
-		} else {
-			jsonData, err := json.Marshal(item)
-			if err != nil {
-				return err
-			}
-			obj = gjson.ParseBytes(jsonData)
+		obj, err := itemJSON(iter.Current())
+		if err != nil {
+			return err
 		}
 		json, err := formatJSON(obj, opts)
 		if err != nil {
@@ -789,16 +774,9 @@ func ShowJSONIterator[T any](iter jsonview.Iterator[T], itemsToDisplay int64, op
 			if itemsToDisplay == 0 {
 				break
 			}
-			item := iter.Current()
-			var obj gjson.Result
-			if hasRaw, ok := any(item).(hasRawJSON); ok {
-				obj = gjson.Parse(hasRaw.RawJSON())
-			} else {
-				jsonData, err := json.Marshal(item)
-				if err != nil {
-					return err
-				}
-				obj = gjson.ParseBytes(jsonData)
+			obj, err := itemJSON(iter.Current())
+			if err != nil {
+				return err
 			}
 			if err := ShowJSON(obj, pagerOpts); err != nil {
 				return err
