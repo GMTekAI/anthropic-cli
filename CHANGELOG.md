@@ -11,6 +11,7 @@
 
 * **client:** stop sending query params hardcoded in endpoint paths
 * **internal:** check the repository by owner and public name in workflows
+* **internal:** read the Go SDK's repo name from a CI variable
 
 ## [2.2.0](https://github.com/anthropics/anthropic-cli/compare/v2.1.0...v2.2.0) (2026-10-23)
 
