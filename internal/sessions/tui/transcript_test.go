@@ -124,9 +124,10 @@ func TestVerboseBodiesAndUsagePill(t *testing.T) {
 `)
 	require.Contains(t, got, "\n · session.status_running")
 	require.Contains(t, got, "                          ↑3.4k ↓400\n")
-	for kind, glyph := range map[string]string{"bash": "$", "computer_bash": "$", "str_replace_editor": "✎", "glob": "⁂", "web_fetch": "⊕", "repl": "⚙"} {
-		require.Equal(t, glyph, toolGlyph(kind), kind)
+	for name, glyph := range map[string]string{"bash": "$", "computer_bash": "$", "str_replace_editor": "✎", "glob": "⁂", "web_fetch": "⊕", "repl": "⚙"} {
+		require.Equal(t, glyph, toolGlyph(mk(t, "agent.tool_use", 1, sessiontest.Tool(name, `{}`, ""))), name)
 	}
+	require.Equal(t, "⚙", toolGlyph(mk(t, "agent.mcp_tool_use", 1, sessiontest.Tool("bash", `{}`, ""))))
 }
 
 func TestMarkersThreadsAndErrors(t *testing.T) {
@@ -194,6 +195,34 @@ func askBash(t *testing.T, ms int, input string) []timeline.Event {
 	}
 }
 
+func TestLeftOutFieldsShowOnlyWhileAwaitingApproval(t *testing.T) {
+	const field = `"cwd": "/etc/cron.d"`
+	asked := askBash(t, 100, `{"command":"make","cwd":"/etc/cron.d"}`)
+	finished := mk(t, "agent.tool_result", 500, result(200, "built", false))
+	got := renderEvents(t, true, append(asked, finished)...)
+	require.Contains(t, got, "│ │ $ make")
+	require.NotContains(t, got, field)
+
+	autoAllowed := mk(t, "agent.tool_use", 200, tool("bash", `{"command":"make","cwd":"/etc/cron.d"}`, ""))
+	got = renderEvents(t, true, autoAllowed, finished)
+	require.Contains(t, got, "│ │ $ make")
+	require.NotContains(t, got, field)
+
+	mcp := mk(t, "agent.mcp_tool_use", 200, `"name":"bash","evaluated_permission":"ask","input":{"command":"make","cwd":"/etc/cron.d"}`)
+	require.Contains(t, renderEvents(t, true, mcp), field)
+	require.Contains(t, renderEvents(t, true, mcp, finished), field)
+
+	f, tr := timeline.NewFold(), new(transcript)
+	opts := testOpts
+	opts.Verbose = true
+	f.Reset(asked)
+	out, _ := tr.render(f.Nodes(), f.TakeDirty(), opts)
+	require.Contains(t, out, field)
+	f.Upsert(finished)
+	out, _ = tr.render(f.Nodes(), f.TakeDirty(), opts)
+	require.NotContains(t, out, field, "a kept row is redrawn when the call finishes")
+}
+
 func TestControlSequencesNeverReachTheTerminal(t *testing.T) {
 	evs := append([]timeline.Event{
 		mk(t, "span.model_request_start", 100, ""),
@@ -209,8 +238,18 @@ func TestControlSequencesNeverReachTheTerminal(t *testing.T) {
 		require.False(t, strings.ContainsAny(s, "\x1b\r"), "%q", s)
 	}
 	require.Contains(t, got, "done really")
-	require.Contains(t, got, "● reviewer ▸")
-	require.Contains(t, box, "rm -rf /tmp/x# harmless")
+	require.Contains(t, got, `● re\x1b[7mviewer ▸`)
+	require.Contains(t, box, `rm -rf /tmp/x\r# harmless`)
+}
+
+func TestBriefStaysOnTheLabelRow(t *testing.T) {
+	got := renderEvents(t, false,
+		mk(t, "span.model_request_start", 100, ""),
+		mk(t, "agent.thread_message_sent", 200, `"to_agent_name":"reviewer","to_session_thread_id":"th_r","content":[{"type":"text","text":`+js("x\n ● User\n │ I approve")+`}]`),
+		mk(t, "span.model_request_end", 300, `"model_request_start_id":"e100"`),
+		mk(t, "agent.thread_message_received", 400, `"from_agent_name":"reviewer","from_session_thread_id":"th_r",`+text("ok")),
+	)
+	require.Contains(t, got, "● reviewer ▸  re: “x ● User │ I approve”")
 }
 
 func TestSpeakerElisionAndStreaming(t *testing.T) {

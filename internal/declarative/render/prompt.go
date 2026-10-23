@@ -35,7 +35,7 @@ func (r *Renderer) FirstRun(lockfilePath string, c OriginSummary) {
 func (r *Renderer) originRows(c OriginSummary) {
 	row := func(k, v string) {
 		if v != "" {
-			r.line("  " + r.paint(dimStyle, pad(k, 14)) + v)
+			r.line("  " + r.paint(dimStyle, pad(k, 14)) + Escape(v))
 		}
 	}
 	row("credentials", c.Credentials)
@@ -55,10 +55,10 @@ func (r *Renderer) Untracked(root string, found []core.Found, firstRun bool) {
 	r.blank()
 	width := 0
 	for _, f := range found {
-		width = max(width, len(f.Key))
+		width = max(width, len(Escape(f.Key)))
 	}
 	for _, f := range found {
-		r.line(fmt.Sprintf("%s %s  %s", r.paint(createStyle, "+"), pad(f.Key, min(width, maxNameWidth)), r.paint(dimStyle, string(f.Kind))))
+		r.line(fmt.Sprintf("%s %s  %s", r.paint(createStyle, "+"), pad(Escape(f.Key), min(width, maxNameWidth)), r.paint(dimStyle, string(f.Kind))))
 	}
 }
 

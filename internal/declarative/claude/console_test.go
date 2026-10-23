@@ -19,4 +19,6 @@ func TestConsoleLinks(t *testing.T) {
 		ConsoleLinks("https://platform.claude.com", "")(KindAgent, "agent_01x"),
 		"no workspace falls back to the Console's default alias")
 	assert.Nil(t, ConsoleLinks("", "wrkspc_01abc"), "no Console, no links")
+	assert.Equal(t, "https://platform.claude.com/workspaces/wrkspc_01abc/agents/agent_%1B%5D0%3Bhi%07", link(KindAgent, "agent_\x1b]0;hi\x07"),
+		"an ID from the lockfile cannot end the renderer's hyperlink escape sequence")
 }

@@ -878,6 +878,22 @@ func init() {
 				},
 			},
 			{
+				Name:     "beta:organization:analytics:usage",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&betaOrganizationAnalyticsUsageList,
+				},
+			},
+			{
+				Name:     "beta:organization:analytics:cost",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&betaOrganizationAnalyticsCostList,
+				},
+			},
+			{
 				Name:     "beta:organization:analytics:usage-report",
 				Category: "API RESOURCE",
 				Suggest:  true,

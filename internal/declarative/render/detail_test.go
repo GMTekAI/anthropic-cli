@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"strings"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/anthropics/anthropic-cli/v2/internal/declarative/core"
 	"github.com/stretchr/testify/assert"
@@ -55,4 +56,11 @@ func TestLongTextShowsTheEditInContext(t *testing.T) {
 		"system": {Kind: core.DiffText, Before: before, After: after},
 	}}, "")
 	assert.NotContains(t, buf.String(), "words…", "verbose keeps the whole text")
+}
+
+// A long value is cut between characters, never inside one.
+func TestElideCutsBetweenCharacters(t *testing.T) {
+	out := elide(quote(strings.Repeat("日本語", 40)), valueWidth)
+	assert.True(t, utf8.ValidString(out))
+	assert.Regexp(t, `^"[日本語]+…[日本語]+"$`, out)
 }

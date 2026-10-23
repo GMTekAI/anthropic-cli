@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"context"
+	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -10,6 +13,7 @@ import (
 	"github.com/anthropics/anthropic-cli/v2/internal/declarative/claude"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v3"
 )
 
 func TestCanPromptRefusesWithoutAHuman(t *testing.T) {
@@ -124,4 +128,27 @@ func buildAnt(t *testing.T) string {
 	out, err := build.CombinedOutput()
 	require.NoError(t, err, "go build: %s", out)
 	return bin
+}
+
+// Errors from apply name files and lockfile entries from the repository, so
+// they print escaped, keep their line breaks and still unwrap.
+func TestApplyErrorEscapesControlCharacters(t *testing.T) {
+	cause := errors.New("cause")
+	err := error(applyError{fmt.Errorf("./agents/a\x1b[2J.md: %w\n  try again", cause)})
+	assert.Equal(t, "./agents/a\\x1b[2J.md: cause\n      try again", err.Error())
+	assert.ErrorIs(t, err, cause)
+
+	forged := applyError{errors.New("./agents/a\nError: forged.md: bad")}
+	assert.Equal(t, "./agents/a\n    Error: forged.md: bad", forged.Error())
+}
+
+// handleApply returns its errors escaped, whichever step they come from.
+func TestHandleApplyEscapesItsError(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "a\x1b[2J.json")
+	require.NoError(t, os.WriteFile(path, []byte("{"), 0o600))
+	cmd := &cli.Command{Flags: []cli.Flag{&cli.StringFlag{Name: "lock-file"}}, Action: handleApply}
+	err := cmd.Run(context.Background(), []string{"apply", "--lock-file", path})
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), `a\x1b[2J.json`)
+	assert.NotContains(t, err.Error(), "\x1b")
 }

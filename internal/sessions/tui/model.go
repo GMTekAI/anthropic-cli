@@ -240,7 +240,7 @@ func (m *model) applyUpdates(batch []live.Update) {
 
 // setSession takes the title and agent name for the status bar.
 func (m *model) setSession(sess *anthropic.BetaManagedAgentsSession) {
-	m.title, m.agent = oneLine(timeline.Sanitize(sess.Title)), oneLine(timeline.Sanitize(sess.Agent.Name))
+	m.title, m.agent = timeline.Name(sess.Title), timeline.Name(sess.Agent.Name)
 	if m.title == "" {
 		m.title = sess.ID
 	}

@@ -225,7 +225,7 @@ var approvalOptions = [...]struct{ label, key string }{
 // naming the first of pendingCount calls and a numbered list with the
 // selected option highlighted.
 func approvalBox(call timeline.ToolCall, pendingCount, selected int, width int) string {
-	head := " " + stWarnBold.Render("Allow tool call?") + "  " + stDim.Render(toolGlyph(call.Use.Name)) + " " +
+	head := " " + stWarnBold.Render("Allow tool call?") + "  " + stDim.Render(toolGlyph(call.Use)) + " " +
 		stBold.Render(timeline.ToolDisplayName(call.Use)) + "  "
 	counter := stDim.Render(fmt.Sprintf("1 of %d", pendingCount))
 	head += clip(timeline.ToolPayloadPreview(call.Use), width-6-lipgloss.Width(head)-lipgloss.Width(counter))

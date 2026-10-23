@@ -5,6 +5,7 @@ import (
 	"cmp"
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 	"unicode/utf8"
 
@@ -35,15 +36,37 @@ type Line struct {
 	Text string
 }
 
-// ToolKind maps a tool name to the built-in whose body renderer applies; "" is unknown.
-func ToolKind(name string) string {
-	switch base := baseName(name); base {
+// ToolKind maps a tool use to the built-in whose layout applies; "" means no
+// built-in layout applies. MCP servers and custom tools choose their own names,
+// so only agent.tool_use events map to a built-in.
+func ToolKind(ev Event) string {
+	if !isBuiltin(ev) {
+		return ""
+	}
+	switch base := baseName(ev.Name); base {
 	case "bash", "read", "write", "glob", "grep", "web_search", "web_fetch":
 		return base
 	case "edit", "text_editor", "str_replace", "str_replace_editor", "multi_edit":
 		return "edit"
 	}
 	return ""
+}
+
+// isBuiltin reports whether ev calls one of the agent's own tools with input a
+// built-in layout can show. Parsers disagree on which of a repeated key wins,
+// so a field picked from such input may not be the one the tool reads.
+func isBuiltin(ev Event) bool {
+	return ev.Type == "agent.tool_use" && !repeatsKey(gjson.Parse(ev.JSON.Input.Raw()))
+}
+
+func repeatsKey(v gjson.Result) bool {
+	seen, repeats := map[string]bool{}, false
+	v.ForEach(func(key, value gjson.Result) bool {
+		repeats = v.IsObject() && seen[key.String()] || (value.IsObject() || value.IsArray()) && repeatsKey(value)
+		seen[key.String()] = true
+		return !repeats
+	})
+	return repeats
 }
 
 // baseName strips the one runtime prefix built-ins arrive under.
@@ -63,8 +86,12 @@ func ToolDisplayName(ev Event) string {
 	if ev.Type == "agent.mcp_tool_use" && ev.MCPServerName != "" {
 		name = ev.MCPServerName + "/" + name
 	}
-	return Sanitize(name)
+	return Name(name)
 }
+
+// Name is a name an agent, server or tool chose for itself: whole, on one
+// line, with hidden characters shown.
+func Name(s string) string { return strings.Join(strings.Fields(Sanitize(showHidden(s))), " ") }
 
 var (
 	previewKeys = []string{"description", "command", "script", "file_path", "path", "query", "url", "pattern"}
@@ -80,20 +107,27 @@ func ToolPreview(ev Event) string { return preview(ev, previewKeys) }
 // own description of it, for places where the user is asked to approve it.
 func ToolPayloadPreview(ev Event) string { return preview(ev, payloadKeys) }
 
+// MCP and custom tools give their fields their own meanings, so their whole
+// input is shown instead of one field.
 func preview(ev Event, keys []string) string {
+	if !isBuiltin(ev) {
+		return oneLine(ev.JSON.Input.Raw())
+	}
 	input := gjson.Parse(ev.JSON.Input.Raw())
 	for _, key := range keys {
-		value := input.Get(key)
-		if value.Type != gjson.String {
-			continue
+		if value := input.Get(key); value.Type == gjson.String {
+			return oneLine(value.String())
 		}
-		oneLine := strings.Join(strings.Fields(Sanitize(value.String())), " ")
-		if runes := []rune(oneLine); len(runes) > previewMaxRunes {
-			return string(runes[:previewMaxRunes]) + "…"
-		}
-		return oneLine
 	}
 	return ""
+}
+
+func oneLine(s string) string {
+	s = Name(s)
+	if runes := []rune(s); len(runes) > previewMaxRunes {
+		return string(runes[:previewMaxRunes]) + "…"
+	}
+	return s
 }
 
 // ToolBody is the expanded view of a call: the user's verdict if any, the
@@ -114,55 +148,11 @@ func toolBody(call ToolCall) []Line {
 			out = append(out, line)
 		}
 	}
-	input := gjson.Parse(call.Use.JSON.Input.Raw())
-	path := firstString(input, "file_path", "path")
-	resultOnlyOnError := false
-
-	switch kind := ToolKind(call.Use.Name); kind {
-	case "bash":
-		out = appendText(out, LineCmd, "$ "+firstString(input, "command"))
-	case "glob":
-		out = append(out, Line{LineCmd, cmp.Or(firstString(input, "pattern"), "(none)")})
-	case "grep":
-		search := cmp.Or(firstString(input, "pattern"), "(none)")
-		if path != "" {
-			search += "  in " + path
-		}
-		out = append(out, Line{LineCmd, search})
-	case "web_search":
-		out = append(out, Line{LineCmd, `"` + cmp.Or(firstString(input, "query"), "(none)") + `"`})
-	case "web_fetch":
-		out = append(out, Line{LineCmd, cmp.Or(firstString(input, "url"), "(none)")})
-		if prompt := firstString(input, "prompt"); prompt != "" {
-			out = append(out, Line{LineCmd, "↳ " + prompt})
-		}
-	case "read", "write", "edit":
-		// text_editor is command-discriminated (view / create / str_replace),
-		// so route by the payload actually present rather than the name.
-		out = append(out, Line{LineMeta, cmp.Or(path, "(no path)")})
-		fileText := firstString(input, "content", "file_text")
-		diff := editDiff(input)
-		switch {
-		case kind == "read":
-		case kind == "write" || fileText != "":
-			out = appendText(out, LineOut, cmp.Or(fileText, "(empty)"))
-			resultOnlyOnError = true
-		case diff != nil:
-			out = append(out, diff...)
-			resultOnlyOnError = true
-		}
-	default:
-		// repl / code_execution runtimes: the payload is source, shown like a command.
-		if code := firstString(input, "script", "code"); code != "" {
-			out = appendText(out, LineCmd, code)
-			break
-		}
-		var pretty bytes.Buffer
-		if input.IsObject() && json.Indent(&pretty, []byte(input.Raw), "", "  ") == nil {
-			out = appendText(out, LineOut, pretty.String())
-		}
+	input, resultOnlyOnError := toolInput(call.Use, call.Lifecycle() == AwaitingApproval)
+	out = append(out, input...)
+	for i := range out {
+		out[i].Text = showHidden(out[i].Text)
 	}
-
 	if call.Result == nil || (resultOnlyOnError && !call.Result.IsError) {
 		return out
 	}
@@ -175,6 +165,121 @@ func toolBody(call ToolCall) []Line {
 		resultKind = LineErr
 	}
 	return appendText(out, resultKind, text)
+}
+
+// toolInput is a call's input in the tool's own idiom, and whether only a failed
+// result is worth showing. A built-in lists the fields its idiom left out only
+// while it awaits approval, when the user's verdict depends on them.
+func toolInput(use Event, awaiting bool) (out []Line, resultOnlyOnError bool) {
+	raw := use.JSON.Input.Raw()
+	if !isBuiltin(use) {
+		return wholeInput(raw), false
+	}
+	input := newFields(gjson.Parse(raw))
+	// A string description counts as shown: it is the model's note about the
+	// call, which the tool does not act on.
+	input.first("description")
+
+	switch kind := ToolKind(use); kind {
+	case "bash":
+		out = appendText(out, LineCmd, "$ "+input.first("command"))
+	case "glob":
+		out = append(out, Line{LineCmd, cmp.Or(input.first("pattern"), "(none)")})
+	case "grep":
+		search := cmp.Or(input.first("pattern"), "(none)")
+		if path := input.first("file_path", "path"); path != "" {
+			search += "  in " + path
+		}
+		out = append(out, Line{LineCmd, search})
+	case "web_search":
+		out = append(out, Line{LineCmd, `"` + cmp.Or(input.first("query"), "(none)") + `"`})
+	case "web_fetch":
+		out = append(out, Line{LineCmd, cmp.Or(input.first("url"), "(none)")})
+		if prompt := input.first("prompt"); prompt != "" {
+			out = append(out, Line{LineCmd, "↳ " + prompt})
+		}
+	case "read", "write", "edit":
+		// text_editor is command-discriminated (view / create / str_replace),
+		// so route by the payload actually present rather than the name.
+		out = append(out, Line{LineMeta, cmp.Or(input.first("file_path", "path"), "(no path)")})
+		if kind == "read" {
+			break
+		}
+		if fileText := input.first("content", "file_text"); kind == "write" || fileText != "" {
+			out = appendText(out, LineOut, cmp.Or(fileText, "(empty)"))
+			if fileText != "" && textLines(fileText) == nil {
+				input.unshow("content", "file_text")
+			}
+			resultOnlyOnError = true
+		} else if diff := editDiff(input); diff != nil {
+			out = append(out, diff...)
+			resultOnlyOnError = true
+		}
+	default:
+		// A built-in call with a script or code field (such as repl or
+		// code_execution) shows that source like a command. Any other shows
+		// its full input as JSON.
+		if code := input.first("script", "code"); code != "" {
+			out = appendText(out, LineCmd, code)
+			break
+		}
+		return wholeInput(raw), false
+	}
+	if awaiting {
+		out = appendText(out, LineOut, strings.Join(input.rest(), "\n"))
+	}
+	return out, resultOnlyOnError
+}
+
+// wholeInput is raw as indented JSON, or as it arrived if it can't be indented.
+func wholeInput(raw string) []Line {
+	var pretty bytes.Buffer
+	if json.Indent(&pretty, []byte(raw), "", "  ") != nil {
+		return appendText(nil, LineOut, raw)
+	}
+	return appendText(nil, LineOut, pretty.String())
+}
+
+// fields picks the input fields a layout shows, remembering them so that the
+// rest can be shown after it.
+type fields struct {
+	value gjson.Result
+	shown map[string]bool
+}
+
+func newFields(value gjson.Result) fields { return fields{value, map[string]bool{}} }
+
+// first is the first of keys holding a non-empty string. An empty string
+// passed over has nothing to show, so it counts as shown.
+func (f fields) first(keys ...string) string {
+	for _, key := range keys {
+		if value := f.value.Get(key); value.Type == gjson.String {
+			f.shown[key] = true
+			if value.String() != "" {
+				return value.String()
+			}
+		}
+	}
+	return ""
+}
+
+// unshow returns keys whose text a layout could not render to rest.
+func (f fields) unshow(keys ...string) {
+	for _, key := range keys {
+		delete(f.shown, key)
+	}
+}
+
+// rest is each field not yet shown, as its raw `"key": value`.
+func (f fields) rest() []string {
+	var out []string
+	f.value.ForEach(func(key, value gjson.Result) bool {
+		if !f.shown[key.String()] {
+			out = append(out, key.Raw+": "+value.Raw)
+		}
+		return true
+	})
+	return out
 }
 
 // confirmationLine is the user's verdict on a tool_confirmation; false when
@@ -192,34 +297,35 @@ func confirmationLine(ev Event) (Line, bool) {
 	return Line{}, false
 }
 
-// firstString is the first of keys holding a non-empty string.
-func firstString(input gjson.Result, keys ...string) string {
-	for _, key := range keys {
-		if value := input.Get(key); value.Type == gjson.String && value.String() != "" {
-			return value.String()
-		}
-	}
-	return ""
-}
-
 // editDiff renders old_str/new_str (either spelling, or multi_edit's edits[])
 // as -/+ lines, keeping shared leading/trailing lines as context. nil when
 // the input carries no edit payload.
-func editDiff(input gjson.Result) []Line {
-	edits := []gjson.Result{input}
-	if list := input.Get("edits"); list.IsArray() {
-		edits = list.Array()
+func editDiff(input fields) []Line {
+	edits := []fields{input}
+	list := input.value.Get("edits")
+	if list.IsArray() {
+		edits = nil
+		for _, edit := range list.Array() {
+			edits = append(edits, newFields(edit))
+		}
 	}
 	var out []Line
 	for _, edit := range edits {
-		oldText, newText := firstString(edit, "old_str", "old_string"), firstString(edit, "new_str", "new_string")
+		oldText, newText := edit.first("old_str", "old_string"), edit.first("new_str", "new_string")
 		if oldText == "" && newText == "" {
 			continue
+		}
+		// textLines drops trailing newlines, so a hunk can't show a change to them.
+		if trailingNewlines(oldText) != trailingNewlines(newText) {
+			edit.unshow("old_str", "old_string", "new_str", "new_string")
 		}
 		if out != nil {
 			out = append(out, Line{LineMeta, "@@"})
 		}
 		out = append(out, hunk(textLines(oldText), textLines(newText))...)
+	}
+	if list.IsArray() && !slices.ContainsFunc(edits, func(edit fields) bool { return len(edit.rest()) > 0 }) {
+		input.shown["edits"] = true
 	}
 	return out
 }
@@ -264,6 +370,8 @@ func textLines(text string) []string {
 	}
 	return strings.Split(text, "\n")
 }
+
+func trailingNewlines(s string) int { return len(s) - len(strings.TrimRight(s, "\n")) }
 
 // Dense truncation caps for tool bodies shown inline in the transcript, matching the web viewer's.
 const (

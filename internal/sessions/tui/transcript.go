@@ -107,9 +107,9 @@ func nodeRows(node timeline.Node, afterTurn bool, opts renderOpts) []string {
 		}
 		return append([]string{"", label}, gutter(stUser, wrapLines(timeline.EventText(node.Event), textWidth))...)
 	case timeline.NodeThreadReceived:
-		label := " " + stPeer.Render("● "+timeline.Sanitize(node.Event.FromAgentName)+" ▸")
+		label := " " + stPeer.Render("● "+timeline.Name(node.Event.FromAgentName)+" ▸")
 		if node.Brief != nil {
-			label += "  " + stDim.Render("re: “"+clip(timeline.EventText(*node.Brief), 60)+"”")
+			label += "  " + stDim.Render("re: “"+clip(oneLine(timeline.EventText(*node.Brief)), 60)+"”")
 		}
 		return append([]string{"", label}, gutter(stPeer, markdown(timeline.EventText(node.Event), textWidth))...)
 	case timeline.NodeInterrupted:
@@ -188,7 +188,7 @@ func blockRows(turn timeline.Node, block timeline.Block, opts renderOpts) []stri
 		}
 		return rows
 	case timeline.BlockThreadSent:
-		head := stPeer.Render("→ @"+timeline.Sanitize(block.Event.ToAgentName)) + "  "
+		head := stPeer.Render("→ @"+timeline.Name(block.Event.ToAgentName)) + "  "
 		return hang(head, wrapLines(timeline.EventText(block.Event), textWidth-lipgloss.Width(head)))
 	case timeline.BlockError:
 		head := stBadgeErr.Render(" Error ") + " "
@@ -238,7 +238,7 @@ func toolRows(call timeline.ToolCall, opts renderOpts) []string {
 	if awaiting {
 		caretStyle, nameStyle, preview = stWarn, stWarnBold, timeline.ToolPayloadPreview
 	}
-	head := caretStyle.Render(caret) + " " + stDim.Render(toolGlyph(call.Use.Name)) + " " + nameStyle.Render(timeline.ToolDisplayName(call.Use)) + "  "
+	head := caretStyle.Render(caret) + " " + stDim.Render(toolGlyph(call.Use)) + " " + nameStyle.Render(timeline.ToolDisplayName(call.Use)) + "  "
 	room := max(rowWidth-lipgloss.Width(head)-lipgloss.Width(state)-2, 1)
 	rows := []string{spread(head+stDim.Render(clip(preview(call.Use), room)), state, rowWidth)}
 
