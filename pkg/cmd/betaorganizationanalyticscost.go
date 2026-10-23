@@ -65,7 +65,7 @@ var betaOrganizationAnalyticsCostList = cli.Command{
 		},
 		&requestflag.Flag[any]{
 			Name:      "ending-at",
-			Usage:     "End of range, exclusive. When omitted, defaults to the earlier of now and `starting_at` + 31 days. The range may span at most 31 days.",
+			Usage:     "End of range, exclusive. Required when `time_bucket_width` is set. Without `time_bucket_width`, defaults to the earlier of now and `starting_at` + 31 days. The range may span at most 31 days.",
 			QueryPath: "ending_at",
 		},
 		&requestflag.Flag[[]string]{
