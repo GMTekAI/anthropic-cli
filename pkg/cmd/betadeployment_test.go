@@ -12,6 +12,7 @@ func TestBetaDeploymentsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:deployments", "create",
 			"--agent", "string",
 			"--environment-id", "x",
@@ -35,6 +36,7 @@ func TestBetaDeploymentsCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:deployments", "create",
 			"--agent", "string",
 			"--environment-id", "x",
@@ -85,6 +87,7 @@ func TestBetaDeploymentsCreate(t *testing.T) {
 			"  - string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:deployments", "create",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -97,6 +100,7 @@ func TestBetaDeploymentsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:deployments", "retrieve",
 			"--deployment-id", "depl_011CZkZcDH3vPqd7xnEfwTai",
 			"--beta", "message-batches-2024-09-24",
@@ -110,6 +114,7 @@ func TestBetaDeploymentsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:deployments", "update",
 			"--deployment-id", "depl_011CZkZcDH3vPqd7xnEfwTai",
 			"--agent", "string",
@@ -134,6 +139,7 @@ func TestBetaDeploymentsUpdate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:deployments", "update",
 			"--deployment-id", "depl_011CZkZcDH3vPqd7xnEfwTai",
 			"--agent", "string",
@@ -185,6 +191,7 @@ func TestBetaDeploymentsUpdate(t *testing.T) {
 			"  - string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:deployments", "update",
 			"--deployment-id", "depl_011CZkZcDH3vPqd7xnEfwTai",
 			"--beta", "message-batches-2024-09-24",
@@ -198,6 +205,7 @@ func TestBetaDeploymentsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:deployments", "list",
 			"--max-items", "10",
 			"--agent-id", "agent_id",
@@ -218,6 +226,7 @@ func TestBetaDeploymentsArchive(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:deployments", "archive",
 			"--deployment-id", "depl_011CZkZcDH3vPqd7xnEfwTai",
 			"--beta", "message-batches-2024-09-24",
@@ -231,6 +240,7 @@ func TestBetaDeploymentsPause(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:deployments", "pause",
 			"--deployment-id", "depl_011CZkZcDH3vPqd7xnEfwTai",
 			"--beta", "message-batches-2024-09-24",
@@ -244,6 +254,7 @@ func TestBetaDeploymentsRun(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:deployments", "run",
 			"--deployment-id", "depl_011CZkZcDH3vPqd7xnEfwTai",
 			"--beta", "message-batches-2024-09-24",
@@ -257,6 +268,7 @@ func TestBetaDeploymentsUnpause(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:deployments", "unpause",
 			"--deployment-id", "depl_011CZkZcDH3vPqd7xnEfwTai",
 			"--beta", "message-batches-2024-09-24",

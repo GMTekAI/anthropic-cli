@@ -11,6 +11,7 @@ func TestBetaOrganizationExternalKeysCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:external-keys", "create",
 			"--provider-config", "{kms_arn: arn:aws:kms:us-east-1:111122223333:key/abcd1234-5678-90ab-cdef-000011112222, type: aws, region: us-east-1, role_arn: arn:aws:iam::111122223333:role/anthropic-cmek}",
 			"--display-name", "x",
@@ -30,6 +31,7 @@ func TestBetaOrganizationExternalKeysCreate(t *testing.T) {
 			"geo: us\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:external-keys", "create",
 		)
 	})
@@ -40,6 +42,7 @@ func TestBetaOrganizationExternalKeysRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:external-keys", "retrieve",
 			"--external-key-id", "external_key_id",
 		)
@@ -51,6 +54,7 @@ func TestBetaOrganizationExternalKeysUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:external-keys", "update",
 			"--external-key-id", "external_key_id",
 			"--display-name", "x",
@@ -71,6 +75,7 @@ func TestBetaOrganizationExternalKeysUpdate(t *testing.T) {
 			"  role_arn: arn:aws:iam::111122223333:role/anthropic-cmek\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:external-keys", "update",
 			"--external-key-id", "external_key_id",
 		)
@@ -82,6 +87,7 @@ func TestBetaOrganizationExternalKeysList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:external-keys", "list",
 			"--max-items", "10",
 			"--limit", "1",
@@ -95,6 +101,7 @@ func TestBetaOrganizationExternalKeysDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:external-keys", "delete",
 			"--external-key-id", "external_key_id",
 		)
@@ -106,6 +113,7 @@ func TestBetaOrganizationExternalKeysValidate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:external-keys", "validate",
 			"--external-key-id", "external_key_id",
 		)

@@ -12,6 +12,7 @@ func TestBetaOrganizationPluginsVersionsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins:versions", "create",
 			"--plugin-id", "plugin_id",
 			"--file", mocktest.TestFile(t, "Example data"),
@@ -31,6 +32,7 @@ func TestBetaOrganizationPluginsVersionsCreate(t *testing.T) {
 		pipeData := []byte(pipeDataStr)
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins:versions", "create",
 			"--plugin-id", "plugin_id",
 			"--beta", "message-batches-2024-09-24",
@@ -43,6 +45,7 @@ func TestBetaOrganizationPluginsVersionsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins:versions", "retrieve",
 			"--plugin-id", "plugin_id",
 			"--version", "version",
@@ -57,6 +60,7 @@ func TestBetaOrganizationPluginsVersionsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins:versions", "list",
 			"--max-items", "10",
 			"--plugin-id", "plugin_id",
@@ -73,6 +77,7 @@ func TestBetaOrganizationPluginsVersionsDownload(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins:versions", "download",
 			"--plugin-id", "plugin_id",
 			"--version", "version",

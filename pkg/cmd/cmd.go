@@ -1084,6 +1084,48 @@ func init() {
 				},
 			},
 			{
+				Name:     "beta:organization:claude-tag:slack-channels",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&betaOrganizationClaudeTagSlackChannelsCreate,
+					&betaOrganizationClaudeTagSlackChannelsRetrieve,
+					&betaOrganizationClaudeTagSlackChannelsUpdate,
+					&betaOrganizationClaudeTagSlackChannelsList,
+					&betaOrganizationClaudeTagSlackChannelsDelete,
+				},
+			},
+			{
+				Name:     "beta:organization:claude-tag:slack-workspaces",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&betaOrganizationClaudeTagSlackWorkspacesRetrieve,
+					&betaOrganizationClaudeTagSlackWorkspacesUpdate,
+					&betaOrganizationClaudeTagSlackWorkspacesList,
+				},
+			},
+			{
+				Name:     "beta:organization:claude-tag:bundles",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&betaOrganizationClaudeTagBundlesRetrieve,
+					&betaOrganizationClaudeTagBundlesList,
+				},
+			},
+			{
+				Name:     "beta:organization:claude-tag:bundles:targets",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&betaOrganizationClaudeTagBundlesTargetsCreate,
+					&betaOrganizationClaudeTagBundlesTargetsRetrieve,
+					&betaOrganizationClaudeTagBundlesTargetsList,
+					&betaOrganizationClaudeTagBundlesTargetsDelete,
+				},
+			},
+			{
 				Name:            "@manpages",
 				Usage:           "Generate documentation for 'man'",
 				UsageText:       "ant @manpages [-o ant.1] [--gzip]",
@@ -1161,6 +1203,6 @@ func generateManpages(ctx context.Context, c *cli.Command) error {
 			return err
 		}
 	}
-	fmt.Printf("Wrote manpages to %s\n", dir)
+	fmt.Fprintf(c.Writer, "Wrote manpages to %s\n", dir)
 	return nil
 }

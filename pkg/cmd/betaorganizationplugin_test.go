@@ -12,6 +12,7 @@ func TestBetaOrganizationPluginsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins", "create",
 			"--file", mocktest.TestFile(t, "Example data"),
 			"--marketplace-id", "marketplace_id",
@@ -32,6 +33,7 @@ func TestBetaOrganizationPluginsCreate(t *testing.T) {
 		pipeData := []byte(pipeDataStr)
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins", "create",
 			"--beta", "message-batches-2024-09-24",
 		)
@@ -43,6 +45,7 @@ func TestBetaOrganizationPluginsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins", "retrieve",
 			"--plugin-id", "plugin_id",
 			"--organization-id", "organization_id",
@@ -56,6 +59,7 @@ func TestBetaOrganizationPluginsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins", "update",
 			"--plugin-id", "plugin_id",
 			"--served-version-id", "pluginver_01KaZmQpRsTuVwXyZ2b4c6d8",
@@ -68,6 +72,7 @@ func TestBetaOrganizationPluginsUpdate(t *testing.T) {
 		pipeData := []byte("served_version_id: pluginver_01KaZmQpRsTuVwXyZ2b4c6d8")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins", "update",
 			"--plugin-id", "plugin_id",
 			"--beta", "message-batches-2024-09-24",
@@ -80,6 +85,7 @@ func TestBetaOrganizationPluginsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins", "list",
 			"--max-items", "10",
 			"--created-at-gt", "'2019-12-27T18:11:19.117Z'",
@@ -102,6 +108,7 @@ func TestBetaOrganizationPluginsDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins", "delete",
 			"--plugin-id", "plugin_id",
 			"--beta", "message-batches-2024-09-24",

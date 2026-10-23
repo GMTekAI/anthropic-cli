@@ -11,6 +11,7 @@ func TestBetaOrganizationPluginsInstallationSettingsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins:installation-settings", "list",
 			"--max-items", "10",
 			"--plugin-id", "plugin_id",
@@ -28,6 +29,7 @@ func TestBetaOrganizationPluginsInstallationSettingsRemove(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins:installation-settings", "remove",
 			"--plugin-id", "plugin_id",
 			"--target", "target",
@@ -41,6 +43,7 @@ func TestBetaOrganizationPluginsInstallationSettingsSet(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins:installation-settings", "set",
 			"--plugin-id", "plugin_id",
 			"--target", "target",
@@ -54,6 +57,7 @@ func TestBetaOrganizationPluginsInstallationSettingsSet(t *testing.T) {
 		pipeData := []byte("installation_preference: required")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:plugins:installation-settings", "set",
 			"--plugin-id", "plugin_id",
 			"--target", "target",

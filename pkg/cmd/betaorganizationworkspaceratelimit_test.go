@@ -12,6 +12,7 @@ func TestBetaOrganizationWorkspacesRateLimitsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces:rate-limits", "update",
 			"--workspace-id", "workspace_id",
 			"--rate-limit-id", "rate_limit_id",
@@ -26,6 +27,7 @@ func TestBetaOrganizationWorkspacesRateLimitsUpdate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces:rate-limits", "update",
 			"--workspace-id", "workspace_id",
 			"--rate-limit-id", "rate_limit_id",
@@ -42,6 +44,7 @@ func TestBetaOrganizationWorkspacesRateLimitsUpdate(t *testing.T) {
 			"    value: 0\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces:rate-limits", "update",
 			"--workspace-id", "workspace_id",
 			"--rate-limit-id", "rate_limit_id",
@@ -54,6 +57,7 @@ func TestBetaOrganizationWorkspacesRateLimitsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces:rate-limits", "list",
 			"--max-items", "10",
 			"--workspace-id", "workspace_id",

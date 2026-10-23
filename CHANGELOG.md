@@ -1,5 +1,31 @@
 # Changelog
 
+## [2.3.0](https://github.com/anthropics/anthropic-cli/compare/v2.2.0...v2.3.0) (2026-10-23)
+
+### Features
+
+* **api:** add Claude Tag endpoints for Claude Enterprise organizations
+
+
+### Bug Fixes
+
+* **cli:** escape terminal control sequences in rendered output
+
+
+### Chores
+
+* bump go sdk to v2.3.0
+* **client:** stop sending query params hardcoded in endpoint paths
+* **docs:** update descriptions of the per-user usage and cost reports
+* **internal:** check the repository by owner and public name in workflows
+* **internal:** read the Go SDK's repo name from a CI variable
+* **internal:** remove preview build upload from CI
+
+
+### Documentation
+
+* update the README and the example request
+
 ## [2.2.0](https://github.com/anthropics/anthropic-cli/compare/v2.1.0...v2.2.0) (2026-10-23)
 
 ### Features
@@ -22,6 +48,11 @@
 * bump go sdk to v2.2.0
 * **ci:** update the runner label for internal CI jobs
 * **docs:** fix usage and cost report examples and ending_at docs
+
+
+### Documentation
+
+* **google-cloud:** update the product name
 
 ## [2.1.0](https://github.com/anthropics/anthropic-cli/compare/v2.0.0...v2.1.0) (2026-10-21)
 

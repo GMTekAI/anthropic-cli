@@ -11,6 +11,7 @@ func TestBetaOrganizationComplianceSettingsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:compliance-settings", "retrieve",
 		)
 	})
@@ -21,6 +22,7 @@ func TestBetaOrganizationComplianceSettingsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:compliance-settings", "update",
 			"--state", "{type: enabled}",
 		)
@@ -33,6 +35,7 @@ func TestBetaOrganizationComplianceSettingsUpdate(t *testing.T) {
 			"  type: enabled\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:compliance-settings", "update",
 		)
 	})

@@ -11,6 +11,7 @@ func TestBetaOrganizationWebhooksCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:webhooks", "create",
 			"--enabled-event", "user_profile.enforcement_action_opened",
 			"--url", "x",
@@ -30,6 +31,7 @@ func TestBetaOrganizationWebhooksCreate(t *testing.T) {
 			"name: name\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:webhooks", "create",
 			"--beta", "message-batches-2024-09-24",
 		)
@@ -41,6 +43,7 @@ func TestBetaOrganizationWebhooksRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:webhooks", "retrieve",
 			"--webhook-endpoint-id", "webhook_endpoint_id",
 			"--beta", "message-batches-2024-09-24",
@@ -53,6 +56,7 @@ func TestBetaOrganizationWebhooksUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:webhooks", "update",
 			"--webhook-endpoint-id", "webhook_endpoint_id",
 			"--description", "description",
@@ -75,6 +79,7 @@ func TestBetaOrganizationWebhooksUpdate(t *testing.T) {
 			"url: x\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:webhooks", "update",
 			"--webhook-endpoint-id", "webhook_endpoint_id",
 			"--beta", "message-batches-2024-09-24",
@@ -87,6 +92,7 @@ func TestBetaOrganizationWebhooksList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:webhooks", "list",
 			"--max-items", "10",
 			"--after-id", "after_id",
@@ -103,6 +109,7 @@ func TestBetaOrganizationWebhooksDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:webhooks", "delete",
 			"--webhook-endpoint-id", "webhook_endpoint_id",
 			"--beta", "message-batches-2024-09-24",
@@ -115,6 +122,7 @@ func TestBetaOrganizationWebhooksRegenerateSigningSecret(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:webhooks", "regenerate-signing-secret",
 			"--webhook-endpoint-id", "webhook_endpoint_id",
 			"--beta", "message-batches-2024-09-24",

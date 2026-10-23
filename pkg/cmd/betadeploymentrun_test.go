@@ -11,6 +11,7 @@ func TestBetaDeploymentRunsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:deployment-runs", "retrieve",
 			"--deployment-run-id", "deployment_run_id",
 			"--beta", "message-batches-2024-09-24",
@@ -24,6 +25,7 @@ func TestBetaDeploymentRunsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:deployment-runs", "list",
 			"--max-items", "10",
 			"--created-at-gt", "'2019-12-27T18:11:19.117Z'",

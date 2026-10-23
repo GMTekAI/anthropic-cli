@@ -12,6 +12,7 @@ func TestBetaMemoryStoresMemoriesCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:memory-stores:memories", "create",
 			"--memory-store-id", "memory_store_id",
 			"--content", "content",
@@ -29,6 +30,7 @@ func TestBetaMemoryStoresMemoriesCreate(t *testing.T) {
 			"path: xx\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:memory-stores:memories", "create",
 			"--memory-store-id", "memory_store_id",
 			"--view", "basic",
@@ -43,6 +45,7 @@ func TestBetaMemoryStoresMemoriesRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:memory-stores:memories", "retrieve",
 			"--memory-store-id", "memory_store_id",
 			"--memory-id", "memory_id",
@@ -58,6 +61,7 @@ func TestBetaMemoryStoresMemoriesUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:memory-stores:memories", "update",
 			"--memory-store-id", "memory_store_id",
 			"--memory-id", "memory_id",
@@ -77,6 +81,7 @@ func TestBetaMemoryStoresMemoriesUpdate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:memory-stores:memories", "update",
 			"--memory-store-id", "memory_store_id",
 			"--memory-id", "memory_id",
@@ -100,6 +105,7 @@ func TestBetaMemoryStoresMemoriesUpdate(t *testing.T) {
 			"  content_sha256: content_sha256\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:memory-stores:memories", "update",
 			"--memory-store-id", "memory_store_id",
 			"--memory-id", "memory_id",
@@ -115,6 +121,7 @@ func TestBetaMemoryStoresMemoriesList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:memory-stores:memories", "list",
 			"--max-items", "10",
 			"--memory-store-id", "memory_store_id",
@@ -134,6 +141,7 @@ func TestBetaMemoryStoresMemoriesDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:memory-stores:memories", "delete",
 			"--memory-store-id", "memory_store_id",
 			"--memory-id", "memory_id",

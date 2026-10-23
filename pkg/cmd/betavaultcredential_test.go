@@ -11,6 +11,7 @@ func TestBetaVaultsCredentialsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:vaults:credentials", "create",
 			"--vault-id", "vlt_011CZkZDLs7fYzm1hXNPeRjv",
 			"--auth", "{token: bearer_exampletoken, mcp_server_url: https://example-server.modelcontextprotocol.io/sse, type: static_bearer}",
@@ -33,6 +34,7 @@ func TestBetaVaultsCredentialsCreate(t *testing.T) {
 			"  environment: production\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:vaults:credentials", "create",
 			"--vault-id", "vlt_011CZkZDLs7fYzm1hXNPeRjv",
 			"--beta", "message-batches-2024-09-24",
@@ -46,6 +48,7 @@ func TestBetaVaultsCredentialsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:vaults:credentials", "retrieve",
 			"--vault-id", "vlt_011CZkZDLs7fYzm1hXNPeRjv",
 			"--credential-id", "vcrd_011CZkZEMt8gZan2iYPQfSkw",
@@ -60,6 +63,7 @@ func TestBetaVaultsCredentialsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:vaults:credentials", "update",
 			"--vault-id", "vlt_011CZkZDLs7fYzm1hXNPeRjv",
 			"--credential-id", "vcrd_011CZkZEMt8gZan2iYPQfSkw",
@@ -89,6 +93,7 @@ func TestBetaVaultsCredentialsUpdate(t *testing.T) {
 			"  environment: production\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:vaults:credentials", "update",
 			"--vault-id", "vlt_011CZkZDLs7fYzm1hXNPeRjv",
 			"--credential-id", "vcrd_011CZkZEMt8gZan2iYPQfSkw",
@@ -103,6 +108,7 @@ func TestBetaVaultsCredentialsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:vaults:credentials", "list",
 			"--max-items", "10",
 			"--vault-id", "vlt_011CZkZDLs7fYzm1hXNPeRjv",
@@ -120,6 +126,7 @@ func TestBetaVaultsCredentialsDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:vaults:credentials", "delete",
 			"--vault-id", "vlt_011CZkZDLs7fYzm1hXNPeRjv",
 			"--credential-id", "vcrd_011CZkZEMt8gZan2iYPQfSkw",
@@ -134,6 +141,7 @@ func TestBetaVaultsCredentialsArchive(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:vaults:credentials", "archive",
 			"--vault-id", "vlt_011CZkZDLs7fYzm1hXNPeRjv",
 			"--credential-id", "vcrd_011CZkZEMt8gZan2iYPQfSkw",
@@ -148,6 +156,7 @@ func TestBetaVaultsCredentialsMCPOAuthValidate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:vaults:credentials", "mcp-oauth-validate",
 			"--vault-id", "vlt_011CZkZDLs7fYzm1hXNPeRjv",
 			"--credential-id", "vcrd_011CZkZEMt8gZan2iYPQfSkw",

@@ -11,6 +11,7 @@ func TestBetaOrganizationTelemetryDestinationsWorkspacesList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:telemetry-destinations:workspaces", "list",
 			"--max-items", "10",
 			"--destination-id", "destination_id",
@@ -26,6 +27,7 @@ func TestBetaOrganizationTelemetryDestinationsWorkspacesAdd(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:telemetry-destinations:workspaces", "add",
 			"--destination-id", "destination_id",
 			"--workspace-id", "workspace_id",
@@ -39,6 +41,7 @@ func TestBetaOrganizationTelemetryDestinationsWorkspacesRemove(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:telemetry-destinations:workspaces", "remove",
 			"--destination-id", "destination_id",
 			"--workspace-id", "workspace_id",

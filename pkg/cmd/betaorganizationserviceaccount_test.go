@@ -11,6 +11,7 @@ func TestBetaOrganizationServiceAccountsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:service-accounts", "create",
 			"--name", "ci-deploy-bot",
 			"--description", "description",
@@ -27,6 +28,7 @@ func TestBetaOrganizationServiceAccountsCreate(t *testing.T) {
 			"organization_role: admin\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:service-accounts", "create",
 			"--beta", "message-batches-2024-09-24",
 		)
@@ -38,6 +40,7 @@ func TestBetaOrganizationServiceAccountsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:service-accounts", "retrieve",
 			"--service-account-id", "service_account_id",
 			"--beta", "message-batches-2024-09-24",
@@ -50,6 +53,7 @@ func TestBetaOrganizationServiceAccountsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:service-accounts", "update",
 			"--service-account-id", "service_account_id",
 			"--description", "description",
@@ -65,6 +69,7 @@ func TestBetaOrganizationServiceAccountsUpdate(t *testing.T) {
 			"organization_role: admin\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:service-accounts", "update",
 			"--service-account-id", "service_account_id",
 			"--beta", "message-batches-2024-09-24",
@@ -77,6 +82,7 @@ func TestBetaOrganizationServiceAccountsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:service-accounts", "list",
 			"--max-items", "10",
 			"--include-archived=true",
@@ -92,6 +98,7 @@ func TestBetaOrganizationServiceAccountsArchive(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:service-accounts", "archive",
 			"--service-account-id", "service_account_id",
 			"--beta", "message-batches-2024-09-24",

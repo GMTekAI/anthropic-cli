@@ -12,6 +12,7 @@ func TestBetaOrganizationWorkspacesCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces", "create",
 			"--name", "x",
 			"--data-residency", "{allowed_inference_geos: unrestricted, default_inference_geo: global, workspace_geo: us}",
@@ -29,6 +30,7 @@ func TestBetaOrganizationWorkspacesCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces", "create",
 			"--name", "x",
 			"--data-residency.allowed-inference-geos", "unrestricted",
@@ -56,6 +58,7 @@ func TestBetaOrganizationWorkspacesCreate(t *testing.T) {
 			"  team: platform\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces", "create",
 			"--beta", "message-batches-2024-09-24",
 		)
@@ -67,6 +70,7 @@ func TestBetaOrganizationWorkspacesRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces", "retrieve",
 			"--workspace-id", "workspace_id",
 		)
@@ -78,6 +82,7 @@ func TestBetaOrganizationWorkspacesUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces", "update",
 			"--workspace-id", "workspace_id",
 			"--data-residency", "{allowed_inference_geos: unrestricted, default_inference_geo: global}",
@@ -95,6 +100,7 @@ func TestBetaOrganizationWorkspacesUpdate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces", "update",
 			"--workspace-id", "workspace_id",
 			"--data-residency.allowed-inference-geos", "unrestricted",
@@ -120,6 +126,7 @@ func TestBetaOrganizationWorkspacesUpdate(t *testing.T) {
 			"  team: platform\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces", "update",
 			"--workspace-id", "workspace_id",
 		)
@@ -131,6 +138,7 @@ func TestBetaOrganizationWorkspacesList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces", "list",
 			"--max-items", "10",
 			"--after-id", "after_id",
@@ -147,6 +155,7 @@ func TestBetaOrganizationWorkspacesArchive(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:workspaces", "archive",
 			"--workspace-id", "workspace_id",
 		)

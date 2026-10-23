@@ -12,6 +12,7 @@ func TestBetaOrganizationTelemetryDestinationsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:telemetry-destinations", "create",
 			"--endpoint-url", "x",
 			"--workspaces", "{type: all}",
@@ -29,6 +30,7 @@ func TestBetaOrganizationTelemetryDestinationsCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:telemetry-destinations", "create",
 			"--endpoint-url", "x",
 			"--workspaces", "{type: all}",
@@ -58,6 +60,7 @@ func TestBetaOrganizationTelemetryDestinationsCreate(t *testing.T) {
 			"  max_content_bytes: 0\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:telemetry-destinations", "create",
 			"--beta", "message-batches-2024-09-24",
 		)
@@ -69,6 +72,7 @@ func TestBetaOrganizationTelemetryDestinationsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:telemetry-destinations", "retrieve",
 			"--destination-id", "destination_id",
 			"--beta", "message-batches-2024-09-24",
@@ -81,6 +85,7 @@ func TestBetaOrganizationTelemetryDestinationsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:telemetry-destinations", "update",
 			"--destination-id", "destination_id",
 			"--display-name", "display_name",
@@ -100,6 +105,7 @@ func TestBetaOrganizationTelemetryDestinationsUpdate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:telemetry-destinations", "update",
 			"--destination-id", "destination_id",
 			"--display-name", "display_name",
@@ -133,6 +139,7 @@ func TestBetaOrganizationTelemetryDestinationsUpdate(t *testing.T) {
 			"  type: all\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:telemetry-destinations", "update",
 			"--destination-id", "destination_id",
 			"--beta", "message-batches-2024-09-24",
@@ -145,6 +152,7 @@ func TestBetaOrganizationTelemetryDestinationsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:telemetry-destinations", "list",
 			"--max-items", "10",
 			"--limit", "0",
@@ -160,6 +168,7 @@ func TestBetaOrganizationTelemetryDestinationsDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:telemetry-destinations", "delete",
 			"--destination-id", "destination_id",
 			"--beta", "message-batches-2024-09-24",
@@ -172,6 +181,7 @@ func TestBetaOrganizationTelemetryDestinationsTest(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:telemetry-destinations", "test",
 			"--destination-id", "destination_id",
 			"--beta", "message-batches-2024-09-24",

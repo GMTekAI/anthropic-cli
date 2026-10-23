@@ -11,6 +11,7 @@ func TestBetaOrganizationAnalyticsCostReportList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:analytics:cost-report", "list",
 			"--max-items", "10",
 			"--starting-at", "'2019-12-27T18:11:19.117Z'",

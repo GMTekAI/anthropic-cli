@@ -11,6 +11,7 @@ func TestBetaAgentsVersionsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:agents:versions", "list",
 			"--max-items", "10",
 			"--agent-id", "agent_011CZkYpogX7uDKUyvBTophP",

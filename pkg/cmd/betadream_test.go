@@ -11,6 +11,7 @@ func TestBetaDreamsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:dreams", "create",
 			"--input", "{memory_store_id: x, type: memory_store}",
 			"--model", "string",
@@ -33,6 +34,7 @@ func TestBetaDreamsCreate(t *testing.T) {
 			"  type: create_new\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:dreams", "create",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -45,6 +47,7 @@ func TestBetaDreamsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:dreams", "retrieve",
 			"--dream-id", "dream_id",
 			"--beta", "message-batches-2024-09-24",
@@ -58,6 +61,7 @@ func TestBetaDreamsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:dreams", "list",
 			"--max-items", "10",
 			"--created-at-gt", "'2019-12-27T18:11:19.117Z'",
@@ -77,6 +81,7 @@ func TestBetaDreamsArchive(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:dreams", "archive",
 			"--dream-id", "dream_id",
 			"--beta", "message-batches-2024-09-24",
@@ -90,6 +95,7 @@ func TestBetaDreamsCancel(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:dreams", "cancel",
 			"--dream-id", "dream_id",
 			"--beta", "message-batches-2024-09-24",

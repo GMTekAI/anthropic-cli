@@ -2,10 +2,12 @@ package cmd
 
 import (
 	"bytes"
+	"encoding/json"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -43,6 +45,31 @@ func TestWriteBinaryResponse(t *testing.T) {
 		content, err := os.ReadFile(outfile)
 		require.NoError(t, err)
 		assert.Equal(t, body, content)
+	})
+
+	t.Run("download message escapes the server's filename", func(t *testing.T) {
+		t.Chdir(t.TempDir())
+		stdoutIsTerminal(t)
+		resp := &http.Response{
+			Header: http.Header{"Content-Disposition": []string{"attachment; filename=\"a\x1b]52;c;aGVsbG8=\x07b.bin\""}},
+			Body:   io.NopCloser(bytes.NewReader([]byte{0, 1, 2, 3})),
+		}
+
+		msg, err := writeBinaryResponse(resp, io.Discard, "")
+
+		require.NoError(t, err)
+		assert.Equal(t, `Wrote output to: a\x1b]52;c;aGVsbG8=\ab.bin`, msg)
+	})
+
+	t.Run("text body on a terminal is escaped", func(t *testing.T) {
+		stdoutIsTerminal(t)
+		var buf bytes.Buffer
+		resp := &http.Response{Body: io.NopCloser(strings.NewReader("one\x1b[2J\ntwo"))}
+
+		_, err := writeBinaryResponse(resp, &buf, "")
+
+		require.NoError(t, err)
+		assert.Equal(t, `one\x1b[2J`+"\ntwo", buf.String())
 	})
 
 	t.Run("write to stdout", func(t *testing.T) {
@@ -96,6 +123,19 @@ func TestCreateDownloadFile(t *testing.T) {
 		require.NoError(t, err)
 		defer file.Close()
 		assert.Contains(t, filepath.Base(file.Name()), "file-")
+	})
+
+	t.Run("escapes control sequences in the filename", func(t *testing.T) {
+		t.Chdir(t.TempDir())
+
+		resp := &http.Response{
+			Header: http.Header{"Content-Disposition": []string{"attachment; filename=\"a\x1b]52;c;aGVsbG8=\x07b.bin\""}},
+		}
+		file, err := createDownloadFile(resp, []byte("test content"))
+		require.NoError(t, err)
+		defer file.Close()
+
+		assert.Equal(t, `a\x1b]52;c;aGVsbG8=\ab.bin`, filepath.Base(file.Name()))
 	})
 
 	t.Run("prevents directory traversal", func(t *testing.T) {
@@ -219,6 +259,298 @@ func TestFormatJSON(t *testing.T) {
 		formatted, err := formatJSON(res, ShowJSONOpts{Format: "raw", Stdout: os.Stdout, Transform: "nested", RawOutput: true})
 		require.NoError(t, err)
 		require.Equal(t, `{"a":1}`+"\n", string(formatted))
+	})
+}
+
+// stdoutIsTerminal stands a pty master in for os.Stdout, which also makes any writer count as feeding the pager.
+func stdoutIsTerminal(t *testing.T) {
+	t.Helper()
+
+	pty := openTerminal(t)
+	realStdout := os.Stdout
+	os.Stdout = pty
+	t.Cleanup(func() { os.Stdout = realStdout })
+}
+
+func openTerminal(t *testing.T) *os.File {
+	t.Helper()
+
+	pty, err := os.OpenFile("/dev/ptmx", os.O_RDWR, 0)
+	if err != nil {
+		t.Skipf("no pty available: %v", err)
+	}
+	t.Cleanup(func() { pty.Close() })
+	return pty
+}
+
+// showToFile runs ShowJSON with a file as Stdout, so that what it writes can be read back.
+func showToFile(t *testing.T, res gjson.Result, opts ShowJSONOpts) string {
+	t.Helper()
+
+	f, err := os.CreateTemp(t.TempDir(), "out")
+	require.NoError(t, err)
+	defer f.Close()
+	opts.Stdout = f
+
+	require.NoError(t, ShowJSON(res, opts))
+
+	written, err := os.ReadFile(f.Name())
+	require.NoError(t, err)
+	return string(written)
+}
+
+// Forms of an OSC 52 clipboard write: JSON-encoded, raw, as the visible text it becomes, and that text as JSON.
+const (
+	encodedOSC52     = `\u001b]52;c;aGVsbG8=\u0007`
+	rawOSC52         = "\x1b]52;c;aGVsbG8=\x07"
+	escapedOSC52     = `\x1b]52;c;aGVsbG8=\a`
+	jsonEscapedOSC52 = `\\x1b]52;c;aGVsbG8=\\a`
+)
+
+func assertNoLiveControls(t *testing.T, got string) {
+	t.Helper()
+
+	assert.NotContains(t, got, "\x1b]52")
+	assert.NotContains(t, got, "\x1b[2J")
+	assert.NotContains(t, got, "\x07")
+	assert.NotContains(t, got, "\u009b")
+	assert.NotContains(t, got, "\u202e")
+}
+
+func TestShowJSONWhenRenderingToTerminal(t *testing.T) {
+	tests := []struct {
+		name   string
+		format string
+		body   string
+		want   string
+	}{
+		{"JSONEncodedEscape", "json", `{"a":"` + encodedOSC52 + `"}`, jsonEscapedOSC52},
+		{"JSONRawBEL", "json", `{"a":"` + rawOSC52 + `"}`, jsonEscapedOSC52},
+		{"JSONRawST", "json", "{\"a\":\"\x1b]52;c;aGVsbG8=\x1b\\\\\"}", `\\x1b]52;c;aGVsbG8=\\x1b\\`},
+		{"JSONRawCSI", "json", "{\"a\":\"\x1b[2J\"}", `\\x1b[2J`},
+		{"JSONRawC1", "json", "{\"a\":\"\u009b2J\"}", `\\u009b2J`},
+		{"JSONLoneEscape", "json", "{\"a\":\"\x1bx\"}", `\\x1bx`},
+		{"JSONLRawBEL", "jsonl", `{"a":"` + rawOSC52 + `"}`, jsonEscapedOSC52},
+		{"RawRawBEL", "raw", `{"a":"` + rawOSC52 + `"}`, jsonEscapedOSC52},
+		{"RawRawC1", "raw", "{\"a\":\"\u009b2J\"}", `\\u009b2J`},
+		{"PrettyEncodedEscape", "pretty", `{"a":"` + encodedOSC52 + `"}`, escapedOSC52},
+		{"PrettyRawBEL", "pretty", `{"a":"` + rawOSC52 + `"}`, escapedOSC52},
+		{"YAMLRawBEL", "yaml", `{"a":"` + rawOSC52 + `"}`, escapedOSC52},
+		{"YAMLEncodedC1", "yaml", `{"a":"\u009b2J"}`, `\u009b2J`},
+		{"YAMLEncodedBidi", "yaml", `{"a":"\u202e"}`, `\u202e`},
+		{"YAMLCRLFWhitespace", "yaml", "{\"a\":1,\r\n\"b\":2}", "b: 2"},
+		{"RawCRLFWhitespace", "raw", "{\"a\":1,\r\n\"b\":2}", "{\"a\":1, \n\"b\":2}"},
+		{"JSONLCRLFWhitespace", "jsonl", "{\"a\":1,\r\n\"b\":2}", `{"a":1,"b":2}`},
+		{"JSONInvalidEscapeBeforeRaw", "json", `{"a":"\q` + rawOSC52 + `"}`, `\\q` + jsonEscapedOSC52},
+		{"PrettyInvalidEscapeAfterEncoded", "pretty", `{"a":"` + encodedOSC52 + `\q"}`, escapedOSC52},
+		{"RawUnterminatedString", "raw", `{"a":"` + rawOSC52, jsonEscapedOSC52},
+		{"PrettyUnterminatedString", "pretty", `"` + encodedOSC52, escapedOSC52},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			stdoutIsTerminal(t)
+
+			got := showToFile(t, gjson.Parse(test.body), ShowJSONOpts{Format: test.format})
+
+			assertNoLiveControls(t, got)
+			assert.Contains(t, got, test.want)
+		})
+	}
+
+	t.Run("StdoutOptionIsTheTerminal", func(t *testing.T) {
+		t.Parallel()
+
+		res := gjson.Parse(`{"a":"` + rawOSC52 + `"}`)
+
+		formatted, err := formatJSON(res, ShowJSONOpts{Format: "raw", Stdout: openTerminal(t)})
+
+		require.NoError(t, err)
+		assert.Equal(t, `{"a":"`+jsonEscapedOSC52+`"}`+"\n", string(formatted))
+	})
+
+	t.Run("JSONStaysValid", func(t *testing.T) {
+		stdoutIsTerminal(t)
+		body := "{\"a\":\"x\u009by\\n\u202e世界\"}"
+
+		got := showToFile(t, gjson.Parse(body), ShowJSONOpts{Format: "json"})
+
+		assert.True(t, json.Valid([]byte(got)))
+		assert.Equal(t, `x\u009by`+"\n"+`\u202e世界`, gjson.Get(got, "a").Str)
+	})
+
+	t.Run("CleanJSONKeepsItsValues", func(t *testing.T) {
+		stdoutIsTerminal(t)
+		body := `{"a":"line\n\ttwo 世界 \"q\" \\"}`
+
+		got := showToFile(t, gjson.Parse(body), ShowJSONOpts{Format: "raw"})
+
+		assert.Equal(t, body+"\n", got)
+	})
+
+	t.Run("RawOutputString", func(t *testing.T) {
+		stdoutIsTerminal(t)
+		res := gjson.Parse(`{"id":"héllo` + encodedOSC52 + `\n\tline \"two\""}`)
+
+		got := showToFile(t, res, ShowJSONOpts{Format: "json", Transform: "id", RawOutput: true})
+
+		assert.Equal(t, `héllo`+escapedOSC52+"\n\tline \"two\"\n", got)
+	})
+
+	t.Run("RawOutputStringWithInvalidEscape", func(t *testing.T) {
+		stdoutIsTerminal(t)
+		res := gjson.Parse(`{"id":"` + encodedOSC52 + `\q"}`)
+
+		got := showToFile(t, res, ShowJSONOpts{Format: "json", Transform: "id", RawOutput: true})
+
+		assertNoLiveControls(t, got)
+		assert.Contains(t, got, escapedOSC52)
+	})
+
+	t.Run("TransformThatDecodesAStringIntoJSON", func(t *testing.T) {
+		stdoutIsTerminal(t)
+		res := gjson.Parse(`{"a":"\"\\u001b]52;c;aGVsbG8=\\u0007\""}`)
+
+		got := showToFile(t, res, ShowJSONOpts{Format: "pretty", Transform: "a.@fromstr"})
+
+		assertNoLiveControls(t, got)
+		assert.Contains(t, got, escapedOSC52)
+	})
+}
+
+// Goes over OutputFormats, so a format added there is covered without changing this test.
+func TestShowJSONOfEveryFormatIsSafeOnATerminal(t *testing.T) {
+	body := `{"k` + encodedOSC52 + `":["` + encodedOSC52 + `","` + rawOSC52 + "\u009b\u202e\"]}"
+
+	for _, format := range OutputFormats {
+		t.Run(format, func(t *testing.T) {
+			stdoutIsTerminal(t)
+
+			got := showToFile(t, gjson.Parse(body), ShowJSONOpts{Format: format, Stderr: io.Discard, Title: "Result"})
+
+			assertNoLiveControls(t, got)
+			assert.Contains(t, got, `x1b]52;c;aGVsbG8=`)
+		})
+	}
+}
+
+func TestShowJSONIteratorWithForcedColor(t *testing.T) {
+	t.Setenv("FORCE_COLOR", "1")
+	iter := &sliceIterator[map[string]any]{items: []map[string]any{{"a": rawOSC52}}}
+
+	got := captureShowJSONIterator(t, iter, "raw", "", -1)
+
+	assertNoLiveControls(t, got)
+	assert.Contains(t, got, jsonEscapedOSC52)
+}
+
+// main passes an API error's raw body to ShowJSON in the format of --format-error.
+func TestShowJSONOfAPIErrorBody(t *testing.T) {
+	body := `{"type":"error","error":{"message":"denied ` + encodedOSC52 + ` and ` + rawOSC52 + `"}}`
+
+	tests := []struct {
+		format string
+		want   string
+	}{
+		{"auto", jsonEscapedOSC52},
+		{"explore", jsonEscapedOSC52},
+		{"json", jsonEscapedOSC52},
+		{"jsonl", jsonEscapedOSC52},
+		{"pretty", escapedOSC52},
+		{"raw", jsonEscapedOSC52},
+		{"yaml", escapedOSC52},
+	}
+	for _, test := range tests {
+		t.Run(test.format, func(t *testing.T) {
+			stdoutIsTerminal(t)
+
+			got := showToFile(t, gjson.Parse(body), ShowJSONOpts{Format: test.format, Stderr: io.Discard, Title: "Error"})
+
+			assertNoLiveControls(t, got)
+			assert.Contains(t, got, test.want)
+		})
+	}
+}
+
+func TestShowJSONWithForcedColor(t *testing.T) {
+	hostile := `{"a":"` + rawOSC52 + "\u009b2J\"}"
+
+	tests := []struct {
+		name string
+		opts ShowJSONOpts
+		want string
+	}{
+		{"JSON", ShowJSONOpts{Format: "json"}, `\u009b`},
+		{"JSONL", ShowJSONOpts{Format: "jsonl"}, `\u009b`},
+		{"Raw", ShowJSONOpts{Format: "raw"}, jsonEscapedOSC52 + `\\u009b2J`},
+		{"RawOutputString", ShowJSONOpts{Format: "json", Transform: "a", RawOutput: true}, escapedOSC52 + `\u009b2J`},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Setenv("FORCE_COLOR", "1")
+
+			got := showToFile(t, gjson.Parse(hostile), test.opts)
+
+			assertNoLiveControls(t, got)
+			assert.Contains(t, got, test.want)
+		})
+	}
+}
+
+func TestShowJSONWhenPiped(t *testing.T) {
+	t.Parallel()
+
+	if shouldUseColors(os.Stdout) || isTerminal(os.Stdout) {
+		t.Skip("a terminal on the test's own stdout or FORCE_COLOR=1 counts as rendering to one")
+	}
+
+	hostile := `{"a":"` + rawOSC52 + "\u009b\"}"
+
+	t.Run("RawIsByteExact", func(t *testing.T) {
+		t.Parallel()
+
+		got := showToFile(t, gjson.Parse(hostile), ShowJSONOpts{Format: "raw"})
+
+		assert.Equal(t, hostile+"\n", got)
+	})
+
+	t.Run("JSONLIsByteExact", func(t *testing.T) {
+		t.Parallel()
+
+		got := showToFile(t, gjson.Parse(hostile), ShowJSONOpts{Format: "jsonl"})
+
+		assert.Equal(t, hostile+"\n", got)
+	})
+
+	t.Run("RawOutputStringIsByteExact", func(t *testing.T) {
+		t.Parallel()
+
+		res := gjson.Parse(`{"id":"a\u001b[31m\tb"}`)
+
+		got := showToFile(t, res, ShowJSONOpts{Format: "json", Transform: "id", RawOutput: true})
+
+		assert.Equal(t, "a\x1b[31m\tb\n", got)
+	})
+
+	t.Run("BinaryResponseIsByteExact", func(t *testing.T) {
+		t.Parallel()
+
+		body := "one\x1b[2J\ntwo"
+		var buf bytes.Buffer
+		resp := &http.Response{Body: io.NopCloser(strings.NewReader(body))}
+
+		_, err := writeBinaryResponse(resp, &buf, "")
+
+		require.NoError(t, err)
+		assert.Equal(t, body, buf.String())
+	})
+
+	t.Run("PrettyIsStillEscaped", func(t *testing.T) {
+		t.Parallel()
+
+		got := showToFile(t, gjson.Parse(hostile), ShowJSONOpts{Format: "pretty"})
+
+		assertNoLiveControls(t, got)
+		assert.Contains(t, got, escapedOSC52)
 	})
 }
 

@@ -8,6 +8,7 @@ import (
 	"os"
 	"slices"
 
+	"github.com/anthropics/anthropic-cli/v2/internal/termsafe"
 	"github.com/anthropics/anthropic-cli/v2/pkg/cmd"
 	"github.com/anthropics/anthropic-sdk-go/v2"
 	"github.com/tidwall/gjson"
@@ -23,7 +24,7 @@ func main() {
 
 	if baseURL, ok := os.LookupEnv("ANTHROPIC_BASE_URL"); ok {
 		if err := cmd.ValidateBaseURL(baseURL, "ANTHROPIC_BASE_URL"); err != nil {
-			fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+			fmt.Fprintf(termsafe.Stderr, "%s\n", err.Error())
 			os.Exit(1)
 		}
 	}
@@ -38,7 +39,7 @@ func main() {
 
 		var apierr *anthropic.Error
 		if errors.As(err, &apierr) {
-			fmt.Fprintf(os.Stderr, "%s %q: %d %s\n", apierr.Request.Method, apierr.Request.URL, apierr.Response.StatusCode, http.StatusText(apierr.Response.StatusCode))
+			fmt.Fprintf(termsafe.Stderr, "%s %q: %d %s\n", apierr.Request.Method, apierr.Request.URL, apierr.Response.StatusCode, http.StatusText(apierr.Response.StatusCode))
 			format := app.String("format-error")
 			json := gjson.Parse(apierr.RawJSON())
 			show_err := cmd.ShowJSON(json, cmd.ShowJSONOpts{
@@ -49,13 +50,13 @@ func main() {
 			})
 			if show_err != nil {
 				// Just print the original error:
-				fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+				fmt.Fprintf(termsafe.Stderr, "%s\n", err.Error())
 			}
 		} else {
 			if cmd.CommandErrorBuffer.Len() > 0 {
-				os.Stderr.Write(cmd.CommandErrorBuffer.Bytes())
+				termsafe.Stderr.Write(cmd.CommandErrorBuffer.Bytes())
 			} else {
-				fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+				fmt.Fprintf(termsafe.Stderr, "%s\n", err.Error())
 			}
 		}
 		os.Exit(exitCode)

@@ -12,6 +12,7 @@ func TestBetaSkillsVersionsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:skills:versions", "create",
 			"--skill-id", "skill_id",
 			"--file", mocktest.TestFile(t, "Example data"),
@@ -30,6 +31,7 @@ func TestBetaSkillsVersionsCreate(t *testing.T) {
 		pipeData := []byte(pipeDataStr)
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:skills:versions", "create",
 			"--skill-id", "skill_id",
 			"--beta", "message-batches-2024-09-24",
@@ -43,6 +45,7 @@ func TestBetaSkillsVersionsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:skills:versions", "retrieve",
 			"--skill-id", "skill_id",
 			"--version", "version",
@@ -57,6 +60,7 @@ func TestBetaSkillsVersionsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:skills:versions", "list",
 			"--max-items", "10",
 			"--skill-id", "skill_id",
@@ -73,6 +77,7 @@ func TestBetaSkillsVersionsDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:skills:versions", "delete",
 			"--skill-id", "skill_id",
 			"--version", "version",
@@ -87,6 +92,7 @@ func TestBetaSkillsVersionsDownload(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:skills:versions", "download",
 			"--skill-id", "skill_id",
 			"--version", "version",

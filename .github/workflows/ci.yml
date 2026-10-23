@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  GOPRIVATE: github.com/anthropics/anthropic-sdk-go/v2,github.com/anthropics/anthropic-sdk-go-private/v2
+  GOPRIVATE: github.com/anthropics/anthropic-sdk-go/v2,github.com/anthropics/*
 
 jobs:
   lint:
@@ -39,11 +39,12 @@ jobs:
         with:
           app-id: ${{ vars.GO_PRIVATE_READER_APP_ID }}
           private-key: ${{ secrets.GO_PRIVATE_READER_PRIVATE_KEY }}
+          go-staging-repo: ${{ vars.GO_STAGING_REPO }}
 
       # A branch with no Go SDK branch of its own builds against the Go SDK branch of its PR's base.
       # With more than one open PR from the branch there is no single base, so none is used.
       - name: Find the PR's base branch
-        if: github.repository == 'anthropics/anthropic-sdk-cli-private'
+        if: github.repository_owner == 'anthropics' && github.repository != 'anthropics/anthropic-cli'
         id: pr-base
         env:
           GH_TOKEN: ${{ github.token }}
@@ -53,12 +54,13 @@ jobs:
           echo "ref=${BASE_REF}" >> "$GITHUB_OUTPUT"
 
       - name: Link staging branch
-        if: github.repository == 'anthropics/anthropic-sdk-cli-private'
+        if: github.repository_owner == 'anthropics' && github.repository != 'anthropics/anthropic-cli'
         env:
           REF_NAME: ${{ github.ref_name }}
           BASE_REF: ${{ steps.pr-base.outputs.ref }}
+          GO_STAGING_REPO: ${{ vars.GO_STAGING_REPO }}
         run: |
-          if ! ./scripts/link "github.com/anthropics/anthropic-sdk-go-private/v2@${REF_NAME}" ${BASE_REF:+"github.com/anthropics/anthropic-sdk-go-private/v2@${BASE_REF}"}; then
+          if ! ./scripts/link "github.com/anthropics/${GO_STAGING_REPO}/v2@${REF_NAME}" ${BASE_REF:+"github.com/anthropics/${GO_STAGING_REPO}/v2@${BASE_REF}"}; then
             echo "::warning::Could not link the Go SDK at ${REF_NAME}${BASE_REF:+ or ${BASE_REF}}, so this build uses the Go SDK version in go.mod"
           fi
 
@@ -84,11 +86,12 @@ jobs:
         with:
           app-id: ${{ vars.GO_PRIVATE_READER_APP_ID }}
           private-key: ${{ secrets.GO_PRIVATE_READER_PRIVATE_KEY }}
+          go-staging-repo: ${{ vars.GO_STAGING_REPO }}
 
       # A branch with no Go SDK branch of its own builds against the Go SDK branch of its PR's base.
       # With more than one open PR from the branch there is no single base, so none is used.
       - name: Find the PR's base branch
-        if: github.repository == 'anthropics/anthropic-sdk-cli-private'
+        if: github.repository_owner == 'anthropics' && github.repository != 'anthropics/anthropic-cli'
         id: pr-base
         env:
           GH_TOKEN: ${{ github.token }}
@@ -98,12 +101,13 @@ jobs:
           echo "ref=${BASE_REF}" >> "$GITHUB_OUTPUT"
 
       - name: Link staging branch
-        if: github.repository == 'anthropics/anthropic-sdk-cli-private'
+        if: github.repository_owner == 'anthropics' && github.repository != 'anthropics/anthropic-cli'
         env:
           REF_NAME: ${{ github.ref_name }}
           BASE_REF: ${{ steps.pr-base.outputs.ref }}
+          GO_STAGING_REPO: ${{ vars.GO_STAGING_REPO }}
         run: |
-          if ! ./scripts/link "github.com/anthropics/anthropic-sdk-go-private/v2@${REF_NAME}" ${BASE_REF:+"github.com/anthropics/anthropic-sdk-go-private/v2@${BASE_REF}"}; then
+          if ! ./scripts/link "github.com/anthropics/${GO_STAGING_REPO}/v2@${REF_NAME}" ${BASE_REF:+"github.com/anthropics/${GO_STAGING_REPO}/v2@${BASE_REF}"}; then
             echo "::warning::Could not link the Go SDK at ${REF_NAME}${BASE_REF:+ or ${BASE_REF}}, so this build uses the Go SDK version in go.mod"
           fi
 
@@ -134,25 +138,6 @@ jobs:
         env:
           GOCACHE: ${{ runner.temp }}/go-build-cache
         run: find "$GOCACHE" -mindepth 2 -maxdepth 2 -mmin +90 -exec rm -rf {} +
-
-      - name: Get GitHub OIDC Token
-        if: |-
-          github.repository == 'anthropics/anthropic-sdk-cli-private' &&
-          !startsWith(github.ref, 'refs/heads/stl/')
-        id: github-oidc
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
-        with:
-          script: core.setOutput('github_token', await core.getIDToken());
-
-      - name: Upload tarball
-        if: |-
-          github.repository == 'anthropics/anthropic-sdk-cli-private' &&
-          !startsWith(github.ref, 'refs/heads/stl/')
-        env:
-          URL: https://pkg.stainless.com/s
-          AUTH: ${{ steps.github-oidc.outputs.github_token }}
-          SHA: ${{ github.sha }}
-        run: ./scripts/utils/upload-artifact.sh
 
       - name: Upload ant-darwin-arm64
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -217,11 +202,12 @@ jobs:
         with:
           app-id: ${{ vars.GO_PRIVATE_READER_APP_ID }}
           private-key: ${{ secrets.GO_PRIVATE_READER_PRIVATE_KEY }}
+          go-staging-repo: ${{ vars.GO_STAGING_REPO }}
 
       # A branch with no Go SDK branch of its own builds against the Go SDK branch of its PR's base.
       # With more than one open PR from the branch there is no single base, so none is used.
       - name: Find the PR's base branch
-        if: github.repository == 'anthropics/anthropic-sdk-cli-private'
+        if: github.repository_owner == 'anthropics' && github.repository != 'anthropics/anthropic-cli'
         id: pr-base
         env:
           GH_TOKEN: ${{ github.token }}
@@ -231,12 +217,13 @@ jobs:
           echo "ref=${BASE_REF}" >> "$GITHUB_OUTPUT"
 
       - name: Link staging branch
-        if: github.repository == 'anthropics/anthropic-sdk-cli-private'
+        if: github.repository_owner == 'anthropics' && github.repository != 'anthropics/anthropic-cli'
         env:
           REF_NAME: ${{ github.ref_name }}
           BASE_REF: ${{ steps.pr-base.outputs.ref }}
+          GO_STAGING_REPO: ${{ vars.GO_STAGING_REPO }}
         run: |
-          if ! ./scripts/link "github.com/anthropics/anthropic-sdk-go-private/v2@${REF_NAME}" ${BASE_REF:+"github.com/anthropics/anthropic-sdk-go-private/v2@${BASE_REF}"}; then
+          if ! ./scripts/link "github.com/anthropics/${GO_STAGING_REPO}/v2@${REF_NAME}" ${BASE_REF:+"github.com/anthropics/${GO_STAGING_REPO}/v2@${BASE_REF}"}; then
             echo "::warning::Could not link the Go SDK at ${REF_NAME}${BASE_REF:+ or ${BASE_REF}}, so this build uses the Go SDK version in go.mod"
           fi
 

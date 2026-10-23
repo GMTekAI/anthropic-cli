@@ -12,6 +12,7 @@ func TestBetaUserProfilesCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:user-profiles", "create",
 			"--access-type", "application",
 			"--external-id", "x",
@@ -31,6 +32,7 @@ func TestBetaUserProfilesCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:user-profiles", "create",
 			"--access-type", "application",
 			"--external-id", "x",
@@ -67,6 +69,7 @@ func TestBetaUserProfilesCreate(t *testing.T) {
 			"name: Example User\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:user-profiles", "create",
 			"--beta", "message-batches-2024-09-24",
 			"--workspace-id", "wrkspc_011CZkZaBF1tNoB5wlCeusgy",
@@ -79,6 +82,7 @@ func TestBetaUserProfilesRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:user-profiles", "retrieve",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--beta", "message-batches-2024-09-24",
@@ -92,6 +96,7 @@ func TestBetaUserProfilesUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:user-profiles", "update",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--access-type", "application",
@@ -112,6 +117,7 @@ func TestBetaUserProfilesUpdate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:user-profiles", "update",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--access-type", "application",
@@ -150,6 +156,7 @@ func TestBetaUserProfilesUpdate(t *testing.T) {
 			"name: x\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:user-profiles", "update",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--beta", "message-batches-2024-09-24",
@@ -163,6 +170,7 @@ func TestBetaUserProfilesList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:user-profiles", "list",
 			"--max-items", "10",
 			"--limit", "0",
@@ -180,6 +188,7 @@ func TestBetaUserProfilesDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:user-profiles", "delete",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--beta", "message-batches-2024-09-24",
@@ -193,6 +202,7 @@ func TestBetaUserProfilesCreateEnrollmentURL(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:user-profiles", "create-enrollment-url",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--beta", "message-batches-2024-09-24",

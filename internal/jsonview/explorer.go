@@ -9,6 +9,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/anthropics/anthropic-cli/v2/internal/termsafe"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
@@ -157,7 +159,7 @@ func (tv *TableView) loadMoreData(raw bool) tea.Cmd {
 
 		obj := tv.iterator.Current()
 		var result gjson.Result
-		if jsonBytes, err := json.Marshal(obj); err != nil {
+		if jsonBytes, err := marshalItem(obj); err != nil {
 			return err
 		} else {
 			result = gjson.ParseBytes(jsonBytes)
@@ -176,10 +178,7 @@ func (tv *TableView) loadMoreData(raw bool) tea.Cmd {
 
 		// For array of objects, we need to format according to columns
 		if len(tv.columns) > 1 && result.IsObject() {
-			newRow = make(table.Row, len(tv.columns))
-			for i, col := range tv.columns {
-				newRow[i] = formatValue(result.Get(col.Title), raw)
-			}
+			newRow = objectRow(result, tv.columns, raw)
 		}
 
 		rows := tv.table.Rows()
@@ -293,7 +292,7 @@ type JSONViewer struct {
 	help    help.Model
 }
 
-// ExploreJSON explores a single JSON value known ahead of time
+// ExploreJSON explores a single JSON value known ahead of time. Callers make it safe to print with termsafe.JSON.
 func ExploreJSON(title string, json gjson.Result) error {
 	view, err := newView("", json, false)
 	if err != nil {
@@ -304,7 +303,7 @@ func ExploreJSON(title string, json gjson.Result) error {
 
 	_, err = tea.NewProgram(viewer).Run()
 	if viewer.message != "" {
-		_, msgErr := fmt.Println("\n" + viewer.message)
+		_, msgErr := fmt.Fprintln(termsafe.Stdout, "\n"+viewer.message)
 		err = errors.Join(err, msgErr)
 	}
 	return err
@@ -314,7 +313,8 @@ type hasRawJSON interface {
 	RawJSON() string
 }
 
-// ExploreJSONStream explores JSON data loaded incrementally via an iterator
+// ExploreJSONStream explores JSON data loaded incrementally via an iterator. Its items must marshal to JSON that is
+// safe to print.
 func ExploreJSONStream[T any](title string, it Iterator[T]) error {
 	anyIt := genericToAnyIterator(it)
 
@@ -351,7 +351,7 @@ func ExploreJSONStream[T any](title string, it Iterator[T]) error {
 	viewer := &JSONViewer{stack: []JSONView{view}, root: title, rawMode: false, help: help.New()}
 	_, err = tea.NewProgram(viewer).Run()
 	if viewer.message != "" {
-		_, msgErr := fmt.Println("\n" + viewer.message)
+		_, msgErr := fmt.Fprintln(termsafe.Stdout, "\n"+viewer.message)
 		err = errors.Join(err, msgErr)
 	}
 	return err
@@ -365,19 +365,22 @@ func marshalItemsToJSONArray(items []any) ([]byte, error) {
 		if i > 0 {
 			buf.WriteByte(',')
 		}
-		if hasRaw, ok := item.(hasRawJSON); ok {
-			buf.WriteString(hasRaw.RawJSON())
-		} else {
-			jsonData, err := json.Marshal(item)
-			if err != nil {
-				return nil, err
-			}
-			buf.Write(jsonData)
+		jsonData, err := marshalItem(item)
+		if err != nil {
+			return nil, err
 		}
+		buf.Write(jsonData)
 	}
 
 	buf.WriteByte(']')
 	return buf.Bytes(), nil
+}
+
+func marshalItem(item any) ([]byte, error) {
+	if hasRaw, ok := item.(hasRawJSON); ok {
+		return []byte(hasRaw.RawJSON()), nil
+	}
+	return json.Marshal(item)
 }
 
 func (v *JSONViewer) current() JSONView { return v.stack[len(v.stack)-1] }
@@ -615,11 +618,7 @@ func newArrayOfObjectsTableView(path string, data gjson.Result, array []gjson.Re
 	rowData := make([]gjson.Result, 0, len(array))
 
 	for _, item := range array {
-		row := make(table.Row, len(columns))
-		for i, col := range columns {
-			row[i] = formatValue(item.Get(col.Title), raw)
-		}
-		rows = append(rows, row)
+		rows = append(rows, objectRow(item, columns, raw))
 		rowData = append(rowData, item)
 	}
 
@@ -633,19 +632,27 @@ func newArrayOfObjectsTableView(path string, data gjson.Result, array []gjson.Re
 	}
 }
 
+// objectRow looks its cells up by exact key, because a key can hold characters that are special in a gjson path.
+func objectRow(item gjson.Result, columns []table.Column, raw bool) table.Row {
+	fields := item.Map()
+	row := make(table.Row, len(columns))
+	for i, col := range columns {
+		row[i] = formatValue(fields[col.Title], raw)
+	}
+	return row
+}
+
 func newObjectTableView(path string, data gjson.Result, raw bool) *TableView {
 	columns := []table.Column{{Title: "Object"}, {}}
 
-	keys := data.Get("@keys").Array()
-	rows := make([]table.Row, 0, len(keys))
-	rowData := make([]gjson.Result, 0, len(keys))
+	var rows []table.Row
+	var rowData []gjson.Result
 
-	for _, key := range keys {
-		value := data.Get(key.Str)
-		title := key.Str
-		rows = append(rows, table.Row{title, formatValue(value, raw)})
+	data.ForEach(func(key, value gjson.Result) bool {
+		rows = append(rows, table.Row{formatValue(key, false), formatValue(value, raw)})
 		rowData = append(rowData, value)
-	}
+		return true
+	})
 
 	// Adjust column widths based on content
 	for _, row := range rows {
@@ -689,7 +696,12 @@ func createTable(columns []table.Column, rows []table.Row, bgColor lipgloss.Colo
 	return t
 }
 
+// formatValue returns the text of a table cell, which has to stay on one line.
 func formatValue(value gjson.Result, raw bool) string {
+	return termsafe.Escape(cellText(value, raw))
+}
+
+func cellText(value gjson.Result, raw bool) string {
 	if raw {
 		return value.Get("@ugly").Raw
 	}
@@ -707,13 +719,11 @@ func formatValue(value gjson.Result, raw bool) string {
 }
 
 func formatObject(value gjson.Result) string {
-	keys := value.Get("@keys").Array()
-	keyStrs := make([]string, len(keys))
-
-	for i, key := range keys {
-		val := value.Get(key.Str)
-		keyStrs[i] = formatObjectKey(key.Str, val)
-	}
+	var keyStrs []string
+	value.ForEach(func(key, val gjson.Result) bool {
+		keyStrs = append(keyStrs, formatObjectKey(key.Str, val))
+		return true
+	})
 
 	return "{" + strings.Join(keyStrs, ", ") + "}"
 }

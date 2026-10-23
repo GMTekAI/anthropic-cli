@@ -12,6 +12,7 @@ func TestBetaUserProfilesActionURLsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:user-profiles:action-urls", "create",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--action", "{type: enroll_end_user}",
@@ -27,6 +28,7 @@ func TestBetaUserProfilesActionURLsCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:user-profiles:action-urls", "create",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--action.type", "enroll_end_user",
@@ -42,6 +44,7 @@ func TestBetaUserProfilesActionURLsCreate(t *testing.T) {
 			"  type: enroll_end_user\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:user-profiles:action-urls", "create",
 			"--user-profile-id", "uprof_011CZkZCu8hGbp5mYRQgUmz9",
 			"--beta", "message-batches-2024-09-24",

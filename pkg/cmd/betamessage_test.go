@@ -12,6 +12,7 @@ func TestBetaMessagesCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:messages", "create",
 			"--max-items", "10",
 			"--max-tokens", "1024",
@@ -51,6 +52,7 @@ func TestBetaMessagesCreate(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:messages", "create",
 			"--max-items", "10",
 			"--max-tokens", "1024",
@@ -220,6 +222,7 @@ func TestBetaMessagesCreate(t *testing.T) {
 			"    type: custom\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:messages", "create",
 			"--max-items", "10",
 			"--beta", "message-batches-2024-09-24",
@@ -234,6 +237,7 @@ func TestBetaMessagesCountTokens(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:messages", "count-tokens",
 			"--message", "{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user}",
 			"--model", "claude-opus-5-5",
@@ -261,6 +265,7 @@ func TestBetaMessagesCountTokens(t *testing.T) {
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:messages", "count-tokens",
 			"--message", "{content: [{text: x, type: text, cache_control: {type: ephemeral, ttl: 5m}, citations: [{cited_text: The grass is green. The sky is blue., document_index: 0, document_title: x, end_char_index: 0, start_char_index: 0, type: char_location}]}], role: user}",
 			"--model", "claude-opus-5-5",
@@ -398,6 +403,7 @@ func TestBetaMessagesCountTokens(t *testing.T) {
 			"    type: custom\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:messages", "count-tokens",
 			"--beta", "message-batches-2024-09-24",
 			"--user-profile-id", "anthropic-user-profile-id",

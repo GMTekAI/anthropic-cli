@@ -11,6 +11,7 @@ func TestBetaOrganizationRBACRolesPermissionsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:organization:rbac-roles:permissions", "list",
 			"--max-items", "10",
 			"--rbac-role-id", "rbac_role_id",

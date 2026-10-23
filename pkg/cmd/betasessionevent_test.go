@@ -11,6 +11,7 @@ func TestBetaSessionsEventsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions:events", "list",
 			"--max-items", "10",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
@@ -33,6 +34,7 @@ func TestBetaSessionsEventsSend(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions:events", "send",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
 			"--event", "{content: [{text: 'Where is my order #1234?', type: text}], type: user.message}",
@@ -51,6 +53,7 @@ func TestBetaSessionsEventsSend(t *testing.T) {
 			"    type: user.message\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions:events", "send",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",
 			"--beta", "message-batches-2024-09-24",
@@ -64,6 +67,7 @@ func TestBetaSessionsEventsStream(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
+			"--base-url", mocktest.ServerWithQuery(t, "beta=true"),
 			"beta:sessions:events", "stream",
 			"--max-items", "10",
 			"--session-id", "sesn_011CZkZAtmR3yMPDzynEDxu7",

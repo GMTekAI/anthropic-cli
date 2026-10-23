@@ -7,23 +7,28 @@ inputs:
   private-key:
     required: false
     description: private key of the GitHub App that can read the Go SDK's staging repo
+  go-staging-repo:
+    required: false
+    description: name of the Go SDK's staging repo, without the owner
 runs:
   using: composite
   steps:
     - uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
-      if: github.repository == 'anthropics/anthropic-sdk-cli-private'
+      if: github.repository_owner == 'anthropics' && github.repository != 'anthropics/anthropic-cli' && inputs.go-staging-repo != ''
       id: app-token
       with:
         app-id: ${{ inputs.app-id }}
         private-key: ${{ inputs.private-key }}
         owner: anthropics
-        repositories: anthropic-sdk-go-private
+        repositories: ${{ inputs.go-staging-repo }}
         permission-contents: read
 
     - name: Configure Git for access to the Go SDK's staging repo
-      if: github.repository == 'anthropics/anthropic-sdk-cli-private'
+      if: github.repository_owner == 'anthropics' && github.repository != 'anthropics/anthropic-cli' && inputs.go-staging-repo != ''
       shell: bash
-      run: git config --global url."https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/anthropics/anthropic-sdk-go-private".insteadOf "https://github.com/anthropics/anthropic-sdk-go-private"
+      env:
+        GO_STAGING_REPO: ${{ inputs.go-staging-repo }}
+      run: git config --global url."https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/anthropics/${GO_STAGING_REPO}".insteadOf "https://github.com/anthropics/${GO_STAGING_REPO}"
 
     - name: Setup go
       uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
