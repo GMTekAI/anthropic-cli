@@ -131,10 +131,10 @@ func TestWorkerRunWorkSecretEnvVarAlone(t *testing.T) {
 	assert.Empty(t, workSecret, "the SDK reads ANTHROPIC_WORK_SECRET itself")
 }
 
-// TestWorkerRunOnPremEntrypoint pins the on-premises invocation: ids and
+// TestWorkerRunEnvEntrypoint pins the env-var invocation: ids and
 // base URL from env vars, the secret from ANTHROPIC_WORK_SECRET_FILE, and no
 // environment key anywhere.
-func TestWorkerRunOnPremEntrypoint(t *testing.T) {
+func TestWorkerRunEnvEntrypoint(t *testing.T) {
 	clearWorkerEnv(t)
 	t.Setenv("ANTHROPIC_SESSION_ID", "ses_1")
 	t.Setenv("ANTHROPIC_WORK_ID", "work_1")

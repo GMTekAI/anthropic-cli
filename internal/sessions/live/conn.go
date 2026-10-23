@@ -153,8 +153,7 @@ func subscribe[T any](ctx context.Context, sse *ssestream.Stream[T], toFrame fun
 	}, nil
 }
 
-// The server only honours event_deltas under this beta and ignores it for
-// orgs that aren't enrolled, so it is safe to always send.
+// Asks the API for event deltas.
 const deltasBeta anthropic.AnthropicBeta = "managed-agents-vnext"
 
 var messageDeltas = []anthropic.BetaManagedAgentsDeltaType{anthropic.BetaManagedAgentsDeltaTypeAgentMessage}
